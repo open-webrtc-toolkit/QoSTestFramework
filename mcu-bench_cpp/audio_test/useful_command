@@ -1,0 +1,36 @@
+ac is 1 for mono
+
+ffmpeg -f s16le -ar 48000 -ac 2 -i test_2.pcm test_2.wav
+ffplay -f s16le -ar 48000 -ac 2 -i test_2.pcm
+ ffmpeg -i short_mixed_stereo_48_no_silence.wav -f s16le -ar 48000 -ac 2 short_mixed_stereo_48_no_silence.pcm
+ ffmpeg -i short_mixed_stereo_48_no_silence.wav -f s16le -ar 48000 -ac 1 short_mixed_stereo_48_no_silence.pcm
+remove silence 
+sox in.wav out4.wav silence 1 0 1% -1 0 1%
+detect silence
+ffmpeg -i short_mixed_stereo_48_no_silence_1.wav -af silencedetect=noise=-50dB:d=0.01 -f null -
+
+
+
+sox rec_out_noslience.wav -r 16000 output.wav
+Converts a wav ﬁle to a raw 16-bit signed integer mono ﬁle with 48kHz:
+1
+ sox conference_rec_48_stereo.wav -b 16  -c 1 -r 16k  conference_rec_16_mono.wa	
+sox infile.wav -b 16 -s -c 1 -r 48k -t raw outfile.raw	
+
+ffmpeg - Trim audio file without re-encoding
+
+Use ffmpeg to trim an audio file without re-encoding it.
+
+Trim starting from 10 seconds and end at 16 seconds (total time 6 seconds)
+
+ffmpeg -i input.mp3 -ss 10 -t 6 -acodec copy output.mp3
+
+Trim from 00:02:54.583 to end of file
+
+ffmpeg -i input.mp3 -ss 00:02:54.583 -acodec copy output.mp3
+
+Trim from 00:02:54.583 for 5 minutes (aka 300 seconds)
+
+ffmpeg -i input.mp3 -ss 00:02:54.583 -t 300 -acodec copy output.mp3
+
+

@@ -1,0 +1,39 @@
+.container {
+    width: 30%;
+    margin-left: 10px;
+    margin-right: 10px;
+    float: left;
+    min-width: 280px;
+}
+
+.dynamicContainer{
+    width: 30%;
+    min-width: 320px;
+}
+
+.container input {
+    width: 40%;
+    float: right;
+    clear: both;
+}
+
+.container input[type="radio"]{
+    float: right;
+    clear: both;
+}
+
+.container select{
+    width: 40%;
+    float: right;
+    clear: both;
+}
+
+.container button{
+    float: right;
+    clear: both;
+}
+
+.on  { background:lightgreen; value: "Yes"; }
+.off { background:lightgray ; value : "No"; }
+.constraintsOn  { background:lightgreen; min-height: 50px ; min-width: 100px }
+.constraintsOff { background:lightgray ; min-height: 50px; min-width: 100px}

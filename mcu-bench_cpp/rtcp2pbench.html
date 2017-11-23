@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title> WebRTCMCUBench</title>
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<script language="javascript">
+
+</script>
+
+<body>
+<h2 style = "text-align:center;"> WebRTCMCUBench: A WebRTC MCU Benchmark </h2>
+<div id = "heading"><h2> Join a WebRTC MCU Connection </h2> </div>
+
+<div id = "welcome" > </div>
+
+<div id = "how-to-use">
+    <p> This is used for android p2p QOS testing.
+</div>
+
+<div title="local medias" >
+    <!--<div id="myVideo" style="width: 1280px; height: 720px; display: inline-block;" title="my camera" ></div>-->
+    <div id = "myVideo" style="width: 1280px; height: 720px; display: none;" title="my camera" ></div>
+    <div id = "mixed-streams" title="mix media"   class="dynamicContainer"></div>
+</div>
+
+
+
+<div style="clear: both">
+    <!--<h2> Console Log </h2>
+
+    <textarea id = "console_log" readonly style="width: 100%; min-height:200px;resize: none"> </textarea>
+    <button id="console-clear" onclick = "clearConsole()"> Clear Console </button>
+    <button id="download-results" onclick = "download()"> Download Results </button>-->
+    <!--button id="start test" onclick = "startVideoQualityMeasureTesting();"style="width: 640px;height: 50px;">start Video Quality Measure Testing</button>
+    <button id="stop test" onclick = "stopVideoQualityMeasureTesting();"style="width: 640px;height: 50px;">stop Video Quality Measure Testing</button-->
+    <!--button id="start recording data" onclick = "receiverInitVideoQualityMeasure();"style="width: 640px;height: 50px;">Record Video Analysis Data</button>
+    <button id="download-analysis-data" onclick = "FinaldownloadVideoQualityData()"style="width: 636px;height: 50px;"> Download Video Analysis Data </button-->
+</div>
+
+<div>
+    <canvas id="blank space" style="width: 640px;height: 50px;" style="display: none;"></canvas>
+</div>
+
+<div>
+    <button id="startAndroidTest" onclick = "startAndroidp2pTest()" style="width: 250px;height: 50px;">startAndroidTest</button>
+</div>
+
+<div>
+    p2pServer:<input type = "text" id = "p2pserver" value = "10.239.44.103" style="width: 100px;height: 20px;">
+    ,lockServer:<input type = "text" id = "lockserver" value = "10.239.44.103" style="width: 100px;height: 20px;">
+    ,yuvStreamName:<select id="yuvname"></select>
+    ,encodedStream:<select id="encodedname"></select>
+    ,fps:<input type = "text" id = "fps" value = "30" style="width: 60px;height: 20px;">
+    ,bitrate:<input type = "text" id = "bitrate" value = "2000" style="width: 60px;height: 20px;">
+    ,testTime(s):<input type = "text" id = "testtime" value = "180" style="width: 60px;height: 20px;">
+    ,resolution:<input type = "text" id = "resolution" value = "1280x720" style="width: 60px;height: 20px;">
+    ,videoFrameSize:<input type = "text" id = "framesize" value = "600" style="width: 60px;height: 20px;">
+</div>
+
+<div>
+    publishDevice:<select id="publishdevices"></select>
+    subscribeDevice:<select id="subscribedevice"></select>
+    TestCaseName:<select id="casename"></select>
+    installAppTest:<input type = "checkbox" id = "isinstall"style="width: 30px;height: 20px;">
+</div>
+
+
+<div>
+    <button id="getAndroidDevices" onclick = "getAdroidDevices()" style="width: 200px;height: 30px;">updateAndroidDrvices</button>
+    <button id="getp2pTestCase" onclick = "getp2pTestCase()" style="width: 200px;height: 30px;">getTestCase</button>
+    <button id="setconfig" onclick = "setp2pconfig()" style="width: 200px;height: 30px;">setconfig</button>
+    <button id="startlockserver" onclick = "startlockserver()" style="width: 200px;height: 30px;">startlockserver</button>
+</div>
+<div>
+    <canvas id="blank space" style="width: 640px;height: 50px;" style="display: none;"></canvas>
+</div>
+
+
+<div>
+      <button id="getResultFolder" onclick = "getResultFolder()" style="width: 200px;height: 30px;">getResultFolder</button>
+       <div>
+          ResultFolder:<select id="resultfolder"></select>
+       </div>
+</div>
+<div>
+<div>
+    <button id="quality-btn" onclick = "getQuality()" style="width: 250px;height: 50px;">Image Quality (PSNR & SSIM & VIF)</button>
+    Frame:<input type = "text" id = "qnum" value = "30">
+    <!--Threshold:<input type = "text" id = "iqthreshold" value = "1000">-->
+
+    <canvas id="chartQuality" width="400" height="100" style="display: none;"></canvas>
+    <canvas id="chartQuality2" width="400" height="100" style="display: none;"></canvas>
+    <!-- <canvas id="chartQuality3" width="400" height="100" style="display: none;"></canvas> -->
+</div>
+
+
+<div>
+    <button id="vmaf-btn" disabled onclick = "getVmaf()" style="width: 250px;height: 50px;">Image Quality (vmaf)</button>
+    Frame:<input type = "text" id = "qnum" value = "30">
+    <!--Threshold:<input type = "text" id = "iqthreshold" value = "1000">-->
+
+    <canvas id="chartVmaf" width="400" height="100" style="display: none;"></canvas>
+</div>
+
+<div>
+    <button id="NR-btn" disabled onclick = "getNR()" style="width: 250px;height: 50px;">No-Reference (Blockiness, Blockloss, Blur, Noise,Freezing)</button>
+    Blockiness Normal Range:<a>0.9-1.01</a>
+      <canvas id="chartNR1" width="400" height="100" style="display: none;"></canvas>
+    Blockloss Normal Range:<a>0-5</a>
+    <canvas id="chartNR2" width="400" height="100" style="display: none;"></canvas>
+    Blur Normal Range:<a>0-5</a>
+    <canvas id="chartNR3" width="400" height="100" style="display: none;"></canvas>
+    Noise Normal Range:<a>0-3.5</a>
+    <canvas id="chartNR4" width="400" height="100" style="display: none;"></canvas>
+    Interlacing Normal Range:<a>0</a>
+    <canvas id="chartNR5" width="400" height="100" style="display: none;"></canvas>
+    Freezing Normal Range:<a>0</a>
+    <canvas id="chartNR6" width="400" height="100" style="display: none;"></canvas>
+</div>
+
+<div>
+    <button id="jitter-btn" disabled onclick = "getJitter()" style="width: 250px;height: 50px;">Jitter (miliseconds)</button>
+  Frame:<input type = "text" id = "jnum" value = "30">
+  Threshold:<input type = "text" id = "jthreshold" value = "3000">
+  Average:<input type = "text" id = "jitter_avg" value = "0">
+    <canvas id="chartJitter" width="400" height="100" style="display: none;"></canvas>
+</div>
+
+<div>
+    <button id="latency-btn" disabled onclick = "getLatency()" style="width: 250px;height: 50px;">Latency (miliseconds)</button>
+  Frame:<input type = "text" id = "lnum" value = "30">
+  Threshold:<input type = "text" id = "lthreshold" value = "1000">
+  Average:<input type = "text" id = "latency_avg" value = "0">
+    <canvas id="chartLatency" width="400" height="100" style="display: none;"></canvas>
+</div>
+
+<div>
+    <button id="fps-btn" onclick = "getFps()" style="width: 250px;height: 50px;">Fps</button>
+  Frame:<input type = "text" id = "fnum" value = "30">
+  Threshold:<input type = "text" id = "fthreshold" value = "80">
+  Average:<input type = "text" id = "fps_avg" value = "0">
+    <canvas id="chartgoogFps" width="400" height="100" style="display: none;"></canvas>
+</div>
+
+<div>
+    <button id="bitrate-btn" onclick = "getBitrate()" style="width: 250px;height: 50px;">Bitrate (kbps)</button>
+  Frame:<input type = "text" id = "bnum" value = "30">
+  Threshold:<input type = "text" id = "bthreshold" value = "2500">
+  Average:<input type = "text" id = "bitrate_avg" value = "0">
+    <canvas id="chartgoogBitrate" width="400" height="100" style="display: none;"></canvas>
+</div>
+
+
+
+
+<!-- Note : This canvas is to store video data, do not touch! -->
+<canvas id="data-canvas" width="1280" height="720" hidden></canvas>
+
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="public/socket.io.js"></script>
+<script type="text/javascript" src="public/adapter.js"></script>
+<script type="text/javascript" src="public/woogeen.sdk.js"></script>
+<script type="text/javascript" src="public/woogeen.sdk.ui.js"></script>
+<script type="text/javascript" src="js/Chart.js"> </script>
+<script type="text/javascript" src="js/stat.js"> </script>
+<script type="text/javascript" src="js/stat_android.js"> </script>
+    <script language="JavaScript">
+      function getParameterByName(name) {
+        name = name.replace(/[\[]/, '\\\[').replace(/[\]]/, '\\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
+          results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(
+          /\+/g, ' '));
+      }
+/*
+      var sampleMode = getParameterByName('mode') || 'socketio';
+      if (sampleMode === 'rest') {
+        console.log('Run REST sample!!');
+        runRestSample();
+      } else {
+        console.log('Run SocketIO sample!!');
+        runSocketIOSample();
+      }*/
+    </script>
+
+</body>
+</html>

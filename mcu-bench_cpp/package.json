@@ -1,0 +1,25 @@
+{
+  "name": "mcu-bench",
+  "version": "1.0.0",
+  "description": "the mcu testbench project, based on WebrtcBench",
+  "main": "basicServer.js",
+  "dependencies": {
+    "body-parser": "^1.13.2",
+    "morgan": "^1.6.1",
+    "errorhandler": "^1.4.1",
+    "express": "^4.13.1",
+    "mysql": "^2.8.0",
+    "async": "^1.4.0",
+    "socket.io": "^1.3.6",
+    "socket.io-client": "^1.3.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mcu-bench"
+  ],
+  "author": "Dongbin Cheng, Jianlin Qiu",
+  "license": "ISC"
+}

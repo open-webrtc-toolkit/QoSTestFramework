@@ -1,0 +1,44 @@
+All video can be found at
+\\kona.sh.intel.com\AOJShare\WebRTC\video for Webrtc-qa\videosource
+
+1. raw stream test for Android/C++ 
+FourPeople_1280*720_30_taged.yuv (framerate:30, resolution:1280*720)
+2. encoded stream test for Android/C++
+1280x720-framerate30-bitrate2000k.vp8 (framerate:30, resolution:1280x720, bitrate 2000k)
+-- This file format is "key frame"+ "frame length"+"tag"+"frame data"
+
+3. raw stream test for JS 
+FourPeople_1280x720_60.y4m (framerate:60, resolution:1280x720)
+4. raw stream used for encode file video quality comparsion 
+h264_raw_1280x720_framerate30-bitrate2000k-gop30.yuv
+vp8_raw_1280x720_framerate30-bitrate2000k-gop30.yuv
+
+
+For C++ test , please copy video to native/video
+For Android test, please copy video to publish side sdcard folder
+
+
+How to generate taged yuv file
+1. go to native folder ,tag input.y4m  output.avi resolution_width resolution_heigth tagesize framenumber
+e.g ./tag ./vide/FourPeople_1280x720_60.y4m FourPeople_1280x720_30_taged.avi 1280 720 3 600  
+it will generate FourPeople_1280x720_30_taged.avi in native output folder, which resolution is 1280x720, one number tag size width is 20*3 , total framenumber is 600
+
+2. use ffmpeg to generate yuv
+ffmpeg -i FourPeople_1280x720_30_taged.avi FourPeople_1280x720_30_taged.yuv
+
+
+How to generate encoded file
+
+1. Go to webrtc-webrtc-qa/mcu-bench_cpp/videoGenerateScripts
+use mkMCUTestStream_tag_key.py to generate vp8/h264 codec mkv file 
+e.g genStreams.sh
+./mkMCUTestStream_tag_key.py -w 1280 -h  720 -b 2000 -o 1280x720-framerate30-bitrate1000k.mkv -v vp8 $stream
+It will generate 1280x720-framerate30-bitrate1000k.mkv file.
+2. use genTestStream to insert tag and key frame information in mkv file
+e.g run.sh
+./genTestStream -i 1280x720-framerate30-bitrate1000k.mkv
+
+
+it will generate corresponding *.vp8 or *.h264 file 
+
+
