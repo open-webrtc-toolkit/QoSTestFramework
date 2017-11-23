@@ -1,13 +1,24 @@
-### A tutorial on mcu image quality comparison pipeline
+### A tutorial on mcu/p2p video/audio quality measurement pipeline
 # yonghao.zhao@intel.com
-# 2017.6.6
+# 2017.11.23
 
-### Environment
-1. mcu-bench is built in node javascript version 6.
-2. To enable the latest deep learning module, you should recompile your OpenCV(above 3.2) with opencv-contrib. The following blog may help if you're not familiar with its installation: http://m.blog.csdn.net/article/details?id=61195530
-3. Our c++ client may have something wrong with Ubuntu 16.04. We strongly recommand you to use Ubuntu 14.04.
-4. We recommand you use vp8 instead of h264 in our C++ client.
-5. To enable vmaf, cd to mcu-bench_cpp/python, unzip vmaf-master.zip and rename it as vmaf. please install all the requirements as instructed in https://github.com/Netflix/vmaf. Finally, cd to /vmaf and "make".
+### Dependencies
+0. Node.js 6 is required.
+1. To enable the deep learning module, you should recompile your OpenCV3.2 with opencv-contrib. The opencv-contrib is not a stable plugin, which changes API dramatically every week. The DNN API I use can neither fit the lastest opencv-contrib or 3.2 branch opencv-contrib. I put the both corresponding OpenCV3.2.zip and OpenCV_contrib.zip on "\\kona.sh.intel.com\WebRTC\qos-bench". Please follow the installation instructions online.
+2. To enable vmaf, cd to mcu-bench_cpp/python, unzip vmaf-master.zip and rename it as vmaf. please install all the requirements as instructed in https://github.com/Netflix/vmaf. Finally, cd to /vmaf and "make".
+3. Install PESQ tools , go to audio_test/Software/
+     unzip P862_annex_A_2005_CD  wav final.zip
+     build:
+      gcc -o PESQ *.c -lm
+     run command:
+     Software/P862_annex_A_2005_CD/source/PESQ +16000 input.wav output.wav
+4. Install sox tools, go to audio_test/Software/
+     tar -jxvf sox-14.4.2.tar.bz2
+     cd sox-14.4.2
+     ./configure
+     ./make
+     ./sudo make install
+5. The new QOStestclient relies on openssl 1.0.2i, please unzip the openssl-OpenSSL_1_0_2i.tar.gz and install it following the INSTALLATION.
 
 ### Test video preparations
 1. A raw video, best resolution in 720P. (e.g. FourPeople_1280x720_60.y4m)
@@ -15,59 +26,44 @@
 3. Encode the avi using videoGenerateScripts to create a vp8 or h264 files. These files will be used in c++ client.
 4. Comment "f_output.write(tag_str)" in videoGenerateScripts and encode the avi again to create a vp8 or h264 files. Then decode the vp8 or h264 into yuv. (e.g. vp8_raw_1280x720_framerate30-bitrate2000k-gop30.yuv). You may turn to Jianlin for help when decoding.
 You can download all the video files by visiting "\\kona.sh.intel.com\WebRTC\video for Webrtc-qa" from your intel laptop.
+5. prepare audio materials: Raw audio 16khz, mono, pcm format.
+
 
 ### Steps
 Compare avi with received video
 
-1. Git the mcu and change directory to /bin.
+1. Download an mcu release package, unzip and change directory to /bin
    (1) vim the start-all.sh and comment the app of the last line.
-   (2) use command "./start-all.sh" (if you have multi-version of node, please use "nvm use v6" at first)
-   (3) cd to /nuve and excute init-all.sh to get the Sample key and Sample ID
+   (2) run `./init-all.sh --deps` to install all mcu runtime dependencies and remember the Sample key and Sample ID.
+   (3) use command "./start-all.sh" 
 
-2. Git the webrtc-webrtc-qa and change directory to /mcu-bench_cpp/native/src.
-   (1) cd to native and "make".
+2. Git the webrtc-qos-bench and change directory to /mcu-bench_cpp/native
+   (1) run "make" (openCV is required here)
    (2) cd to /mcu-bench_cpp and vim basicServer.js. Make sure your Sample ID and Key are correctly set. Make sure your vmaf path is correctly set. Comment avi_quality if you compare yuv and vice versa
    (3) use command "./basicServer.js"
    (4) remember the roomID.
 
-3. Open chrome and go to "localhost:3000/console", input the Sample key and ID. Then go to "localhost:4002".
+3. Open chrome and go to "localhost:3000/console", input the Sample key and ID. Then go to "http://localhost:4002" or "https://localhost:4004".
 
 4. Change directory to mcu_bench_cpp/QOStestclient.
-   (1) "make" (If lib and include folders are not in the git, take them from an another way)
-   (2) vim directvideoencoder.cc and make sure your vp8 or h264 path is correctly set.
+   (1) libs and include folders are put on "\\kona.sh.intel.com\WebRTC\qos-bench"
+   (2) mkdir build and cd to build, run "cmake .." and "make"
+   (3) vim directvideoencoder.cc and make sure your vp8 or h264 path is correctly set. VP8 is preferred.
+   (4) vim out/vp8.sh, change the roomID.
    (3) Click "start Video Quality Measure Testing" on the 4002 page, waiting for minutes.
    (4) Click "stop Video Quality Measure Testing"
    (5) There is a sequnce to click button, Image Quality(PSNR SSIM VIF) first, Image Quality(Vmaf) second, No-reference last. The other buttons are of no sequnce.
 
+### PS
 If you want to compare yuv with received video, you should change
 2.1 "cp imagequaliy_yuv_dl.cpp imagequality.cpp"
 2.2  make
 2.3  cd to /mcu-bench_cpp and vim basicServer.js. Make sure your yuv path is correctly set.
 
-
-### PS
-1. if you want to test packet loss via two different computer, you should edit three parts of QOStestclient
+if you want to test packet loss via two different computer, you should edit three parts of QOStestclient
    a) change localhost in /out/vp8.sh
    b) change "#define IPSTR" in basicserverConnector.h
    c) change MyBasicServerConnector::TestConnect() in basicserverConnector.cc
 
-
-
-##### Test audio preparations ####
-1. Raw audio 16khz , mono, pcm format .
-2. Install PESQ tools , go to audio_test/Software/
-     unzip P862_annex_A_2005_CD  wav final.zip
-     build:
-      gcc -o PESQ *.c -lm
-     run command:
-     Software/P862_annex_A_2005_CD/source/PESQ +16000 input.wav output.wav
-3. Install ffmpeg tools
-4. Install sox tools, go to audio_test/Software/
-     tar -jxvf sox-14.4.2.tar.bz2
-     cd sox-14.4.2
-     ./configure
-     ./make
-     ./sudo make install
-
- 
-
+### Docker usage
+Please refer to Readme_docker for details.
