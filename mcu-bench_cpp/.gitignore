@@ -2,7 +2,7 @@
 /node_modules
 /native/*.o
 /native/iq_avi iq_yuv tag convert saveImage latency FLR fps bitrate imagequality_yuv_android fps_android bitrate_android FLR_android latency_android
-/native/Data
+/native/Data/*
 /native/output
 /native/bak
 /native/video

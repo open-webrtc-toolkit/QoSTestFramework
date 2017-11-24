@@ -12,6 +12,11 @@ How to use the images
 7.  Do your business
 8.  Ctrl+D to quit
 
+How to continue to use the container
+1. sudo docker ps -a
+2. sudo docker start xxx(container id in step1)
+3. sudo docker attach xxx(container id in step1)
+
 How to commit your changes to the docker (not necessary)
 1.  sudo docker ps –a
 2.  sudo docker commit xxxx(container id in step 1)  xxx(a new image name)
