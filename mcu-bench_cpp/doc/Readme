@@ -5,7 +5,7 @@
 ### Dependencies
 0. Node.js 6 is required.
 1. To enable the deep learning module, you should recompile your OpenCV3.2 with opencv-contrib. The opencv-contrib is not a stable plugin, which changes API dramatically every week. The DNN API I use can neither fit the lastest opencv-contrib or 3.2 branch opencv-contrib. I put the both corresponding OpenCV3.2.zip and OpenCV_contrib.zip under the folder "dependency". Please follow the installation instructions online.
-2. To enable vmaf, cd to mcu-bench_cpp/python, unzip vmaf-master.zip and rename it as vmaf. please install all the requirements as instructed in https://github.com/Netflix/vmaf. Finally, cd to /vmaf and "make".
+2. To enable vmaf, cd to mcu-bench_cpp/dependency, unzip vmaf.zip, move it to mcu-bench_cpp/python and rename it as vmaf. please install all the requirements as instructed in https://github.com/Netflix/vmaf. Finally, cd to /vmaf and "make".
 3. Install PESQ tools , go to audio_test/Software/
      unzip P862_annex_A_2005_CD  wav final.zip
      build:
