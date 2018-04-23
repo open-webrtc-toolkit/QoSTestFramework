@@ -27,8 +27,8 @@ bool DirectVideoEncoder::InitEncoderContext(Resolution& resolution, uint32_t fps
     //fd_ = fopen("./source.vp8", "rb");
     //fd_ = fopen("./1280x720-framerate30-bitrate2000k-gop30.vp8", "rb");
     //fd_ = fopen("./FourPeopleH720p.vp8", "rb");
-//    fd_ = fopen("./1280x720-framerate30-bitrate2000k.vp8", "rb");
-    fd_ = fopen("./source.h264", "rb");
+    fd_ = fopen("./1280x720-framerate30-bitrate2000k.vp8", "rb");
+//    fd_ = fopen("./source.h264", "rb");
 
     if (!fd_) {
         std::cout << "Failed to open the source.h264" << std::endl;

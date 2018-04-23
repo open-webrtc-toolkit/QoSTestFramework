@@ -192,19 +192,22 @@ int main(int argc, char** argv)
  // cin.ignore();
 
   string token = getToken(scheme, roomId, "", "", false);
-/*
-  LocalCustomizedStreamParameters lcsp(LocalCustomizedStreamParameters(true, true));
-  FileFrameGenerator* framer = new FileFrameGenerator(1280, 720, 30);
 
-  LocalCustomizedStream stream(std::make_shared<LocalCustomizedStreamParameters>(lcsp), framer);
-  std::shared_ptr<LocalCustomizedStream> shared_stream(std::make_shared<LocalCustomizedStream>(stream));
-*/
+#if 0 
+  std::unique_ptr<FileFrameGenerator> framer(new FileFrameGenerator(1280, 720, 30));
+  std::shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true));
+  std::shared_ptr<ics::base::LocalStream> shared_stream;
+  shared_stream = LocalStream::Create(lcsp, std::move(framer));
+#endif
+
+#if 1 
    GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
    VideoEncoderInterface* external_encoder = DirectVideoEncoder::Create(codec_name);
    Resolution res(1280, 720);
    shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true, res, 30, 2000));
    std::shared_ptr<ics::base::LocalStream> shared_stream;
    shared_stream = LocalStream::Create(lcsp, external_encoder);
+#endif
 
   if (token != "") {
       room->Join(token,
