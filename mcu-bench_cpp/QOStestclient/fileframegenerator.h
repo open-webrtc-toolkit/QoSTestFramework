@@ -7,9 +7,9 @@
 #define FILE_FRAME_GENERATOR_H_
 
 #include <stdio.h>
-#include "woogeen/base/framegeneratorinterface.h"
+#include "ics/base/framegeneratorinterface.h"
 
-class FileFrameGenerator: public woogeen::base::VideoFrameGeneratorInterface {
+class FileFrameGenerator: public ics::base::VideoFrameGeneratorInterface {
  public:
   FileFrameGenerator(int width, int height, int fps);
   ~FileFrameGenerator();
@@ -19,14 +19,14 @@ class FileFrameGenerator: public woogeen::base::VideoFrameGeneratorInterface {
   int GetHeight();
   int GetWidth();
   int GetFps();
-  woogeen::base::VideoFrameGeneratorInterface::VideoFrameCodec GetType();
+  ics::base::VideoFrameGeneratorInterface::VideoFrameCodec GetType();
 
  private:
   int width_;
   int height_;
   int fps_;
   uint32_t frame_data_size_;
-  woogeen::base::VideoFrameGeneratorInterface::VideoFrameCodec type_;
+  ics::base::VideoFrameGeneratorInterface::VideoFrameCodec type_;
   FILE * fd;
 };
 

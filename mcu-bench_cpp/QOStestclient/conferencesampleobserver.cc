@@ -5,14 +5,14 @@
 */
 #include <iostream>
 
-#include "woogeen/conference/remotemixedstream.h"
+#include "ics/conference/remotemixedstream.h"
 #include "conferencesampleobserver.h"
 #include "myVideoRenderer.h"
 #include "basicserverConnector.h"
 //#include "dfbvideorenderer.h"
 using namespace std;
-using namespace woogeen::base;
-using namespace woogeen::conference;
+using namespace ics::base;
+using namespace ics::conference;
 
 ConferenceSampleObserver::ConferenceSampleObserver(shared_ptr<ConferenceClient> client)
   :client_(client) {

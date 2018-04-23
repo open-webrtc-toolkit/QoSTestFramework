@@ -7,15 +7,15 @@
 
 using namespace std;
 
-DirectVideoDecoder::DirectVideoDecoder(MediaCodec::VideoCodec codec) {
+DirectVideoDecoder::DirectVideoDecoder(ics::base::VideoCodec codec) {
   codec_ = codec;
 }
 
 DirectVideoDecoder::~DirectVideoDecoder() { }
 
-bool DirectVideoDecoder::InitDecodeContext(MediaCodec::VideoCodec video_codec) {
+bool DirectVideoDecoder::InitDecodeContext(ics::base::VideoCodec video_codec) {
   if (video_codec != codec_) {
-    cout << "Unsupported decoder codec type" << video_codec << " for " << codec_;
+//    cout << "Unsupported decoder codec type" << video_codec << " for " << codec_;
   } else {
     // Here to initialize your own dedicated decode context
 
@@ -34,7 +34,7 @@ bool DirectVideoDecoder::OnEncodedFrame(std::unique_ptr<VideoEncodedFrame> frame
   return true;
 }
 
-DirectVideoDecoder* DirectVideoDecoder::Create(MediaCodec::VideoCodec codec) {
+DirectVideoDecoder* DirectVideoDecoder::Create(ics::base::VideoCodec codec) {
   DirectVideoDecoder* video_decoder = new DirectVideoDecoder(codec);
   return video_decoder;
 }

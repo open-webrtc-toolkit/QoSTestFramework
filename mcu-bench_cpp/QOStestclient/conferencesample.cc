@@ -4,17 +4,21 @@
 // testclient.cc : Defines the entry point for the console application.
 //
 #include <iostream>
-#include "woogeen/conference/conferenceclient.h"
-#include "woogeen/base/localcamerastreamparameters.h"
-#include "woogeen/base/stream.h"
+#include "ics/conference/conferenceclient.h"
+#include "ics/conference/remotemixedstream.h"
+#include "ics/conference/conferencepublication.h"
+#include "ics/conference/conferencesubscription.h"
+#include "ics/base/globalconfiguration.h"
+#include "ics/base/localcamerastreamparameters.h"
+#include "ics/base/stream.h"
 #include "fileframegenerator.h"
 #include "encodedframegenerator.h"
 //#include "fileaudioframegenerator.h"
 #include "asio_token.h"
-#include "conferencesampleobserver.h"
 #include "conferencesampleforwardobserver.h"
 #include "basicserverConnector.h"
 #include "directvideoencoder.h"
+#include "myVideoRenderer.h"
 #include <unistd.h>
 #include <chrono>
 #include <ctime>
@@ -25,26 +29,22 @@
 
 
 using namespace std;
+using namespace ics::base;
+using namespace ics::conference;
 
-/*std::function<void(std::shared_ptr<User>)>join_room_success {
-
-}
-
-std::function<void(std::unique_ptr<ConferenceException>)>join_room_failure {
-
-}*/
+std::shared_ptr<RemoteMixedStream> remote_mixed_stream;
+ConferenceClientConfiguration configuration;
 
 int main(int argc, char** argv)
 {
   //daemon(1,1);
-  using namespace woogeen::base;
-  using namespace woogeen::conference;
+  using namespace ics::base;
+  using namespace ics::conference;
  // std::string audiopath("");
   std::string videopath("");
   std::string roomId("");
   std::string scheme("http://");
   std::string suffix("/createToken");
-  ConferenceClientConfiguration configuration;
   EncodedMimeType type;
   int width;
   int height;
@@ -53,12 +53,15 @@ int main(int argc, char** argv)
   bool subscribe = true;
   //true for mix mode, false for forward mode
   bool mode = true;
+  std::string isp("");
+  std::string region("");
+  std::string codec_used("");
 
   if(argc >= 2){
     std::string hosturl(argv[1]);
     scheme.append(hosturl);
   }else{
-    std::string fixed("10.239.44.59:3001");
+    std::string fixed("10.239.44.59:3004");
     scheme.append(fixed);
   }
 
@@ -70,14 +73,14 @@ int main(int argc, char** argv)
   if(argc >= 4){
     std::string codec(argv[3]);
     if (codec.find("h264") != std::string::npos) {
-      configuration.media_codec.video_codec = MediaCodec::VideoCodec::H264;
+      codec_used ="h264";
       type = EncodedMimeType::ENCODED_H264;
     }else{
-      configuration.media_codec.video_codec = MediaCodec::VideoCodec::VP8;
+      codec_used = "vp8";
       type = EncodedMimeType::ENCODED_VP8;
     }
   }else{
-    configuration.media_codec.video_codec = MediaCodec::VideoCodec::VP8;
+    codec_used = "vp8";
     type = EncodedMimeType::ENCODED_VP8;
   }
 
@@ -145,12 +148,22 @@ int main(int argc, char** argv)
     videopath.append("/testFourPeopleHD720P.avi");
   }
 
-  std::unique_ptr<woogeen::base::AudioFrameGeneratorInterface> audio_generator(FileAudioFrameGenerator::Create(audiopath));
+  std::unique_ptr<ics::base::AudioFrameGeneratorInterface> audio_generator(FileAudioFrameGenerator::Create(audiopath));
   if (audio_generator == nullptr){
     return -1;
   }*/
   //GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
   //GlobalConfiguration::SetCustomizedAudioInputEnabled(true, std::move(audio_generator));
+
+  ics::base::VideoCodec codec_name;
+  if (codec_used.find("h264") != std::string::npos) {
+    codec_name = ics::base::VideoCodec::kH264;
+  } else if(codec_used.find("vp8") != std::string::npos) {
+    codec_name = ics::base::VideoCodec::kVp8;
+  } else {
+    codec_name = ics::base::VideoCodec::kVp8;
+  }
+
 
   IceServer ice;
   ice.urls.push_back("stun:61.152.239.56");
@@ -161,15 +174,12 @@ int main(int argc, char** argv)
   configuration.ice_servers = ice_servers;
 
   scheme.append(suffix);
-  std::shared_ptr<ConferenceClient> room(new ConferenceClient(configuration));
+  std::shared_ptr<ConferenceClient> room = ConferenceClient::Create(configuration);
 
-  ConferenceSampleObserver *observer = nullptr;
   ConferenceSampleForwardObserver *forwardobserver = nullptr;
   if(subscribe) {
     if(mode) {
       cout <<" ============Mix mode==========";
-      observer = new ConferenceSampleObserver(room);
-      room->AddObserver(*observer);
     }
     else {
       cout <<" ============Forward mode==========";
@@ -181,7 +191,7 @@ int main(int argc, char** argv)
 //  cout << "Press Enter to connect room." << std::endl;
  // cin.ignore();
 
-  string token = getToken(scheme, roomId);
+  string token = getToken(scheme, roomId, "", "", false);
 /*
   LocalCustomizedStreamParameters lcsp(LocalCustomizedStreamParameters(true, true));
   FileFrameGenerator* framer = new FileFrameGenerator(1280, 720, 30);
@@ -190,39 +200,156 @@ int main(int argc, char** argv)
   std::shared_ptr<LocalCustomizedStream> shared_stream(std::make_shared<LocalCustomizedStream>(stream));
 */
    GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
-   VideoEncoderInterface* external_encoder = DirectVideoEncoder::Create(MediaCodec::VideoCodec::VP8);
+   VideoEncoderInterface* external_encoder = DirectVideoEncoder::Create(codec_name);
    Resolution res(1280, 720);
    shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true, res, 30, 2000));
-   shared_ptr<LocalCustomizedStream> shared_stream(new LocalCustomizedStream(lcsp, external_encoder));
-
-
-
-
+   std::shared_ptr<ics::base::LocalStream> shared_stream;
+   shared_stream = LocalStream::Create(lcsp, external_encoder);
 
   if (token != "") {
       room->Join(token,
-          [=](std::shared_ptr<User> user) {
+          [=](std::shared_ptr<ConferenceInfo> info) {
+              // Subscribe mixed stream if indicated so 
+              if (subscribe && mode) {
+                std::vector<std::shared_ptr<RemoteStream>> remote_streams = info->RemoteStreams();
+                for (auto& remote_stream : remote_streams) {
+                  if (remote_stream->Source().video == VideoSourceInfo::kMixed) {
+                    remote_mixed_stream = std::static_pointer_cast<RemoteMixedStream>(remote_stream);
+                    break;
+                  }
+                }
+
+                SubscribeOptions options;
+                VideoCodecParameters codec_param1;
+                codec_param1.name = codec_name;
+                options.video.codecs.push_back(codec_param1);
+
+                room->Subscribe(remote_mixed_stream,
+                                options,
+                                [&](std::shared_ptr<ConferenceSubscription> subscription) {
+                                  cout << "==============Subscribe succeed===========" << endl;
+                      MyVideoRenderer* myVideoRenderer = new MyVideoRenderer();
+                      remote_mixed_stream->AttachVideoRenderer(*myVideoRenderer);
+                      //  DFBVideoRenderer* dfbVideoRenderer = new DFBVideoRenderer();
+                      //  rstream->AttachVideoRenderer(*dfbVideoRenderer);
+                    
+                      int remoteID=atoi((remote_mixed_stream->Origin()).c_str());
+                    //  std::thread FpsSendThread(MyBasicServerConnector::SendFps);
+                    //  std::thread BitrateSendThread(MyBasicServerConnector::SendBitrate);
+                    //  std::thread ARGBSendThread(MyBasicServerConnector::SendARGB);
+                      
+                      std::thread FpsSaveThread(MyBasicServerConnector::SaveFps);
+                      std::thread BitrateSaveThread(MyBasicServerConnector::SaveBitrate);
+                      std::thread ARGBSaveThread(MyBasicServerConnector::SaveARGB);
+                    //  std::thread publishDataSaveThread(MyBasicServerConnector::SavepublishDatas);
+                      //getstats
+                      //int interval = 0;
+                      while(1) {
+                        sleep(3);
+                        //++interval;
+                        //if (interval%2 == 0) {
+                          subscription->GetStats(
+                                                  [=](std::shared_ptr<ConnectionStats> stats) {
+                                                    MyBasicServerConnector::FpsDataQ.push(stats->video_receiver_reports[remoteID]->framerate_output);
+                                                    MyBasicServerConnector::BitrateDataQ.push(stats->video_receiver_reports[remoteID]->bytes_rcvd);
+                                                  },
+                                                  [=](unique_ptr<Exception>) {
+                                                    cout << "GetConnectionStats failed" << endl;
+                                                  });
+                        //}
+                      }
+
+                                },
+                                [=](std::unique_ptr<Exception>) {
+
+                                  cout << "==============Subscribe failed============" << endl;
+                                });
+	      } else if(subscribe && !mode) { //subscribing existing forward stream instead
+		      std::vector<std::shared_ptr<RemoteStream>> remote_streams = info->RemoteStreams();
+		      for (auto& remote_stream : remote_streams) {
+			      if (remote_stream->Source().video == VideoSourceInfo::kCamera) {
+				      SubscribeOptions options;
+				      VideoCodecParameters codec_param1;
+				      codec_param1.name = codec_name;
+				      options.video.codecs.push_back(codec_param1);
+
+				      room->Subscribe(remote_stream,
+						      options,
+						      [&](std::shared_ptr<ConferenceSubscription> subscription) {
+						      cout << "==============Subscribe succeed===========" << endl;
+						      MyVideoRenderer* myVideoRenderer = new MyVideoRenderer();
+						      remote_stream->AttachVideoRenderer(*myVideoRenderer);
+						      //  DFBVideoRenderer* dfbVideoRenderer = new DFBVideoRenderer();
+						      //  rstream->AttachVideoRenderer(*dfbVideoRenderer);
+
+						      int remoteID=atoi((remote_stream->Origin()).c_str());
+						      //  std::thread FpsSendThread(MyBasicServerConnector::SendFps);
+						      //  std::thread BitrateSendThread(MyBasicServerConnector::SendBitrate);
+						      //  std::thread ARGBSendThread(MyBasicServerConnector::SendARGB);
+
+						      std::thread FpsSaveThread(MyBasicServerConnector::SaveFps);
+						      std::thread BitrateSaveThread(MyBasicServerConnector::SaveBitrate);
+						      std::thread ARGBSaveThread(MyBasicServerConnector::SaveARGB);
+						      //  std::thread publishDataSaveThread(MyBasicServerConnector::SavepublishDatas);
+						      //getstats
+						      //int interval = 0;
+						      while(1) {
+							      sleep(3);
+							      //++interval;
+							      //if (interval%2 == 0) {
+							      subscription->GetStats(
+									      [=](std::shared_ptr<ConnectionStats> stats) {
+									      MyBasicServerConnector::FpsDataQ.push(stats->video_receiver_reports[remoteID]->framerate_output);
+									      MyBasicServerConnector::BitrateDataQ.push(stats->video_receiver_reports[remoteID]->bytes_rcvd);
+									      },
+									      [=](unique_ptr<Exception>) {
+									      cout << "GetConnectionStats failed" << endl;
+									      });
+							      //}
+						      }
+
+						      },
+						      [=](std::unique_ptr<Exception>) {
+
+							      cout << "==============Subscribe failed============" << endl;
+						      });
+
+
+			      }
+		      }
+
+
+
+	      }
+              // Publish if indicated so
               if(publish) {
+                PublishOptions options;
+                VideoCodecParameters codec_param1;
+                codec_param1.name = codec_name;
+                VideoEncodingParameters encoding_param1(codec_param1, 0, false);
+
                 room->Publish(shared_stream,
-                [=] {
-                      cout <<" ============Publish succeed==========";
-
-                      //cout <<"";
-
-                  },
-                [=](std::unique_ptr<ConferenceException> err) {
-                  cout <<" ============Publish failed===========";
-                });
-              }
-
-              cout << "Join succeeded!" << endl;
-                    },
-                    [=](std::unique_ptr<ConferenceException> err) {
-                      cout << "Join failed!" << endl;
-                    });
+                              options,
+                              [=](std::shared_ptr<ConferencePublication> publication) {
+                                cout <<" ============Publish succeed=========="<<endl;
+                                std::string pub_id = publication->Id();
+                                mix(scheme, roomId, pub_id);
+                              },
+                              [=](std::unique_ptr<Exception> err) {
+                                cout <<" ============Publish failed==========="<<endl;
+                              });
+                }
+                cout << "Join succeeded!" << endl;
+           }, // Join success callback
+           [=](std::unique_ptr<Exception> err) {
+             cout << "Join failed!" << endl;
+           }); //End of join 
   } else {
-     cout << "create token error!" << endl;
+     cout << "join error!" << endl;
   }
+
+
+
 
   int connectResult = MyBasicServerConnector::TestConnect();
 //  std::thread publishDataSendThread(MyBasicServerConnector::SendpublishDatas);
@@ -231,13 +358,6 @@ int main(int argc, char** argv)
     sleep(1);
   }
 
-
-
-
-  if(observer) {
-    delete observer;
-    observer = nullptr;
-  }
   if(forwardobserver) {
     delete forwardobserver;
     forwardobserver = nullptr;

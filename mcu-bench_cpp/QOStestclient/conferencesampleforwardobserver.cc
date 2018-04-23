@@ -11,14 +11,14 @@
 #include "basicserverConnector.h"
 
 using namespace std;
-using namespace woogeen::base;
-using namespace woogeen::conference;
+using namespace ics::base;
+using namespace ics::conference;
 
 ConferenceSampleForwardObserver::ConferenceSampleForwardObserver(shared_ptr<ConferenceClient> client)
   :client_(client) {
 }
 
-void ConferenceSampleForwardObserver::OnStreamAdded(shared_ptr<RemoteCameraStream> stream) {
+void ConferenceSampleForwardObserver::OnStreamAdded(shared_ptr<RemoteStream> stream) {
   remote_stream_ = stream;
   SubscribeOptions options;
   std::cout <<"Subscribe forward stream"<<endl;
@@ -27,15 +27,15 @@ void ConferenceSampleForwardObserver::OnStreamAdded(shared_ptr<RemoteCameraStrea
 
   client_->Subscribe(remote_stream_,
                      options,
-                     [&](std::shared_ptr<RemoteStream> rstream){
+                     [&](std::shared_ptr<ConferenceSubscription> subscription){
                       std::cout <<"---------------------Subscribe succeed------------------------------"<<endl;
                       //std::shared_ptr<MyVideoRenderer> myVideoRenderer(new MyVideoRenderer);
                       MyVideoRenderer* myVideoRenderer = new MyVideoRenderer();
                       //rstream->AttachVideoRenderer(*myVideoRenderer);
 
 //                      DFBVideoRenderer* myVideoRenderer = new DFBVideoRenderer();
-                      rstream->AttachVideoRenderer(*myVideoRenderer);
-                      int remoteID=atoi((rstream->From()).c_str());
+                      remote_stream_->AttachVideoRenderer(*myVideoRenderer);
+                      int remoteID=atoi((remote_stream_->Origin()).c_str());
                     //  std::thread FpsSendThread(MyBasicServerConnector::SendFps);
                     //  std::thread BitrateSendThread(MyBasicServerConnector::SendBitrate);
                     //  std::thread ARGBSendThread(MyBasicServerConnector::SendARGB);
@@ -50,18 +50,18 @@ void ConferenceSampleForwardObserver::OnStreamAdded(shared_ptr<RemoteCameraStrea
                         sleep(3);
                         //++interval;
                         //if (interval%2 == 0) {
-                          client_->GetConnectionStats(rstream,
+                          subscription->GetStats(
                                                   [=](std::shared_ptr<ConnectionStats> stats) {
                                                     MyBasicServerConnector::FpsDataQ.push(stats->video_receiver_reports[remoteID]->framerate_output);
                                                     MyBasicServerConnector::BitrateDataQ.push(stats->video_receiver_reports[remoteID]->bytes_rcvd);
                                                   },
-                                                  [=](unique_ptr<ConferenceException>) {
+                                                  [=](unique_ptr<Exception>) {
                                                     cout << "GetConnectionStats failed" << endl;
                                                   });
                         //}
                       }
                      },
-                     [=](std::unique_ptr<ConferenceException>){
+                     [=](std::unique_ptr<Exception>){
                        std::cout <<"Subscribe failed"<<endl;
                      });
 

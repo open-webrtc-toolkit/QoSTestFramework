@@ -14,7 +14,7 @@ int countTag = 1;
 FileFrameGenerator::FileFrameGenerator(int width, int height, int fps) {
   width_ = width;
   height_ = height;
-  type_ = woogeen::base::VideoFrameGeneratorInterface::I420;
+  type_ = ics::base::VideoFrameGeneratorInterface::I420;
   fps_ = fps;
   int size = width_ * height_;
   int qsize = size / 4;
@@ -39,7 +39,7 @@ int FileFrameGenerator::GetHeight() { return height_; }
 int FileFrameGenerator::GetWidth() { return width_; }
 int FileFrameGenerator::GetFps() { return fps_; }
 
-woogeen::base::VideoFrameGeneratorInterface::VideoFrameCodec FileFrameGenerator::GetType() { return type_; }
+ics::base::VideoFrameGeneratorInterface::VideoFrameCodec FileFrameGenerator::GetType() { return type_; }
 
 uint32_t FileFrameGenerator::GenerateNextFrame(uint8_t* frame_buffer, const uint32_t capacity) {
   if (capacity < frame_data_size_) {

@@ -1,15 +1,15 @@
 #ifndef MY_VIDEO_RENDERER_H_
 #define MY_VIDEO_RENDERER_H_
 
-#include "woogeen/base/videorendererinterface.h"
+#include "ics/base/videorendererinterface.h"
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/time.h>
 #include <unistd.h>
 
-using namespace woogeen::base;
-//namespace woogeen {
+using namespace ics::base;
+//namespace ics {
 //namespace base {
 
 class MyVideoRenderer : public VideoRendererARGBInterface

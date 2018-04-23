@@ -4,30 +4,30 @@
 
 #ifndef DIRECTVIDEOENCODER_H
 #define DIRECTVIDEOENCODER_H
-#include "woogeen/base/mediaformat.h"
-#include "woogeen/base/videoencoderinterface.h"
+#include "ics/base/commontypes.h"
+#include "ics/base/videoencoderinterface.h"
 
 /// This class defines the external video encoder
-class DirectVideoEncoder : public woogeen::base::VideoEncoderInterface {
+class DirectVideoEncoder : public ics::base::VideoEncoderInterface {
 public:
-	static DirectVideoEncoder* Create(woogeen::base::MediaCodec::VideoCodec codec);
+	static DirectVideoEncoder* Create(ics::base::VideoCodec codec);
 
-	explicit DirectVideoEncoder(woogeen::base::MediaCodec::VideoCodec codec);
+	explicit DirectVideoEncoder(ics::base::VideoCodec codec);
 
 	virtual ~DirectVideoEncoder();
 
-	virtual bool InitEncoderContext(woogeen::base::Resolution& resolution, uint32_t fps, uint32_t bitrate, woogeen::base::MediaCodec::VideoCodec video_codec) override;
+	virtual bool InitEncoderContext(ics::base::Resolution& resolution, uint32_t fps, uint32_t bitrate, ics::base::VideoCodec video_codec) override;
 
 	virtual bool EncodeOneFrame(std::vector<uint8_t>& buffer, bool keyFrame) override;
 
 	virtual bool Release() override;
 
-	virtual woogeen::base::VideoEncoderInterface* Copy() override;
+	virtual ics::base::VideoEncoderInterface* Copy() override;
 
 
 	struct timeval tv_publish;
 private:
-	woogeen::base::MediaCodec::VideoCodec codec_;
+	ics::base::VideoCodec codec_;
 	FILE* fd_;
 };
 

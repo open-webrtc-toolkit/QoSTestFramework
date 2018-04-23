@@ -10,6 +10,4 @@
 /QOStestclient/out
 /QOStestclient/*.*~
 /QOStestclient/build
-/QOStestclient/libs
-/QOStestclient/include
 /python/vmaf

@@ -9,9 +9,9 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-using namespace woogeen::base;
+using namespace ics::base;
 
-DirectVideoEncoder::DirectVideoEncoder(MediaCodec::VideoCodec codec) {
+DirectVideoEncoder::DirectVideoEncoder(ics::base::VideoCodec codec) {
     codec_ = codec;
     timeval tv_publish;
 }
@@ -22,7 +22,7 @@ DirectVideoEncoder::~DirectVideoEncoder() {
         fclose(fd_);
 }
 
-bool DirectVideoEncoder::InitEncoderContext(Resolution& resolution, uint32_t fps, uint32_t bitrate, woogeen::base::MediaCodec::VideoCodec video_codec) {
+bool DirectVideoEncoder::InitEncoderContext(Resolution& resolution, uint32_t fps, uint32_t bitrate, ics::base::VideoCodec video_codec) {
     //Open the resource file.
     //fd_ = fopen("./source.vp8", "rb");
     //fd_ = fopen("./1280x720-framerate30-bitrate2000k-gop30.vp8", "rb");
@@ -139,12 +139,12 @@ bool DirectVideoEncoder::EncodeOneFrame(std::vector<uint8_t>& buffer, bool keyFr
 }
 
 
-DirectVideoEncoder* DirectVideoEncoder::Create(MediaCodec::VideoCodec codec) {
+DirectVideoEncoder* DirectVideoEncoder::Create(ics::base::VideoCodec codec) {
     DirectVideoEncoder* video_encoder = new DirectVideoEncoder(codec);
     return video_encoder;
 }
 
-woogeen::base::VideoEncoderInterface* DirectVideoEncoder::Copy() {
+ics::base::VideoEncoderInterface* DirectVideoEncoder::Copy() {
     DirectVideoEncoder* video_encoder = new DirectVideoEncoder(codec_);
     return video_encoder;
 }
