@@ -193,13 +193,14 @@ int main(int argc, char** argv)
 
   string token = getToken(scheme, roomId, "", "", false);
 
+// following code is used for encoded file input
 #if 0 
   std::unique_ptr<FileFrameGenerator> framer(new FileFrameGenerator(1280, 720, 30));
   std::shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true));
   std::shared_ptr<ics::base::LocalStream> shared_stream;
   shared_stream = LocalStream::Create(lcsp, std::move(framer));
 #endif
-
+// following code is used for raw file input
 #if 1 
    GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
    VideoEncoderInterface* external_encoder = DirectVideoEncoder::Create(codec_name);

@@ -1,37 +1,12 @@
-本文档用来介绍”webrtc-bench”基本架构以及其环境配置，使用方法，以及一部分现存问题等等。
+This folder is QOS client by C++ Client SDK.
+For 4.0 MCU , it need build on ubuntu 16
+It provide two kind of input format video encoded video and raw video .
+sample usage please refer h264.sh
+1. git clone source code. 
+2. mkdir build
+3. cd build cmake ../
+4. make 
+5. cp h264.sh to out folder 
+6. if you want use raw file, please also copy the raw video file to out folder and modify the audio file name in fileframegenerator.cc and read file format is correct in conferencesample.cc
+7. if you want use encoded file, please also copy encode video file to out folder and modify the file name to source.yuv and read file format is correct in conferencesample.cc
 
-
-1. webrtc-bench基本架构
-webrtc-bench系统是用来在conference模式下正常进行基于webrtc通信过程中，一方进行publish操作，另一方进行subscribe mix流,在不影响视频传输的基础上在后台进行实时数据收集，并在之后进行数据分析，包括视频质量分析，jitter，FPS，latency，bitrate等数据的分析工作，并将分析数据在浏览器进行绘图输出的一套系统。
-
-为确保整套系统的正常运行，系统主要包含以下几个部分：
-（1） mcu v3.3.x（不需要其app部分，作为服务器）
-（2） webrtc-webrtc-qa目录下的mcu-bench_3.0中的basicserver（替代作为mcu的app部分，不仅接受正常的与webrtc通信相关的请求，也同时接收待分析的数据，并在之后进行处理）
-（3） webrtc-native-sdk/src/samples/conference目录下的QOStestclient。（作为进行基于webrtc通信的客户端并同时向basicserver实时发送所需数据。）
-
-具体架构可通过introduction来进行简单的了解。
-基本解释如下：如图所示，使用c++ client或js client 与mcu进行通信，一边进行publish操作，一边进行subscribe操作，与此同时，两边client分别即时将需要进行分析的数据发送给basicserver,basicserver则实时将所收数据保存到本地文件中。在收集足够数据后，目前使用web页面操作调用后台编译好的数据分析app（也可通过command直接调用）读取各文件内容并做分析，将分析结果输出到输出流中，并在web页面上调用js绘图框架在页面上将结果绘制出来。
-
-
-2. 环境配置
-（1） 拉下来最新的release mcu,在bin/start-all.sh中注释掉启动app的部分后，配置好mcu所需环境，正确启动mcu v3.3.x。
-（2） 从git上将webrtc-webrtc-qa目录拉下来，在其中的mcu-bench_c++目录中，进入native/目录，进行make操作，以编译src内的source code ，生成analyze app。
-（3） 在mcu-bench_c++目录下使用node basicserver.js命令启动basicserver，如正确启动则调到（5）,若出现任何问题，则（4）。
-（4） 当出现问题时，首先需要将mcu文件夹中的extra/目录中的nuve.js，cipher.js以及cert/目录拷贝到mcu-bench_ c++目录中覆盖对应文件，并查看mcu执行init-all时的sample key和sample ID。复制到basicserver.js代码中的对应部分。如缺少任何Node.js环境，则使用通用方式装好node.js以及所需的modules，并重新执行node basicserver.js
-（5） 打开浏览器，按照需求进入localhost:3000/console进行设置后，访问localhost:4002。如使用JS client，则跳到（6），否则（7）。
-（6） Js client自带在webrtc-webrtc-qa的mcu-bench_3.0目录中供测试（性能问题较大，不建议实际使用），如需使用，则使用google-chrome –use-fake-device-for-media-stream –usefile-for-fake-video-capture=/home/webrtc/…../xxx.y4m命令，以读取本地y4m格式视频文件的形式启动chrome并访问页面，即可实现publish和subscribe。
-（7） 使用c++ client，需要从git上拉取webrtc-native-sdk目录，用以测试的代码在webrtc-native-sdk/src/samples/conference/QOStestclient目录下。需要重新进行make操作编译code，在out/目录下的vp8.sh是用来启动c++ client的bash，也可取出直接使用（需要修改其中的roomID）。使用./vp8.sh执行即可启动c++ client，publish和subscrbe操作将自动进行。
-
-
-3. 使用方法
-在正确启动mcu,basicserver,并且可以再web页面上看到publish和subscribe已经成功后：（1）如果使用的是js client，则点击页面上的Record Video Analysis Data键开始进行录制，录制三分钟左右后，点击Download Video Analyze Data停止录制。提示保存成功后，依次点击（此步骤非常重要，在后台数据分析会有一个顺序问题，所以请从上到下依次点击，否则可能出现问题。详见source code）页面上的绘图按键，稍等片刻（image quality需等待10到40秒左右），即可依次显示分析结果。改变Frame和Threshold中的内容，再次点击画图按键，即可限定对应的数据进行重新绘图。
-（2）如果使用的是C++ client,使用./vp8.sh启动后不许任何其他操作，client将自动开始向basicserver发送所需数据，录制三分钟左右后，使用kill命令杀掉该进程即可关闭。之后的步骤和（1）一致。
-
-
-4. 现存问题及解决方案
-（1） C++ client 向basicserver发送数据的方式存在一定问题，最好改为基于boost的异步发送方式，当前发送极限速度仍较低，导致发送速度低于向queue中push framedata的速度，导致进程占用内存逐渐增加。
-（2） 由于（1）中描述的发送方式问题，或其他可能的问题，现导致发送到basicserver的每一帧都有一部分的像素点损坏的问题，一定程度上影响了质量检测的结果准确度。
-（3） Jitter 的分析方式有一定问题，特别是code 中的interval变量需要更深入的研究。
-（4） 在使用本地视频进行Publish和subscribe时，一开始由于视频加载，视频传输比较有一定卡顿（使用windows c++ client测试也存在相同问题）。而c++ client在此阶段取了较多的值，可能影响分析结果。或需要优化client的取值时机。
-（5） 当前在代码中默认roomsize为1，所以当有多个流时会识别失败，测试时注意要保持只存在一个流，否则需要改变source code中数据传输部分，增加roomsize的传输，server端识别前对每帧的裁切比例等部分。
-（6） 当前显示的vmaf图是模拟数据，没有真实算法，日后如需添加可使用其layout。

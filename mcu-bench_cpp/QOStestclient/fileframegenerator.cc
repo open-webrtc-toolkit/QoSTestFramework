@@ -19,7 +19,7 @@ FileFrameGenerator::FileFrameGenerator(int width, int height, int fps) {
   int size = width_ * height_;
   int qsize = size / 4;
   frame_data_size_ = size + 2 * qsize;
-  fd = fopen("./testFourPeopleHD720P.yuv", "r");
+  fd = fopen("./FourPeople_1280x720_30_taged.yuv", "r");
   if(!fd) {
     std::cout << "failed to open the source.yuv." << std::endl;
   } else {
