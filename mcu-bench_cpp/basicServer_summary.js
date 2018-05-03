@@ -8,8 +8,7 @@ var express = require('express'),
   errorhandler = require('errorhandler'),
   morgan = require('morgan'),
   fs = require('fs'),
-  https = require('https'),
-  N = require('./nuve');
+  https = require('https');
 
 var app = express();
 
@@ -50,22 +49,6 @@ app.get('/',function(req,res){
  //   res.sendFile(__dirname + '/rtcp2pbench.html');
 //});
 
-app.get('/public/socket.io.js', function(req,res){
-    res.sendFile(__dirname + '/public/socket.io.js');
-});
-
-
-app.get('/public/adapter.js', function(req,res){
-    res.sendFile(__dirname + '/public/adapter.js');
-});
-
-app.get('/public/woogeen.sdk.js', function(req,res){
-    res.sendFile(__dirname + '/public/woogeen.sdk.js');
-});
-
-app.get('/public/woogeen.sdk.ui.js', function(req,res){
-    res.sendFile(__dirname + '/public/woogeen.sdk.ui.js');
-});
 
 
 app.get('/css/style.css', function(req,res){

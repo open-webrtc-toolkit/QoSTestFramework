@@ -25,7 +25,13 @@
     <div id = "mixed-streams" title="mix media"   class="dynamicContainer"></div>
 </div>
 
-
+  <div style="width: 1280px; height: 720px;" class="local">
+      <video playsinline muted autoplay></video>
+    </div>
+    <div id="resolutions"><span>Try a different resolution:&nbsp;</span></div>
+    <div class="remote">
+      <video playsinline muted autoplay></video>
+    </div>
 
 <div style="clear: both">
     <!--<h2> Console Log </h2>
@@ -54,7 +60,7 @@
 
 <div>
     <button id="quality-btn" onclick = "getQuality()" style="width: 250px;height: 50px;">Image Quality (PSNR & SSIM & VIF)</button>
-    Frame:<input type = "text" id = "qnum" value = "100">
+    Frame:<input type = "text" id = "qnum" value = "300">
     <!--Threshold:<input type = "text" id = "iqthreshold" value = "1000">-->
 
     <canvas id="chartQuality" width="400" height="100" style="display: none;"></canvas>
@@ -90,7 +96,7 @@
 
 <div>
     <button id="jitter-btn" onclick = "getJitter()" style="width: 250px;height: 50px;">Jitter (miliseconds)</button>
-  Frame:<input type = "text" id = "jnum" value = "30">
+  Frame:<input type = "text" id = "jnum" value = "300">
   Threshold:<input type = "text" id = "jthreshold" value = "3000">
   Average:<input type = "text" id = "jitter_avg" value = "0">
     <canvas id="chartJitter" width="400" height="100" style="display: none;"></canvas>
@@ -98,7 +104,7 @@
 
 <div>
     <button id="latency-btn" onclick = "getLatency()" style="width: 250px;height: 50px;">Latency (miliseconds)</button>
-  Frame:<input type = "text" id = "lnum" value = "30">
+  Frame:<input type = "text" id = "lnum" value = "300">
   Threshold:<input type = "text" id = "lthreshold" value = "1000">
   Average:<input type = "text" id = "latency_avg" value = "0">
     <canvas id="chartLatency" width="400" height="100" style="display: none;"></canvas>
@@ -106,7 +112,7 @@
 
 <div>
     <button id="fps-btn" onclick = "getFps()" style="width: 250px;height: 50px;">Fps</button>
-  Frame:<input type = "text" id = "fnum" value = "30">
+  Frame:<input type = "text" id = "fnum" value = "300">
   Threshold:<input type = "text" id = "fthreshold" value = "80">
   Average:<input type = "text" id = "fps_avg" value = "0">
     <canvas id="chartgoogFps" width="400" height="100" style="display: none;"></canvas>
@@ -114,7 +120,7 @@
 
 <div>
     <button id="bitrate-btn" onclick = "getBitrate()" style="width: 250px;height: 50px;">Bitrate (kbps)</button>
-  Frame:<input type = "text" id = "bnum" value = "30">
+  Frame:<input type = "text" id = "bnum" value = "300">
   Threshold:<input type = "text" id = "bthreshold" value = "2500">
   Average:<input type = "text" id = "bitrate_avg" value = "0">
     <canvas id="chartgoogBitrate" width="400" height="100" style="display: none;"></canvas>
@@ -125,18 +131,32 @@
 
 <!-- Note : This canvas is to store video data, do not touch! -->
 <canvas id="data-canvas" width="1280" height="720" hidden></canvas>
-
-<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script src="public/jquery-3.2.1.min.js"></script>
+<script src="public/socket.io.js" type="text/javascript"></script>
+<script src="public/adapter.js" type="text/javascript"></script>
+<script src="public/ics.js" type="text/javascript"></script>
+<script src="public/index.js" type="text/javascript"></script>
+<!--script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="public/socket.io.js"></script>
 <script type="text/javascript" src="public/ieMediaStream.js"></script>
 <script type="text/javascript" src="public/adapter.js"></script>
 <script type="text/javascript" src="public/woogeen.sdk.js"></script>
 <script type="text/javascript" src="public/woogeen.sdk.ui.js"></script>
-<script type="text/javascript" src="public/script2.js"></script>
+<script type="text/javascript" src="public/script2.js"></script-->
 <script type="text/javascript" src="js/Chart.js"> </script>
 <script type="text/javascript" src="js/stat.js"> </script>
 <script type="text/javascript" src="js/stat_c.js"> </script>
-    <script language="JavaScript">
+<script language="JavaScript">
+      function getParameterByName(name) {
+        name = name.replace(/[\[]/, '\\\[').replace(/[\]]/, '\\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
+          results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(
+          /\+/g, ' '));
+      }
+      runSocketIOSample();
+</script>
+    <!--script language="JavaScript">
       function getParameterByName(name) {
         name = name.replace(/[\[]/, '\\\[').replace(/[\]]/, '\\\]');
         var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
@@ -153,7 +173,7 @@
         console.log('Run SocketIO sample!!');
         runSocketIOSample();
       }
-    </script>
+    </script-->
 
 </body>
 </html>

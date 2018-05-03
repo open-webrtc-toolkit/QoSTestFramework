@@ -50,12 +50,12 @@
 <p>getQuality Full-Reference (PSNR, SSIM)</p>
     <div>
     <button id="quality-PSNR" onclick = "getPSNR()" style="width: 250px;height: 50px;">Image Quality (PSNR). Greater value is better</button> 
-    Frame:<input type = "text" id = "qnum" value = "100">
+    Frame:<input type = "text" id = "qnum" value = "300">
     <canvas id="chartPSNR" width="400" height="100" style="display: none;"></canvas>
     </div>
     <div>
      <button id="quality-SSIM" onclick = "getSSIM()" style="width: 250px;height: 50px;">Image Quality (SSIM). Greater value is better</button>
-    Frame:<input type = "text" id = "qnum" value = "100">
+    Frame:<input type = "text" id = "qnum" value = "300">
     <canvas id="chartSSIM" width="400" height="100" style="display: none;"></canvas>
     </div>
 </div>
@@ -100,28 +100,28 @@
 
 <div>
     <button id="jitter-btn" onclick = "getJitter()" style="width: 250px;height: 50px;">Jitter (miliseconds)</button>
-  Frame:<input type = "text" id = "jnum" value = "100">
+  Frame:<input type = "text" id = "jnum" value = "300">
   Threshold:<input type = "text" id = "jthreshold" value = "10000">
     <canvas id="chartJitter" width="400" height="100" style="display: none;"></canvas>
 </div>
 
 <div>
     <button id="latency-btn" onclick = "getLatency()" style="width: 250px;height: 50px;">Latency (miliseconds)</button>
-  Frame:<input type = "text" id = "lnum" value = "100">
+  Frame:<input type = "text" id = "lnum" value = "300">
   Threshold:<input type = "text" id = "lthreshold" value = "5000">
     <canvas id="chartLatency" width="400" height="100" style="display: none;"></canvas>
 </div>
 
 <div>
     <button id="fps-btn" onclick = "getFps()" style="width: 250px;height: 50px;">Fps</button>
-  Frame:<input type = "text" id = "fnum" value = "100">
+  Frame:<input type = "text" id = "fnum" value = "300">
   Threshold:<input type = "text" id = "fthreshold" value = "80">
     <canvas id="chartgoogFps" width="400" height="100" style="display: none;"></canvas>
 </div>
 
 <div>
     <button id="bitrate-btn" onclick = "getBitrate()" style="width: 250px;height: 50px;">Bitrate (kbps)</button>
-  Frame:<input type = "text" id = "bnum" value = "100">
+  Frame:<input type = "text" id = "bnum" value = "300">
   Threshold:<input type = "text" id = "bthreshold" value = "2500">
     <canvas id="chartgoogBitrate" width="400" height="100" style="display: none;"></canvas>
 </div>
