@@ -12,6 +12,8 @@
 enum EncodedMimeType {
   ENCODED_VP8,
   ENCODED_H264,
+  ENCODED_H265,
+  ENCODED_VP9,
   ENCODED_UNKNOWN = 99
 };
 

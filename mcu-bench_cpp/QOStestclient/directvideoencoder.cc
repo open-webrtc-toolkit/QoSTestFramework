@@ -31,10 +31,10 @@ bool DirectVideoEncoder::InitEncoderContext(Resolution& resolution, uint32_t fps
 //    fd_ = fopen("./source.h264", "rb");
 
     if (!fd_) {
-        std::cout << "Failed to open the source.h264" << std::endl;
+        std::cout << "Failed to open the encoded file" << std::endl;
     }
     else {
-        std::cout << "Successfully open the source.h264" << std::endl;
+        std::cout << "Successfully open the encoded file" << std::endl;
     }
     return true;
 }

@@ -74,7 +74,15 @@ int main(int argc, char** argv)
     std::string codec(argv[3]);
     if (codec.find("h264") != std::string::npos) {
       codec_used ="h264";
+      cout <<" ============codec is h264==========";
       type = EncodedMimeType::ENCODED_H264;
+    }else if (codec.find("vp9") != std::string::npos){
+      codec_used = "vp9";
+      cout <<" ============codec is vp9==========";
+      type = EncodedMimeType::ENCODED_VP9;
+    }else if (codec.find("h265") != std::string::npos){
+      codec_used = "h265";
+      type = EncodedMimeType::ENCODED_H265;
     }else{
       codec_used = "vp8";
       type = EncodedMimeType::ENCODED_VP8;
@@ -157,9 +165,15 @@ int main(int argc, char** argv)
 
   ics::base::VideoCodec codec_name;
   if (codec_used.find("h264") != std::string::npos) {
+    cout <<" ============codec_name is ics::base::VideoCodec::kH264==========";
     codec_name = ics::base::VideoCodec::kH264;
+  } else if(codec_used.find("vp9") != std::string::npos) {
+    codec_name = ics::base::VideoCodec::kVp9;
+    cout << "codec_name is vp9 ";
   } else if(codec_used.find("vp8") != std::string::npos) {
     codec_name = ics::base::VideoCodec::kVp8;
+  } else if(codec_used.find("h265") != std::string::npos) {
+    codec_name = ics::base::VideoCodec::kH265;
   } else {
     codec_name = ics::base::VideoCodec::kVp8;
   }
@@ -193,14 +207,14 @@ int main(int argc, char** argv)
 
   string token = getToken(scheme, roomId, "", "", false);
 
-// following code is used for encoded file input
+// following code is used for raw file input
 #if 0 
   std::unique_ptr<FileFrameGenerator> framer(new FileFrameGenerator(1280, 720, 30));
   std::shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true));
   std::shared_ptr<ics::base::LocalStream> shared_stream;
   shared_stream = LocalStream::Create(lcsp, std::move(framer));
 #endif
-// following code is used for raw file input
+// following code is used for encoded file input
 #if 1 
    GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
    VideoEncoderInterface* external_encoder = DirectVideoEncoder::Create(codec_name);
@@ -227,7 +241,17 @@ int main(int argc, char** argv)
                 VideoCodecParameters codec_param1;
                 codec_param1.name = codec_name;
                 options.video.codecs.push_back(codec_param1);
-
+                auto multipliers= remote_mixed_stream->Capabilities().video.bitrate_multipliers;
+                Resolution res(1280,720);
+                options.video.resolution = res;
+                for (auto it = multipliers.begin(); it != multipliers.end(); it++ ){
+                    cout << "multipliers is " << endl;
+                    cout << (*it) << endl;
+                    if (((*it)-0.8)<0.00001){
+                       cout << "birate is 0.8" << endl;
+                       options.video.bitrateMultiplier = (*it);
+                    }
+                }
                 room->Subscribe(remote_mixed_stream,
                                 options,
                                 [&](std::shared_ptr<ConferenceSubscription> subscription) {
@@ -256,6 +280,9 @@ int main(int argc, char** argv)
                                                   [=](std::shared_ptr<ConnectionStats> stats) {
                                                     MyBasicServerConnector::FpsDataQ.push(stats->video_receiver_reports[remoteID]->framerate_output);
                                                     MyBasicServerConnector::BitrateDataQ.push(stats->video_receiver_reports[remoteID]->bytes_rcvd);
+                                                    cout << "subscribe mix resolution is ------" << endl;
+                                                    cout << stats->video_receiver_reports[remoteID]->frame_resolution_rcvd.width << endl;
+                                                    cout << stats->video_receiver_reports[remoteID]->frame_resolution_rcvd.height << endl;
                                                   },
                                                   [=](unique_ptr<Exception>) {
                                                     cout << "GetConnectionStats failed" << endl;
@@ -276,7 +303,9 @@ int main(int argc, char** argv)
 				      VideoCodecParameters codec_param1;
 				      codec_param1.name = codec_name;
 				      options.video.codecs.push_back(codec_param1);
-
+                      Resolution res(1280,720);
+                      options.video.resolution = res;
+                      //options.video.bitrateMultiplier = 0.8;
 				      room->Subscribe(remote_stream,
 						      options,
 						      [&](std::shared_ptr<ConferenceSubscription> subscription) {
