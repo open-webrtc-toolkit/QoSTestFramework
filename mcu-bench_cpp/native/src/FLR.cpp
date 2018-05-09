@@ -20,8 +20,9 @@ using namespace std;
 #include <stdio.h>
 
 #define ND 4
-#define INTERVAL 1000.0/24.0
+#define INTERVAL 3000.0/30.0
 int tagsize= 60;
+int framenumber = 600;
 void getMaxClass(const Mat &probBlob, int *classId, double *classProb);
 int test_on_single_photo_dl(Mat img);
 
@@ -202,12 +203,28 @@ int main(int argc, char *argv[])
     for(int i = 2;i < datas.size();i++)
     {
         unsigned long long int temp = datas[i].first - datas[i-1].first;
+        int inter = datas[i].second - datas[i-1].second;
         //if (temp < 2000)
     //  if (temp < 10000)
     //  {
-            cout << abs(datas[i].first - datas[i-1].first - INTERVAL) << endl;//what's INTERVAL?
+
+
+
+       if (inter < 0)
+        {
+           //cout << "---<0--inter--" << (inter + framenumber) << endl;
+           cout << abs((datas[i].first - datas[i-1].first)/(inter + framenumber)) << endl;//what's INTERVAL?
+           jitter_out << abs((datas[i].first - datas[i-1].first)/(inter + framenumber));//what's INTERVAL?
+        }
+        else{
+          
+          cout << abs((datas[i].first - datas[i-1].first)/(inter)) << endl;//what's INTERVAL?
+          jitter_out << abs((datas[i].first - datas[i-1].first)/(inter));//what's INTERVAL?
+          }
+            
+  //          cout << abs(datas[i].first - datas[i-1].first - INTERVAL) << endl;//what's INTERVAL?
     //  }
-            jitter_out << abs(datas[i].first - datas[i-1].first - INTERVAL);
+            //jitter_out << abs(datas[i].first - datas[i-1].first - INTERVAL);
             jitter_out << ",";
     //  }
     }
