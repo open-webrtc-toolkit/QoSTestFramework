@@ -45,6 +45,9 @@ int main(int argc, char** argv)
   std::string roomId("");
   std::string scheme("http://");
   std::string suffix("/createToken");
+  std::string encodedFile("");
+  std::string rawFile("");
+  bool rawfileMode = true;
   EncodedMimeType type;
   int width;
   int height;
@@ -140,6 +143,17 @@ int main(int argc, char** argv)
       mode = false;
     }
   }
+  if(argc >= 9){
+    std::string fileStr(argv[8]);
+    if ((fileStr.find(".vp8") != std::string::npos) | (fileStr.find(".vp9") != std::string::npos) | (fileStr.find(".h264") != std::string::npos) | (fileStr.find(".h265") != std::string::npos)){
+      cout << "use encoded file as input";
+      encodedFile.append(fileStr);
+      rawfileMode = false;
+    }
+    else {
+      rawFile.append(fileStr);
+    }
+  }
 /*
   if(argc >= 9){
     std::string path(argv[8]);
@@ -160,7 +174,7 @@ int main(int argc, char** argv)
   if (audio_generator == nullptr){
     return -1;
   }*/
-  //GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
+  GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
   //GlobalConfiguration::SetCustomizedAudioInputEnabled(true, std::move(audio_generator));
 
   ics::base::VideoCodec codec_name;
@@ -206,24 +220,23 @@ int main(int argc, char** argv)
  // cin.ignore();
 
   string token = getToken(scheme, roomId, "", "", false);
-
-// following code is used for raw file input
-#if 0 
-  std::unique_ptr<FileFrameGenerator> framer(new FileFrameGenerator(1280, 720, 30));
-  std::shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true));
   std::shared_ptr<ics::base::LocalStream> shared_stream;
-  shared_stream = LocalStream::Create(lcsp, std::move(framer));
-#endif
+// following code is used for raw file input
+  if(rawfileMode){
+     std::unique_ptr<FileFrameGenerator> framer(new FileFrameGenerator(1280, 720, 30, rawFile));
+     std::shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true));
+     shared_stream = LocalStream::Create(lcsp, std::move(framer));
+   }
+  else{
 // following code is used for encoded file input
-#if 1 
-   GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
-   VideoEncoderInterface* external_encoder = DirectVideoEncoder::Create(codec_name);
-   Resolution res(1280, 720);
-   shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true, res, 30, 2000));
-   std::shared_ptr<ics::base::LocalStream> shared_stream;
-   shared_stream = LocalStream::Create(lcsp, external_encoder);
-#endif
-
+    GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
+    cout << "encoded file is " << endl;
+    cout << encodedFile << endl;
+    VideoEncoderInterface* external_encoder = DirectVideoEncoder::Create(codec_name, encodedFile);
+    Resolution res(1280, 720);
+    shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true, res, 30, 2000));
+    shared_stream = LocalStream::Create(lcsp, external_encoder);
+   }
   if (token != "") {
       room->Join(token,
           [=](std::shared_ptr<ConferenceInfo> info) {
@@ -360,6 +373,7 @@ int main(int argc, char** argv)
                 VideoCodecParameters codec_param1;
                 codec_param1.name = codec_name;
                 VideoEncodingParameters encoding_param1(codec_param1, 0, false);
+                options.video.push_back(encoding_param1);
 
                 room->Publish(shared_stream,
                               options,
