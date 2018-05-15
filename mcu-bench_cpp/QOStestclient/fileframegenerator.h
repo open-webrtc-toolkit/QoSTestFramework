@@ -11,7 +11,7 @@
 
 class FileFrameGenerator: public ics::base::VideoFrameGeneratorInterface {
  public:
-  FileFrameGenerator(int width, int height, int fps);
+  FileFrameGenerator(int width, int height, int fps, std::string filename);
   ~FileFrameGenerator();
 
   uint32_t GetNextFrameSize();
@@ -26,6 +26,7 @@ class FileFrameGenerator: public ics::base::VideoFrameGeneratorInterface {
   int height_;
   int fps_;
   uint32_t frame_data_size_;
+  std::string rawfile_;
   ics::base::VideoFrameGeneratorInterface::VideoFrameCodec type_;
   FILE * fd;
 };

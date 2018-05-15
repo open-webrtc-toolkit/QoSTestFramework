@@ -11,15 +11,19 @@
 struct timeval tv_publish;
 int countTag = 1;
 
-FileFrameGenerator::FileFrameGenerator(int width, int height, int fps) {
+FileFrameGenerator::FileFrameGenerator(int width, int height, int fps, std::string filename ) {
   width_ = width;
   height_ = height;
   type_ = ics::base::VideoFrameGeneratorInterface::I420;
   fps_ = fps;
+  rawfile_ = filename;
   int size = width_ * height_;
   int qsize = size / 4;
   frame_data_size_ = size + 2 * qsize;
-  fd = fopen("./FourPeople_1280x720_30_taged.yuv", "r");
+  cout << "rawfile_ is" << endl;
+  cout << rawfile_ <<endl;
+  fd = fopen(rawfile_.c_str(), "r");
+  //fd = fopen("./FourPeople_1280x720_30_taged.yuv", "r");
   if(!fd) {
     std::cout << "failed to open the source.yuv." << std::endl;
   } else {
