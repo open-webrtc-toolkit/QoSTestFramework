@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-
+#include <cmath>
 
 
 using namespace std;
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
   std::string isp("");
   std::string region("");
   std::string codec_used("");
-
+  float bandwidthRate;
   if(argc >= 2){
     std::string hosturl(argv[1]);
     scheme.append(hosturl);
@@ -154,6 +154,16 @@ int main(int argc, char** argv)
       rawFile.append(fileStr);
     }
   }
+  if(argc >=10){
+   std::string fileStr(argv[9]);
+   bandwidthRate = atof(argv[9]);
+   cout << "bandwidthRate is " << endl;
+   cout << bandwidthRate <<endl;
+  }else{
+    bandwidthRate = 1;
+   cout << "bandwidthRate is " << endl;
+   cout << bandwidthRate <<endl;
+  }
 /*
   if(argc >= 9){
     std::string path(argv[8]);
@@ -174,7 +184,9 @@ int main(int argc, char** argv)
   if (audio_generator == nullptr){
     return -1;
   }*/
-  GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
+  if(!rawfileMode){
+     GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
+  }
   //GlobalConfiguration::SetCustomizedAudioInputEnabled(true, std::move(audio_generator));
 
   ics::base::VideoCodec codec_name;
@@ -229,7 +241,6 @@ int main(int argc, char** argv)
    }
   else{
 // following code is used for encoded file input
-    GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
     cout << "encoded file is " << endl;
     cout << encodedFile << endl;
     VideoEncoderInterface* external_encoder = DirectVideoEncoder::Create(codec_name, encodedFile);
@@ -257,13 +268,15 @@ int main(int argc, char** argv)
                 auto multipliers= remote_mixed_stream->Capabilities().video.bitrate_multipliers;
                 Resolution res(1280,720);
                 options.video.resolution = res;
-                for (auto it = multipliers.begin(); it != multipliers.end(); it++ ){
-                    cout << "multipliers is " << endl;
-                    cout << (*it) << endl;
-                    if (((*it)-0.8)<0.00001){
-                       cout << "birate is 0.8" << endl;
+                if ((1-bandwidthRate)>0.1){ 
+                  for (auto it = multipliers.begin(); it != multipliers.end(); it++ ){
+                    if (fabs((*it)-bandwidthRate)<0.00001){
                        options.video.bitrateMultiplier = (*it);
+                       cout << "birate is changed" << endl;
+                       cout << bandwidthRate << endl;
+                       cout << (*it) << endl;
                     }
+                  }
                 }
                 room->Subscribe(remote_mixed_stream,
                                 options,
