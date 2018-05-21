@@ -37,8 +37,8 @@ It will generate 1280x720-framerate30-bitrate1000k.mkv file.
 2. use genTestStream to insert tag and key frame information in mkv file
 e.g run.sh
 ./genTestStream -i 1280x720-framerate30-bitrate1000k.mkv
-
-
 it will generate corresponding *.vp8 or *.h264 file 
-
-
+3. Decode encoded file to raw file for comparsion
+e.g decode.sh
+ffmpeg -i FourPeople_720p_taged_H264.mkv -c:v rawvideo -pix_fmt yuv420p FourPeople_720p_taged_H264_decoded.yuv
+It will decode FourPeople_720p_taged_H264.mkv to FourPeople_720p_taged_H264_decoded.yuv
