@@ -331,6 +331,16 @@ int main(int argc, char** argv)
 				      options.video.codecs.push_back(codec_param1);
                       Resolution res(1280,720);
                       options.video.resolution = res;
+                  if ((1-bandwidthRate)>0.1){ 
+                     for (auto it = multipliers.begin(); it != multipliers.end(); it++ ){
+                        if (fabs((*it)-bandwidthRate)<0.00001){
+                            options.video.bitrateMultiplier = (*it);
+                            cout << "birate is changed" << endl;
+                            cout << bandwidthRate << endl;
+                            cout << (*it) << endl;
+                          }
+                         }
+                      }
                       //options.video.bitrateMultiplier = 0.8;
 				      room->Subscribe(remote_stream,
 						      options,
