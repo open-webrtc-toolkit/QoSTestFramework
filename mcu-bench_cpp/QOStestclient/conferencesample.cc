@@ -331,6 +331,7 @@ int main(int argc, char** argv)
 				      options.video.codecs.push_back(codec_param1);
                       Resolution res(1280,720);
                       options.video.resolution = res;
+                  auto multipliers= remote_stream->Capabilities().video.bitrate_multipliers;
                   if ((1-bandwidthRate)>0.1){ 
                      for (auto it = multipliers.begin(); it != multipliers.end(); it++ ){
                         if (fabs((*it)-bandwidthRate)<0.00001){
