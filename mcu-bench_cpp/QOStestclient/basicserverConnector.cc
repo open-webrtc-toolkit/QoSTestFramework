@@ -47,10 +47,11 @@ int MyBasicServerConnector::ARGBsendLock = 0;//at first ,the thread should not b
 int MyBasicServerConnector::ARGBsockLock = 0;
 int MyBasicServerConnector::isFirstTimeConnect = 0;
 int MyBasicServerConnector::TagRound = 0;
-
-MyBasicServerConnector::MyBasicServerConnector()
+int MyBasicServerConnector::width_= 0;
+int MyBasicServerConnector::height_= 0;
+    MyBasicServerConnector::MyBasicServerConnector()
 {
-    ;//todo
+  ;// todo
 }
 
 MyBasicServerConnector::~MyBasicServerConnector()
@@ -58,6 +59,13 @@ MyBasicServerConnector::~MyBasicServerConnector()
     ;//todo
 }
 
+bool MyBasicServerConnector::Create(int width, int height) {
+    MyBasicServerConnector::width_ = width;
+    MyBasicServerConnector::height_ = height;
+    std::cout << "MyBasicServerConnector::width is" << endl;
+    std::cout << MyBasicServerConnector::width_ << endl;
+    return true;
+}
 
 
 int MyBasicServerConnector::TestConnect()
@@ -226,7 +234,7 @@ void MyBasicServerConnector::SendARGB()
      // fprintf(result,",0,");
       if (ARGBsendLock == 0)
       {
-        for (long i = 0; i < video_width*video_height*4; ++i)
+        for (long i = 0; i < MyBasicServerConnector::width_*MyBasicServerConnector::height*4; ++i)
         {
           //cout<<ptrTmp<<endl;
           value = (int)(*ptrTmp);
@@ -251,10 +259,10 @@ void MyBasicServerConnector::SendARGB()
           sendedARGBBuffer = sendedARGBBuffer + 2;
           sendcount++;
 
-          if ((sendedARGBBuffer >= ARGB_sendBlock) || (i >= (video_width*video_height*4-1)))
+          if ((sendedARGBBuffer >= ARGB_sendBlock) || (i >= (MyBasicServerConnector::width_*MyBasicServerConnector::height*4-1)))
           {
             ARGBsendLock = 1;//data sending start,lock the thread
-            if (i >= (video_width*video_height*4-1))//the last block,should add a over sign
+            if (i >= (MyBasicServerConnector::width_*MyBasicServerConnector::height*4-1))//the last block,should add a over sign
             {
               strcat(str3,"frame");
             }
@@ -281,7 +289,7 @@ void MyBasicServerConnector::SendARGB()
             strcat(str4, "\r\n");
             strcat(str4, str3);
 
-            if (i >= (video_width*video_height*4-1))//the last block,should add a over sign
+            if (i >= (MyBasicServerConnector::width_*MyBasicServerConnector::height*4-1))//the last block,should add a over sign
             {
               //cout <<str4<<endl;
             }
@@ -503,6 +511,8 @@ void MyBasicServerConnector::SaveARGB()
   FILE *localLatency = fopen("../../native/Data/localLatency.txt", "w");
   fprintf(localARGB, ",");
   fprintf(localLatency, ",");
+  std::cout << "MyBasicServerConnector::width is" << endl;
+  std::cout << MyBasicServerConnector::width_ << endl;
   while(true)
   {
     cout<<"--------------------------frames in queue:"<<ARGBDataQ.size()<<endl;
@@ -517,7 +527,7 @@ void MyBasicServerConnector::SaveARGB()
       ptr = ARGBDataQ.front();
       int value = 0;
       unsigned char *ptrTmp = ptr;
-      for (long i = 0; i < video_width*video_height*4; ++i)
+      for (long i = 0; i < MyBasicServerConnector::width_*MyBasicServerConnector::height_*4; ++i)
       {
           //cout<<ptrTmp<<endl;
           value = (int)(*ptrTmp);
@@ -525,7 +535,7 @@ void MyBasicServerConnector::SaveARGB()
           fprintf(localARGB, "%d", value);
           fprintf(localARGB, ",");
 
-          if (i/4%1280 >= 0 && i/4%1280 <= 239 && i/4/1280 >=0 && i/4/1280 <= 59)
+          if (i/4%MyBasicServerConnector::width_ >= 0 && i/4%MyBasicServerConnector::width_ <= 239 && i/4/MyBasicServerConnector::width_ >=0 && i/4/MyBasicServerConnector::width_ <= 59)
           {
             fprintf(localLatency, "%d,", value);
             //fflush(localLatency);

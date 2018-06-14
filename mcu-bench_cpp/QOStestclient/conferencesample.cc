@@ -103,7 +103,9 @@ int main(int argc, char** argv)
     }else if (res.find("720") != std::string::npos){
       width = 1280;
       height = 720;
-      //cout <<"-------------------------------------------720P---------------------------------------"<<endl;
+      cout <<"-------------------------------------------720P---------------------------------------"<<endl;
+      cout << width<< endl;
+      cout << "----------------720--------"<<endl;
       //pause();
     }else if (res.find("vga") != std::string::npos){
       width = 640;
@@ -235,7 +237,7 @@ int main(int argc, char** argv)
   std::shared_ptr<ics::base::LocalStream> shared_stream;
 // following code is used for raw file input
   if(rawfileMode){
-     std::unique_ptr<FileFrameGenerator> framer(new FileFrameGenerator(1280, 720, 30, rawFile));
+     std::unique_ptr<FileFrameGenerator> framer(new FileFrameGenerator(width, height, 30, rawFile));
      std::shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true));
      shared_stream = LocalStream::Create(lcsp, std::move(framer));
    }
@@ -244,7 +246,7 @@ int main(int argc, char** argv)
     cout << "encoded file is " << endl;
     cout << encodedFile << endl;
     VideoEncoderInterface* external_encoder = DirectVideoEncoder::Create(codec_name, encodedFile);
-    Resolution res(1280, 720);
+    Resolution res(width, height);
     shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true, res, 30, 2000));
     shared_stream = LocalStream::Create(lcsp, external_encoder);
    }
@@ -266,7 +268,7 @@ int main(int argc, char** argv)
                 codec_param1.name = codec_name;
                 options.video.codecs.push_back(codec_param1);
                 auto multipliers= remote_mixed_stream->Capabilities().video.bitrate_multipliers;
-                Resolution res(1280,720);
+                Resolution res(width,height);
                 options.video.resolution = res;
                 if ((1-bandwidthRate)>0.1){ 
                   for (auto it = multipliers.begin(); it != multipliers.end(); it++ ){
@@ -280,7 +282,7 @@ int main(int argc, char** argv)
                 }
                 room->Subscribe(remote_mixed_stream,
                                 options,
-                                [&](std::shared_ptr<ConferenceSubscription> subscription) {
+                                [=](std::shared_ptr<ConferenceSubscription> subscription) {
                                   cout << "==============Subscribe succeed===========" << endl;
                       MyVideoRenderer* myVideoRenderer = new MyVideoRenderer();
                       remote_mixed_stream->AttachVideoRenderer(*myVideoRenderer);
@@ -292,6 +294,7 @@ int main(int argc, char** argv)
                     //  std::thread BitrateSendThread(MyBasicServerConnector::SendBitrate);
                     //  std::thread ARGBSendThread(MyBasicServerConnector::SendARGB);
                       
+                      MyBasicServerConnector::Create(width,height);
                       std::thread FpsSaveThread(MyBasicServerConnector::SaveFps);
                       std::thread BitrateSaveThread(MyBasicServerConnector::SaveBitrate);
                       std::thread ARGBSaveThread(MyBasicServerConnector::SaveARGB);
@@ -329,19 +332,8 @@ int main(int argc, char** argv)
 				      VideoCodecParameters codec_param1;
 				      codec_param1.name = codec_name;
 				      options.video.codecs.push_back(codec_param1);
-                      Resolution res(1280,720);
+                      Resolution res(width,height);
                       options.video.resolution = res;
-                  auto multipliers= remote_stream->Capabilities().video.bitrate_multipliers;
-                  if ((1-bandwidthRate)>0.1){ 
-                     for (auto it = multipliers.begin(); it != multipliers.end(); it++ ){
-                        if (fabs((*it)-bandwidthRate)<0.00001){
-                            options.video.bitrateMultiplier = (*it);
-                            cout << "birate is changed" << endl;
-                            cout << bandwidthRate << endl;
-                            cout << (*it) << endl;
-                          }
-                         }
-                      }
                       //options.video.bitrateMultiplier = 0.8;
 				      room->Subscribe(remote_stream,
 						      options,
@@ -356,7 +348,7 @@ int main(int argc, char** argv)
 						      //  std::thread FpsSendThread(MyBasicServerConnector::SendFps);
 						      //  std::thread BitrateSendThread(MyBasicServerConnector::SendBitrate);
 						      //  std::thread ARGBSendThread(MyBasicServerConnector::SendARGB);
-
+                              MyBasicServerConnector::Create(width,height);
 						      std::thread FpsSaveThread(MyBasicServerConnector::SaveFps);
 						      std::thread BitrateSaveThread(MyBasicServerConnector::SaveBitrate);
 						      std::thread ARGBSaveThread(MyBasicServerConnector::SaveARGB);

@@ -66,6 +66,7 @@ class MyBasicServerConnector
 public:
     static int TestConnect();
     //static void SendThread(int n);
+    static bool Create(int width, int height);
     static void SendFps();
     static void SendBitrate();
     static void SendARGB();
@@ -104,6 +105,8 @@ public:
     static int ARGBsockLock;
     static int isFirstTimeConnect;
     static int TagRound;
+    static int width_;
+    static int height_;
 };
 //}
 //}
