@@ -14,7 +14,7 @@ originVideo="football_720p_taged_H264_decoded.yuv"
 folderName="h264"
 #######Please modify this room index if running in different devices
 echo "User connect to room:"
-../out/woogeen_conf_sample localhost:4004 $roomId h264 hd720p 30 ps m $filename >h264.log 2>&1 &
+../woogeen_conf_sample localhost:4004 $roomId h264 hd720p 30 ps m $filename >h264.log 2>&1 &
 
 sleep 300
 ps aux  |  grep -i woogeen_conf_sample  |  awk '{print $2}'  | xargs kill -9
