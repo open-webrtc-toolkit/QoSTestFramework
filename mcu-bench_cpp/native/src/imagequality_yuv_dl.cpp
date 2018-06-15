@@ -22,14 +22,8 @@ using namespace std;
 #define ND 4
 int tagsize= 60;
 
-const int framesize = 1280 * 720 * 3 / 2;   //一副图所含的像素个数
+int framesize;   //一副图所含的像素个数
 
-typedef struct planet
-{
-    char name[framesize];
-    double population;
-    double g;
-} PLANET;
 
 class VIFP{
 public:
@@ -48,6 +42,8 @@ void getMaxClass(const Mat &probBlob, int *classId, double *classProb);
 int test_on_single_photo_dl(Mat img);
 double getPSNR ( const Mat& I1, const Mat& I2);
 Scalar getMSSIM( const Mat& I1, const Mat& I2);
+int video_width;
+int video_height;
 
 void help()
 {
@@ -57,7 +53,7 @@ void help()
     cout << "Please ensure your OPENCV is above 3.2 and complied with corresponding opencv_contrib. This is very important to enable Deep Learning modules" << endl;
     cout << "USAGE: ./iq_yuv rawdata sourcevideo" << endl;
     cout << "If you want to run it in terminal instead of basicServer, please cd to mcu-bench_cpp folder and use ./native/xxx" << endl;
-    cout << "For example: ./native/iq_yuv ./native/Data/localARGB.txt ./native/video/vp8_raw_1280x720_framerate30-bitrate2000k-gop30.yuv" << endl;
+    cout << "For example: ./native/iq_yuv ./native/Data/localARGB.txt ./native/video/vp8_raw_1280x720_framerate30-bitrate2000k-gop30.yuv 720p" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl << endl;
 }
 
@@ -73,8 +69,32 @@ int main(int argc, char *argv[])
         cout << "can't not open file" << endl;
         return -1;
     }
+    std::string res(argv[3]);
+    if (res.find("1080") != std::string::npos) {
+        video_width = 1920;
+        video_height = 1080;
+    }else if (res.find("720") != std::string::npos){
+        video_width = 1280;
+        video_height = 720;
+        cout <<"-------------------------------------------720P---------------------------------------"<<endl;
+        cout << video_width<< endl;
+        cout << "----------------720--------"<<endl;
+    }else if (res.find("vga") != std::string::npos){
+        video_width = 640;
+        video_height = 480;
+    }else{
+        video_width = 320;
+        video_height = 240;
+    } 
+    framesize = video_width * video_height * 3 / 2;   //一副图所含的像素个数
+   // typedef struct planet
+   // {
+   // char name[framesize];
+   // double population;
+   // double g;
+   // } PLANET;
 
-    PLANET pl;
+   // PLANET pl;
     ifstream fin;
     const string originVideoName = argv[2];
     fin.open(originVideoName.c_str(), ios_base::in|ios_base::binary);
@@ -110,8 +130,8 @@ int main(int argc, char *argv[])
     unsigned int a1, r1, g1, b1;//get ARGB from file "mixRawFile"
     int framecount(0);
 
-    int width(1280);
-    int height(720);
+    int width(video_width);
+    int height(video_height);
     int overFlag(0);
 
     char c;//get ',' from file "mixRawFile"
@@ -168,8 +188,8 @@ int main(int argc, char *argv[])
     height /= roomsize;
     width /= roomsize;
 
-    height = 720;
-    width = 1280;
+    height = video_height;
+    width = video_width;
     FILE* recyuv = fopen("./native/output/rec.yuv","w");
     FILE* sendyuv = fopen("./native/output/send.yuv","w");
     initLookupTable();
@@ -483,8 +503,8 @@ float VIFP::compute(const cv::Mat& original, const cv::Mat& processed)
     cv::Mat dist[NLEVS];
     cv::Mat tmp1, tmp2;
 
-    int w = 1280;
-    int h = 720;
+    int w = video_width;
+    int h = video_height;
 
     // for scale=1:4
     for (int scale=0; scale<NLEVS; scale++) {

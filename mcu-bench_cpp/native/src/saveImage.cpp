@@ -29,16 +29,34 @@ void help()
     cout << "This program saves frames received" << endl;
     cout << "If you want to run it in terminal instead of basicServer, please cd to mcu-bench_cpp folder and use ./native/xxx" << endl;
     cout << "USAGE: ./saveImage rawdata" << endl;
-    cout << "For example: ./native/saveImage ./native/Data/localARGB.txt " << endl;
+    cout << "For example: ./native/saveImage ./native/Data/localARGB.txt hd720p" << endl;
     cout << "The output files will be saved in ./native/output" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl << endl;
 }
+int video_width;
+int video_height;
 
 int main(int argc, char *argv[])
 {
 
     ifstream received_video(argv[1]);
-
+    std::string res(argv[3]);
+    if (res.find("1080") != std::string::npos) {
+        video_width = 1920;
+        video_height = 1080;
+    }else if (res.find("720") != std::string::npos){
+        video_width = 1280;
+        video_height = 720;
+        cout <<"-------------------------------------------720P---------------------------------------"<<endl;
+        cout << video_width<< endl;
+        cout << "----------------720--------"<<endl;
+    }else if (res.find("vga") != std::string::npos){
+        video_width = 640;
+        video_height = 480;
+    }else{
+        video_width = 320;
+        video_height = 240;
+    } 
     int v(0);
     unsigned int r, g, b;
 
@@ -46,8 +64,8 @@ int main(int argc, char *argv[])
     int a1, r1, g1, b1;//get ARGB from file "mixRawFile"
     int framecount(0);
 
-    int width(1280);
-    int height(720);
+    int width(video_width);
+    int height(video_height);
     int overFlag(0);
 
     char c;//get ',' from file "mixRawFile"

@@ -30,6 +30,8 @@ void getMaxClass(const Mat &probBlob, int *classId, double *classProb);
 int test_on_single_photo_dl(Mat img);
 double getPSNR ( const Mat& I1, const Mat& I2);
 Scalar getMSSIM( const Mat& I1, const Mat& I2);
+int video_width;
+int video_height;
 
 class VIFP{
 public:
@@ -48,13 +50,13 @@ void help()
     cout << "Please ensure your OPENCV is above 3.2 and complied with corresponding opencv_contrib. This is very important to enable Deep Learning modules" << endl;
     cout << "If you want to run it in terminal instead of basicServer, please cd to mcu-bench_cpp folder and use ./native/xxx" << endl;
     cout << "USAGE: ./native/iq_avi rawdata sourcevideo" << endl;
-    cout << "For example: ./native/iq_avi ./native/Data/localARGB ./native/video/testFourPeople.avi" << endl;
+    cout << "For example: ./native/iq_avi ./native/Data/localARGB ./native/video/testFourPeople.avi 1080p" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl << endl;
 }
 
 int main(int argc, char *argv[])
 {
-    if(argc != 3)
+    if(argc != 4)
     {
         help();
         return -1;
@@ -64,7 +66,23 @@ int main(int argc, char *argv[])
     ofstream psnr_out("./native/output/psnr.txt");
     ofstream ssim_out("./native/output/ssim.txt");
     ofstream quality_out("./native/output/quality.txt");
-
+    std::string res(argv[3]);
+    if (res.find("1080") != std::string::npos) {
+        video_width = 1920;
+        video_height = 1080;
+    }else if (res.find("720") != std::string::npos){
+        video_width = 1280;
+        video_height = 720;
+        cout <<"-------------------------------------------720P---------------------------------------"<<endl;
+        cout << video_width<< endl;
+        cout << "----------------720--------"<<endl;
+    }else if (res.find("vga") != std::string::npos){
+        video_width = 640;
+        video_height = 480;
+    }else{
+        video_width = 320;
+        video_height = 240;
+    } 
     if(!received_video)
     {
         cout << "can't not open file" << endl;
@@ -97,8 +115,8 @@ int main(int argc, char *argv[])
     unsigned int a1, r1, g1, b1;//get ARGB from file "mixRawFile"
     int framecount(0);
 
-    int width(1280);
-    int height(720);
+    int width(video_width);
+    int height(video_height);
     int overFlag(0);
 
     char c;//get ',' from file "mixRawFile"
@@ -154,8 +172,10 @@ int main(int argc, char *argv[])
     height /= roomsize;
     width /= roomsize;
 
-    height = 720;
-    width = 1280;
+    height = video_height;
+    width = video_width;
+    cout << "yanbin height is " << endl;
+    cout <<  height << endl;
 
     for(int f = 0;;f++)
     {       
@@ -465,8 +485,8 @@ float VIFP::compute(const cv::Mat& original, const cv::Mat& processed)
     cv::Mat dist[NLEVS];
     cv::Mat tmp1, tmp2;
 
-    int w = 1280;
-    int h = 720;
+    int w = video_width;
+    int h = video_height;
 
     // for scale=1:4
     for (int scale=0; scale<NLEVS; scale++) {
