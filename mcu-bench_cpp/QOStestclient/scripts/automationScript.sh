@@ -5,12 +5,19 @@ originVideo=$1
 echo $originVideo
 currentScenario=$2
 echo $currentScenario
-
+resolution=$3
+echo $resolution
 cd ${root}
 rawFilename="./native/Data/localARGB.txt"
 originFilename="./native/video/$originVideo"
-./native/iq_yuv ${rawFilename} ${originFilename}
-
+if [[ $originVideo =~ .*yuv ]]
+then
+   echo "origin video is yuv file", $originVideo
+   ./native/iq_yuv ${rawFilename} ${originFilename} ${resolution}
+else
+   echo "orgin video is avi file", $originVideo
+   ./native/iq_avi ${rawFilename} ${originFilename} ${resolution}
+fi
 #quality testing for vmaf
 python python/vmaf_calculate.py
 

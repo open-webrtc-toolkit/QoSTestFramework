@@ -419,7 +419,7 @@ app.post('/displayData', function(req, res){
 app.post('/startTest', function(req,res){
 
    var exec = require('child_process').exec;
-   exec('./QOStestclient/out/vp8.sh',function(err){
+   exec('./QOStestclient/scripts/vp8.sh',function(err){
         if(err) {
             console.info('stderr form vp8.sh:'+err);
           }
