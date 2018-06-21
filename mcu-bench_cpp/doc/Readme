@@ -41,8 +41,8 @@ You can download all the video files by visiting "\\kona.sh.intel.com\WebRTC\vid
 2. Git the webrtc-qos-bench and change directory to /mcu-bench_cpp/native
    (1) run "make" (openCV is required here)
    (2) `mkdir Data` and `mkdir video`, copy sample video here from kona
-   (2) cd to /mcu-bench_cpp and vim basicServer.js. Make sure your Sample ID and Key are correctly set. Make sure your vmaf path is correctly set. Comment avi_quality if you compare yuv and vice versa
-   (3) use command "node ./basicServer.js"
+   (2) cd to /mcu-bench_cpp and vim qosServer.js. Make sure your Sample ID and Key are correctly set. Make sure your vmaf path is correctly set. Comment avi_quality if you compare yuv and vice versa
+   (3) use command "node ./qosServer.js"
    (4) remember the roomID.
 
 ### check connection using browser ############
@@ -56,9 +56,10 @@ You can download all the video files by visiting "\\kona.sh.intel.com\WebRTC\vid
 
   ####trigger testing from web side #####
   encoded file mode:
-  cd to /mcu-bench_cpp and vim basicServer.js. using iq_yuv to generate PSNR SSIM data. Make sure your yuv path is correctly set.
+  cd to /mcu-bench_cpp and vim qosServer.js. using iq_yuv to generate PSNR SSIM data. Make sure your yuv path is correctly set.
   raw file mode
-  cd to /mcu-bench_cpp and vim basicServer.js. using iq_avi to generate PSNR SSIM data. Make sure your yuv path is correctly set.
+  cd to /mcu-bench_cpp and vim qosServer.js. using iq_avi to generate PSNR SSIM data. Make sure your yuv path is correctly set.
+
    (3) Click "start Video Quality Measure Testing" on the 4002 page, waiting for minutes. This default will trigger VP8 mode .
    (4) Click "stop Video Quality Measure Testing"
    (5) There is a sequnce to click button, Image Quality(PSNR SSIM VIF) first, Image Quality(Vmaf) second, No-reference last. The other buttons are of no sequnce.
@@ -84,7 +85,7 @@ You can download all the video files by visiting "\\kona.sh.intel.com\WebRTC\vid
                                             ^ target ip address is 192.168.3.2
                                                                 ^ set rules on outgoing way
 ##Compare different round result ###
-   (1) run "node basicServer_summary.js"
+   (1) run "node qosServer_summary.js"
    (2) go to "https://<QOSServer_address>:5004/" or "http://<QOSServer_address>:5002/" to get comparision results automatically
    
    
@@ -92,7 +93,7 @@ You can download all the video files by visiting "\\kona.sh.intel.com\WebRTC\vid
 ##Other##
 if you want to set MCU on different machine to emulater packet lost between MCU and client.
   (1) start MCU with app process is marked on another machine.
-  (2) modify MCU Sample ID and key in basicserver.js on QOS bench folder. start "node basicserver.js" on client side. Make sure it can connect to MCU correctly .
+  (2) modify MCU Sample ID and key in qosserver.js on QOS bench folder. start "node qosserver.js" on client side. Make sure it can connect to MCU correctly .
   (3) start network emulator in MCU/Client side with required rules.
   (4) modify roomId in scripts e.g scripts/h264.sh and start test.
    

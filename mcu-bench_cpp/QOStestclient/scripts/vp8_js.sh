@@ -16,7 +16,3 @@ folderName="vp8"
 echo "User connect to room:"
 ./woogeen_conf_sample localhost:4004 $roomId vp8 hd720p 30 ps m $filename >vp8.log 2>&1 &
 
-sleep 300
-ps aux  |  grep -i woogeen_conf_sample  |  awk '{print $2}'  | xargs kill -9
-
-./automationScript.sh ${originVideo} ${folderName} hd720p 

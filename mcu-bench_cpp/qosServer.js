@@ -321,9 +321,10 @@ app.post('/bitrate', function(req, res){
 app.post('/quality', function(req, res){
     var rawFilename = "./native/Data/localARGB.txt";
     //var originFilename = "./native/video/football_720p_taged_decoded.yuv"
-    var originFilename = "./native/video/vp8_raw_1280x720_framerate30-bitrate2000k-gop30.yuv"
+    var originFilename = "./native/video/football_720p_taged_vp8_decoded.yuv";
+    var codec = "hd720p";
     var exec = require('child_process').exec;
-    exec('./native/iq_yuv ' + rawFilename + ' ' + originFilename, function(err, data, stderr) {
+    exec('./native/iq_yuv ' + rawFilename + ' ' + originFilename + ' ' + codec, function(err, data, stderr) {
         if(data.length > 1) {
             res.json({quality : data});
         } else {
@@ -341,8 +342,9 @@ app.post('/quality', function(req, res){
     //var originFilename = "./native/video/FourPeople_640x480_30_taged.avi"
     var originFilename = "./native/video/BBB_720p_4Mbps_audio_44100_30fps_HP_taged.avi"
    // var originFilename = "./native/video/FourPeople_1280x720_30_taged.avi"
+    var codec = hd720p;
     var exec = require('child_process').exec;
-    exec('./native/iq_avi ' + rawFilename + ' ' + originFilename, function(err, data, stderr) {
+    exec('./native/iq_avi ' + rawFilename + ' ' + originFilename + ' ' + codec, function(err, data, stderr) {
         if(data.length > 1) {
             res.json({quality : data});
         } else {
@@ -419,7 +421,7 @@ app.post('/displayData', function(req, res){
 app.post('/startTest', function(req,res){
 
    var exec = require('child_process').exec;
-   exec('./QOStestclient/scripts/vp8.sh',function(err){
+   exec('./QOStestclient/scripts/vp8_js.sh',function(err){
         if(err) {
             console.info('stderr form vp8.sh:'+err);
           }

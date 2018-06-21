@@ -76,9 +76,6 @@ int main(int argc, char *argv[])
     }else if (res.find("720") != std::string::npos){
         video_width = 1280;
         video_height = 720;
-        cout <<"-------------------------------------------720P---------------------------------------"<<endl;
-        cout << video_width<< endl;
-        cout << "----------------720--------"<<endl;
     }else if (res.find("vga") != std::string::npos){
         video_width = 640;
         video_height = 480;
