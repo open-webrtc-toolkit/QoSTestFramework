@@ -1,11 +1,11 @@
 ### A tutorial on mcu/p2p video/audio quality measurement pipeline
-# yonghao.zhao@intel.com
-# 2017.11.23
 
 ### Dependencies
 0. Node.js 6 is required.
+### video testing related ########
 1. To enable the deep learning module, you should recompile your OpenCV3.2 with opencv-contrib. The opencv-contrib is not a stable plugin, which changes API dramatically every week. The DNN API I use can neither fit the lastest opencv-contrib or 3.2 branch opencv-contrib. I put the both corresponding OpenCV3.2.zip and OpenCV_contrib.zip under the folder "dependency". Please follow the installation instructions online.
 2. To enable vmaf, cd to mcu-bench_cpp/dependency, unzip vmaf.zip, move it to mcu-bench_cpp/python and rename it as vmaf. please install all the requirements as instructed in https://github.com/Netflix/vmaf. Finally, cd to /vmaf and "make".
+#### audio related#########
 3. Install PESQ tools , go to audio_test/Software/
      unzip P862_annex_A_2005_CD  wav final.zip
      build:
@@ -18,49 +18,84 @@
      ./configure
      ./make
      ./sudo make install
+####c++ client ###########
 5. The new QOStestclient relies on openssl 1.0.2i, please unzip the openssl-OpenSSL_1_0_2i.tar.gz and install it following the INSTALLATION.
 
 ### Test video preparations
 1. A raw video, best resolution in 720P. (e.g. FourPeople_1280x720_60.y4m)
 2. Tag the raw video using /webrtc-webrtc-qa/mcu-bench_cpp/native/tag.o to create an avi. (e.g. testFourPeople720P.avi)
-3. Encode the avi using videoGenerateScripts to create a vp8 or h264 files. These files will be used in c++ client.
-4. Comment "f_output.write(tag_str)" in videoGenerateScripts and encode the avi again to create a vp8 or h264 files. Then decode the vp8 or h264 into yuv. (e.g. vp8_raw_1280x720_framerate30-bitrate2000k-gop30.yuv). You may turn to Jianlin for help when decoding.
+3. Encode the avi using videoGenerateScripts to create a vp8/h264/vp9 files. Please refer Readme_TestVideo to create encoded video file. Those file will be used in c++ client.
 You can download all the video files by visiting "\\kona.sh.intel.com\WebRTC\video for Webrtc-qa" from your intel laptop.
 5. prepare audio materials: Raw audio 16khz, mono, pcm format.
 
 
 ### Steps
-Compare avi with received video
 
+#start MCU ######
 1. Download an mcu release package, unzip and change directory to /bin
    (1) vim the start-all.sh and comment the app of the last line.
    (2) run `./init-all.sh --deps` to install all mcu runtime dependencies and remember the Sample key and Sample ID.
    (3) use command "./start-all.sh"
 
+### start QOS server ########
 2. Git the webrtc-qos-bench and change directory to /mcu-bench_cpp/native
    (1) run "make" (openCV is required here)
    (2) `mkdir Data` and `mkdir video`, copy sample video here from kona
    (2) cd to /mcu-bench_cpp and vim basicServer.js. Make sure your Sample ID and Key are correctly set. Make sure your vmaf path is correctly set. Comment avi_quality if you compare yuv and vice versa
-   (3) use command "./basicServer.js"
+   (3) use command "node ./basicServer.js"
    (4) remember the roomID.
 
-3. Open chrome and go to "localhost:3000/console", input the Sample key and ID. Then go to "http://localhost:4002" or "https://localhost:4004".
+### check connection using browser ############
+3. Go to "http://<QOSServer_Address>:4002" or "https://<QOSServer_Address>:4004".
+
+### Start testing using c++ client #############
 
 4. Change directory to mcu-bench_cpp/QOStestclient.
    (1) libs and include folders are put under `mcu-bench_cpp/dependency`, please unzip them and move to QOStestclient
-   (2) mkdir build and cd to build, run "cmake .." and "make"
-   (3) vim directvideoencoder.cc and make sure your vp8 or h264 path is correctly set. VP8 is preferred.
-   (4) vim out/vp8.sh, change the roomID.
-   (3) Click "start Video Quality Measure Testing" on the 4002 page, waiting for minutes.
+   (2) mkdir build and cd to build, run "cmake .." and "make"--- this steps only build on ubuntu 16 machine after 4.0 version. The binary will generated on out folder named as "woogeen_conf_sample"
+
+  ####trigger testing from web side #####
+  encoded file mode:
+  cd to /mcu-bench_cpp and vim basicServer.js. using iq_yuv to generate PSNR SSIM data. Make sure your yuv path is correctly set.
+  raw file mode
+  cd to /mcu-bench_cpp and vim basicServer.js. using iq_avi to generate PSNR SSIM data. Make sure your yuv path is correctly set.
+   (3) Click "start Video Quality Measure Testing" on the 4002 page, waiting for minutes. This default will trigger VP8 mode .
    (4) Click "stop Video Quality Measure Testing"
    (5) There is a sequnce to click button, Image Quality(PSNR SSIM VIF) first, Image Quality(Vmaf) second, No-reference last. The other buttons are of no sequnce.
 
-### PS
-If you want to compare yuv with received video, you should change
-2.1 "cp imagequaliy_yuv_dl.cpp imagequality.cpp"
-2.2  make
-2.3  cd to /mcu-bench_cpp and vim basicServer.js. Make sure your yuv path is correctly set.
+ #####trigger testing useing automation scripts ######
+   There are sample scripts in scripts folder. Please refer h264.sh/vp8.sh in scripts folder.
+   Go to scripts folder, modify testing video file name, reference video file name and mcu conference room in h264.sh/vp8.sh 
+   you can visit https://localhost:4004 or http://localhost:4002 to get visual result for each indicators.
 
+### network emulator module ####
+# we use ipfw as our network emulator, perfer use 3.16.0-71-generic kernel ##
+   (1) install ipfw/dummynet module in your gateway/client/server machine.
+    http://manpages.ubuntu.com/manpages/trusty/man4/dummynet.4freebsd.html
+    http://manpages.ubuntu.com/manpages/trusty/man4/ipaccounting.4freebsd.html
+    make sure run follwing scripts is works 
+    sudo ipfw list 
+
+   (2) run the scripts
+   Go to network_emulator folder , command.sh will show you how to use this module.
+   e.g 
+   sudo python ./emulate.py -p 11 --target-ip=192.168.2.3 --set-way=outgoing
+                               ^the 11th rules in network_emulator.py
+                                            ^ target ip address is 192.168.3.2
+                                                                ^ set rules on outgoing way
+##Compare different round result ###
+   (1) run "node basicServer_summary.js"
+   (2) go to "https://<QOSServer_address>:5004/" or "http://<QOSServer_address>:5002/" to get comparision results automatically
+   
+   
+     
+##Other##
+if you want to set MCU on different machine to emulater packet lost between MCU and client.
+  (1) start MCU with app process is marked on another machine.
+  (2) modify MCU Sample ID and key in basicserver.js on QOS bench folder. start "node basicserver.js" on client side. Make sure it can connect to MCU correctly .
+  (3) start network emulator in MCU/Client side with required rules.
+  (4) modify roomId in scripts e.g scripts/h264.sh and start test.
+   
 if you want to test packet loss via two different computer, you should edit three parts of QOStestclient
    a) change localhost in /out/vp8.sh
    b) change "#define IPSTR" in basicserverConnector.h
