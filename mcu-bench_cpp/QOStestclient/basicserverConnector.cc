@@ -234,7 +234,7 @@ void MyBasicServerConnector::SendARGB()
      // fprintf(result,",0,");
       if (ARGBsendLock == 0)
       {
-        for (long i = 0; i < MyBasicServerConnector::width_*MyBasicServerConnector::height*4; ++i)
+        for (long i = 0; i < MyBasicServerConnector::width_*MyBasicServerConnector::height_*4; ++i)
         {
           //cout<<ptrTmp<<endl;
           value = (int)(*ptrTmp);
@@ -259,10 +259,10 @@ void MyBasicServerConnector::SendARGB()
           sendedARGBBuffer = sendedARGBBuffer + 2;
           sendcount++;
 
-          if ((sendedARGBBuffer >= ARGB_sendBlock) || (i >= (MyBasicServerConnector::width_*MyBasicServerConnector::height*4-1)))
+          if ((sendedARGBBuffer >= ARGB_sendBlock) || (i >= (MyBasicServerConnector::width_*MyBasicServerConnector::height_*4-1)))
           {
             ARGBsendLock = 1;//data sending start,lock the thread
-            if (i >= (MyBasicServerConnector::width_*MyBasicServerConnector::height*4-1))//the last block,should add a over sign
+            if (i >= (MyBasicServerConnector::width_*MyBasicServerConnector::height_*4-1))//the last block,should add a over sign
             {
               strcat(str3,"frame");
             }
@@ -289,7 +289,7 @@ void MyBasicServerConnector::SendARGB()
             strcat(str4, "\r\n");
             strcat(str4, str3);
 
-            if (i >= (MyBasicServerConnector::width_*MyBasicServerConnector::height*4-1))//the last block,should add a over sign
+            if (i >= (MyBasicServerConnector::width_*MyBasicServerConnector::height_*4-1))//the last block,should add a over sign
             {
               //cout <<str4<<endl;
             }
