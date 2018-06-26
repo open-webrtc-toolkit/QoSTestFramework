@@ -233,8 +233,9 @@ int main(int argc, char** argv)
 //  cout << "Press Enter to connect room." << std::endl;
  // cin.ignore();
 
-  string token = getToken(scheme, roomId, "", "", false);
+  string token = getToken(scheme, roomId, "", "", false,"presenter");
   std::shared_ptr<ics::base::LocalStream> shared_stream;
+    cout << "token is" << token <<endl;
 // following code is used for raw file input
   if(rawfileMode){
      std::unique_ptr<FileFrameGenerator> framer(new FileFrameGenerator(width, height, 30, rawFile));

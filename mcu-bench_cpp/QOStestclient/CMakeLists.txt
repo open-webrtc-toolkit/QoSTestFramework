@@ -48,10 +48,12 @@ set_target_properties(woogeen_conf_sample PROPERTIES COMPILE_DEFINITIONS "WEBRTC
 
 target_link_libraries(woogeen_conf_sample
   "-Wl,--start-group"
-  "-lasiotoken"  
+  "-lsioclient_tls"
+  "-lasiotoken"
   "-lboost_date_time"
   "-lboost_random"
-  "-lsioclient_tls"
+  "-lssl"
+  "-lcrypto"
   "-lics"
   "-Wl,--end-group"
   "-lrt"
@@ -59,8 +61,6 @@ target_link_libraries(woogeen_conf_sample
   "-ldl"
   "-lX11"
   "-lXext"
-  "-lssl"
-  "-lcrypto"
   "-lXcomposite"
   "-lXrender"
   "-lXrandr"
@@ -69,3 +69,4 @@ target_link_libraries(woogeen_conf_sample
   "-lXdamage"
   "-lpthread"
   "-lboost_system")
+
