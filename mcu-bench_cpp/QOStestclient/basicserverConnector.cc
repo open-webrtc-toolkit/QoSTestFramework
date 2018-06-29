@@ -47,8 +47,8 @@ int MyBasicServerConnector::ARGBsendLock = 0;//at first ,the thread should not b
 int MyBasicServerConnector::ARGBsockLock = 0;
 int MyBasicServerConnector::isFirstTimeConnect = 0;
 int MyBasicServerConnector::TagRound = 0;
-int MyBasicServerConnector::width_= 0;
-int MyBasicServerConnector::height_= 0;
+int MyBasicServerConnector::width_= 1280;
+int MyBasicServerConnector::height_= 720;
     MyBasicServerConnector::MyBasicServerConnector()
 {
   ;// todo
@@ -62,7 +62,7 @@ MyBasicServerConnector::~MyBasicServerConnector()
 bool MyBasicServerConnector::Create(int width, int height) {
     MyBasicServerConnector::width_ = width;
     MyBasicServerConnector::height_ = height;
-    std::cout << "MyBasicServerConnector::width is" << endl;
+    std::cout << "MyBasicServerConnector::width changed to" << endl;
     std::cout << MyBasicServerConnector::width_ << endl;
     return true;
 }
@@ -511,8 +511,9 @@ void MyBasicServerConnector::SaveARGB()
   FILE *localLatency = fopen("../../native/Data/localLatency.txt", "w");
   fprintf(localARGB, ",");
   fprintf(localLatency, ",");
-  std::cout << "MyBasicServerConnector::width is" << endl;
+  std::cout << "SaveARGB MyBasicServerConnector::width and height is" << endl;
   std::cout << MyBasicServerConnector::width_ << endl;
+  std::cout << MyBasicServerConnector::height_ << endl;
   while(true)
   {
     cout<<"--------------------------frames in queue:"<<ARGBDataQ.size()<<endl;

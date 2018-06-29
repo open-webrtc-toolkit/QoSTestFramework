@@ -294,7 +294,6 @@ int main(int argc, char** argv)
                     //  std::thread BitrateSendThread(MyBasicServerConnector::SendBitrate);
                     //  std::thread ARGBSendThread(MyBasicServerConnector::SendARGB);
                       
-                      MyBasicServerConnector::Create(width,height);
                       std::thread FpsSaveThread(MyBasicServerConnector::SaveFps);
                       std::thread BitrateSaveThread(MyBasicServerConnector::SaveBitrate);
                       std::thread ARGBSaveThread(MyBasicServerConnector::SaveARGB);
@@ -348,7 +347,6 @@ int main(int argc, char** argv)
 						      //  std::thread FpsSendThread(MyBasicServerConnector::SendFps);
 						      //  std::thread BitrateSendThread(MyBasicServerConnector::SendBitrate);
 						      //  std::thread ARGBSendThread(MyBasicServerConnector::SendARGB);
-                              MyBasicServerConnector::Create(width,height);
 						      std::thread FpsSaveThread(MyBasicServerConnector::SaveFps);
 						      std::thread BitrateSaveThread(MyBasicServerConnector::SaveBitrate);
 						      std::thread ARGBSaveThread(MyBasicServerConnector::SaveARGB);
@@ -415,6 +413,7 @@ int main(int argc, char** argv)
 
 
   int connectResult = MyBasicServerConnector::TestConnect();
+  MyBasicServerConnector::Create(width,height);
 //  std::thread publishDataSendThread(MyBasicServerConnector::SendpublishDatas);
   std::thread publishDataSaveThread(MyBasicServerConnector::SavepublishDatas);
   while(1){
