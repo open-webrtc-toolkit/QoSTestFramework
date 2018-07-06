@@ -12,10 +12,11 @@ using namespace ics::base;
 //namespace ics {
 //namespace base {
 
-class MyVideoRenderer : public VideoRendererARGBInterface
+class MyVideoRenderer : public VideoRendererInterface
 {
 public:
-	void RenderFrame(std::unique_ptr<ARGBBuffer> buffer);
+	void RenderFrame(std::unique_ptr<VideoBuffer> buffer);
+    VideoRendererType Type();
 	MyVideoRenderer();
 	~MyVideoRenderer();
 
