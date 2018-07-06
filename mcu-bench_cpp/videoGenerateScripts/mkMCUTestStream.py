@@ -31,7 +31,7 @@ def PrintUsage():
     print "      -g"
     print "          specify output gop, default 30"
     print "      -v"
-    print "          specify output format (vp8, vp9, h264), default h264"
+    print "          specify output format (vp8, vp9, h264,h265), default h264"
     print ""
     print "  Sample: "
     print ""
@@ -65,6 +65,26 @@ def extraceBitSreamH264(inputFile, o_width, o_height, o_framerate, o_bitrate, o_
 
     return
 
+def extraceBitSreamH265(inputFile, o_width, o_height, o_framerate, o_bitrate, o_gop, o_file):
+    cmd = 'ffmpeg -y -i ' + inputFile \
+        + ' -c:v libx265 ' \
+        + ' -g ' + o_gop \
+        + ' -b:v ' + o_bitrate + ' -minrate ' + o_bitrate + ' -maxrate ' + o_bitrate + ' -bufsize ' + getBufSize(o_bitrate) \
+        + ' -framerate ' + o_framerate \
+        + ' -s ' + o_width + 'x' + o_height \
+        + ' -vcodec hevc -vbsf hevc_mp4toannexb -f hevc ' \
+        + o_file
+
+    #        + ' -ss 0:0:0 -t 2' \
+    print cmd
+
+    stream = os.popen(cmd)
+    lines = stream.readlines()
+
+    #sys.exit(1)
+
+    return
+
 def tagSkip57(input):
     output=0;
     len =1;
@@ -81,11 +101,16 @@ def tagSkip57(input):
     return output;
 
 
-def mkH264(g_output, g_input, g_width, g_height,
-           g_framerate, g_bitrate, g_gop, g_rawBSFile):
-
-    extraceBitSreamH264(g_input, g_width, g_height,
-                        g_framerate, g_bitrate, g_gop, g_rawBSFile)
+def mkH26x(g_output, g_input, g_width, g_height,
+           g_framerate, g_bitrate, g_gop, g_rawBSFile,codec):
+    if codec == "h264":
+        extraceBitSreamH264(g_input, g_width, g_height,
+                     g_framerate, g_bitrate, g_gop, g_rawBSFile)
+    else:
+        print "extrace H265"
+        extraceBitSreamH265(g_input, g_width, g_height,
+                     g_framerate, g_bitrate, g_gop, g_rawBSFile)
+       
 '''
     if not os.path.exists(g_rawBSFile):
         print '*' * 10
@@ -305,6 +330,8 @@ def main(argv):
     elif g_format == 'vp9':
         g_suffix = '.vp9'
         #g_rawBSFile = '640x480-framerate30-bitrate1000k.mkv'
+    elif g_format == 'h265':
+        g_suffix = '.h265'
     else:
         print '*' * 10
         print 'Error:', 'Invalid format, ', g_format
@@ -319,8 +346,11 @@ def main(argv):
         os.remove(g_rawBSFile)
 
     if g_format == 'h264':
-        mkH264(g_output, g_input, g_width, g_height, g_framerate, g_bitrate,
-               g_gop, g_rawBSFile)
+        mkH26x(g_output, g_input, g_width, g_height, g_framerate, g_bitrate,
+               g_gop, g_rawBSFile,'h264')
+    elif g_format == 'h265':
+        mkH26x(g_output, g_input, g_width, g_height, g_framerate, g_bitrate,
+               g_gop, g_rawBSFile,'h265')
     elif g_format == 'vp8':
         mkVPx(g_output, g_input, g_width, g_height,
               g_framerate, g_bitrate, g_gop, g_rawBSFile, 'vp8')
