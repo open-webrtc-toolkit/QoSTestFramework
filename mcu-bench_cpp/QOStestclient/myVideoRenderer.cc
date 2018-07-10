@@ -13,7 +13,7 @@ MyVideoRenderer::MyVideoRenderer()
 	mynum = 0;
 }
 
-void MyVideoRenderer::RenderFrame(std::unique_ptr<ARGBBuffer> video_frame) 
+void MyVideoRenderer::RenderFrame(std::unique_ptr<VideoBuffer> video_frame) 
 {
 	if (video_frame)
 	{
@@ -42,6 +42,10 @@ void MyVideoRenderer::RenderFrame(std::unique_ptr<ARGBBuffer> video_frame)
 		std::cout <<"---------------------null---"<<endl;
 	}
 	;//todo
+}
+
+VideoRendererType MyVideoRenderer::Type() {
+   return ics::base::VideoRendererType::kARGB ;
 }
 
 MyVideoRenderer::~MyVideoRenderer() 
