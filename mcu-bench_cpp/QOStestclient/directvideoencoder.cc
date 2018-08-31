@@ -137,6 +137,7 @@ bool DirectVideoEncoder::EncodeOneFrame(std::vector<uint8_t>& buffer, bool keyFr
         fread(data, 1, frame_data_size, fd_);
         buffer.insert(buffer.begin(), data, data + frame_data_size);
         delete[] data;
+        return true;
     }
 }
 
