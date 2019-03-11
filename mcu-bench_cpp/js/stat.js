@@ -61,6 +61,19 @@ var numbertagwidth=0;
 var iamgeNeedheight=0;
 var numbertagheight=0;
 
+window.chartColors = {
+    red: 'rgb(255, 99, 132)',
+    orange: 'rgb(255, 159, 64)',
+    green: 'rgb(75, 192, 192)',
+    blue: 'rgb(0, 64, 255)',
+    purple: 'rgb(153, 102, 255)',
+    grey: 'rgb(201, 203, 207)',
+    yellow: 'rgb(255, 255, 0)',
+    black: 'rgb(0,0,0)',
+    skyblue: 'rgb(0,255,255)',
+    bloodred: 'rgb(255,64,0)',
+    lightgreen: 'rgb(0,255,0)'
+    };
 
 /*
  * doSave is a function
@@ -648,15 +661,14 @@ function getJitter() {
             var average = 0;
             var num = 0;
             var ctx = document.getElementById("chartJitter").getContext("2d");
+            var colorNames = Object.keys(window.chartColors);
+            var Color = window.chartColors[colorNames[0]];
             var jitterData = { labels: [], datasets: [ {
-                label: "My First dataset",
-                fillColor: "rgba(255,255,255,0.5)",
-                strokeColor: "rgba(255,0,0,1)",
-                pointColor: "rgba(255,0,0,0.5)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(255,0,0,1)",
-                data: []
+                label: "Jitter Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
             }]};
             //jitter = jitter.split("\n");
             var fnum = $("#jnum").val();
@@ -678,7 +690,40 @@ function getJitter() {
             $("#jitter_avg").val(average);
             if (div4.style.display == 'none') {div4.style.display = 'inline'};
             if(jChart != null) jChart.destroy();
-            jChart = new Chart(ctx).Line(jitterData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+            //jChart = new Chart(ctx).Line(jitterData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+            jChart = Chart.Line(ctx, {
+                data: jitterData,
+
+                options: {
+                    responsive: true,
+                    title:{
+                        display:true,
+                        text:'Latency Chart'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }]
+                    }
+                }
+            })
         },
         error: function(jqXHR, textStatus, errorThrown){
             alert('error : ' + textStatus + " " + errorThrown);
@@ -696,15 +741,14 @@ function getJitter() {
             var average = 0;
             var num = 0;
             var ctx = document.getElementById("chartJitter").getContext("2d");
+            var colorNames = Object.keys(window.chartColors);
+            var Color = window.chartColors[colorNames[0]];
             var jitterData = { labels: [], datasets: [ {
-                label: "My First dataset",
-                fillColor: "rgba(255,255,255,0.5)",
-                strokeColor: "rgba(255,0,0,1)",
-                pointColor: "rgba(255,0,0,0.5)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(255,0,0,1)",
-                data: []
+                label: "Jitter Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
             }]};
             //jitter = jitter.split("\n");
             var fnum = $("#jnum").val();
@@ -725,7 +769,40 @@ function getJitter() {
             $("#jitter_avg").val(average);
             if (div4.style.display == 'none') {div4.style.display = 'inline'};
             if(jChart != null) jChart.destroy();
-            jChart = new Chart(ctx).Line(jitterData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+            //jChart = new Chart(ctx).Line(jitterData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+            jChart = Chart.Line(ctx, {
+                data: jitterData,
+
+                options: {
+                    responsive: true,
+                    title:{
+                        display:true,
+                        text:'Latency Chart'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }]
+                    }
+                }
+            })
         },
         error: function(jqXHR, textStatus, errorThrown){
             alert('error : ' + textStatus + " " + errorThrown);
@@ -754,15 +831,14 @@ function getLatency() {
             var average = 0;
             var num = 0;
             var ctx = document.getElementById("chartLatency").getContext("2d");
+            var colorNames = Object.keys(window.chartColors);
+            var Color = window.chartColors[colorNames[0]];
             var latencyData = { labels: [], datasets: [ {
-                label: "My First dataset",
-                fillColor: "rgba(255,255,255,0.5)",
-                strokeColor: "rgba(255,0,0,1)",
-                pointColor: "rgba(255,0,0,0.5)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(255,0,0,1)",
-                data: []
+                label: "Latency Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
             }]};
             latency = latency.split(",");
             var fnum = $("#lnum").val();
@@ -784,7 +860,40 @@ function getLatency() {
             $("#latency_avg").val(average);
             if (div5.style.display == 'none') {div5.style.display = 'inline'};
             if(lChart != null) lChart.destroy();
-            lChart = new Chart(ctx).Line(latencyData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+           // lChart = new Chart(ctx).Line(latencyData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+            lChart = Chart.Line(ctx, {
+                data: latencyData,
+
+                options: {
+                    responsive: true,
+                    title:{
+                        display:true,
+                        text:'Latency Chart'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }]
+                    }
+                }
+            })
         },
         error: function(jqXHR, textStatus, errorThrown){
             alert('error : ' + textStatus + " " + errorThrown);
@@ -803,15 +912,14 @@ function getLatency() {
             var average = 0;
             var num = 0;
             var ctx = document.getElementById("chartLatency").getContext("2d");
+            var colorNames = Object.keys(window.chartColors);
+            var Color = window.chartColors[colorNames[0]];
             var latencyData = { labels: [], datasets: [ {
-                label: "My First dataset",
-                fillColor: "rgba(255,255,255,0.5)",
-                strokeColor: "rgba(255,0,0,1)",
-                pointColor: "rgba(255,0,0,0.5)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(255,0,0,1)",
-                data: []
+                label: "Latency Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
             }]};
             latency = latency.split("\n");
             var fnum = $("#lnum").val();
@@ -832,8 +940,41 @@ function getLatency() {
             $("#latency_avg").val(average);
             if (div5.style.display == 'none') {div5.style.display = 'inline'};
             if(lChart != null) lChart.destroy();
-            lChart = new Chart(ctx).Line(latencyData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-        },
+            //lChart = new Chart(ctx).Line(latencyData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+             lChart = Chart.Line(ctx, {
+                data: latencyData,
+
+                options: {
+                    responsive: true,
+                    title:{
+                        display:true,
+                        text:'Bitrate Chart'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }]
+                    }
+                }
+            })
+        },  
         error: function(jqXHR, textStatus, errorThrown){
             alert('error : ' + textStatus + " " + errorThrown);
         }
@@ -861,15 +1002,14 @@ function getFps() {
             var average = 0;
             var num = 0;
             var ctx = document.getElementById("chartgoogFps").getContext("2d");
+            var colorNames = Object.keys(window.chartColors);
+            var Color = window.chartColors[colorNames[0]];
             var fpsData = { labels: [], datasets: [ {
-                label: "My First dataset",
-                fillColor: "rgba(255,255,255,0.5)",
-                strokeColor: "rgba(255,0,0,1)",
-                pointColor: "rgba(255,0,0,0.5)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(255,0,0,1)",
-                data: []
+                label: "FPS Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
             }]};
             fps = fps.split(",");
             var fnum = $("#fnum").val();
@@ -894,7 +1034,40 @@ function getFps() {
             $("#fps_avg").val(average);
             if (div6.style.display == 'none') {div6.style.display = 'inline'};
             if(fChart != null) fChart.destroy();
-            fChart = new Chart(ctx).Line(fpsData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true,scaleBeginAtZero:true});
+            //fChart = new Chart(ctx).Line(fpsData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true,scaleBeginAtZero:true});
+            fChart = Chart.Line(ctx, {
+                data: fpsData,
+
+                options: {
+                    responsive: true,
+                    title:{
+                        display:true,
+                        text:'Bitrate Chart'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }]
+                    }
+                }
+            })
         },
         error: function(jqXHR, textStatus, errorThrown){
             alert('error : ' + textStatus + " " + errorThrown);
@@ -913,15 +1086,13 @@ function getFps() {
             var average = 0;
             var num = 0;
             var ctx = document.getElementById("chartgoogFps").getContext("2d");
+            var Color = window.chartColors[colorNames[0]];
             var fpsData = { labels: [], datasets: [ {
-                label: "My First dataset",
-                fillColor: "rgba(255,255,255,0.5)",
-                strokeColor: "rgba(255,0,0,1)",
-                pointColor: "rgba(255,0,0,0.5)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(255,0,0,1)",
-                data: []
+                label: "FPS Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
             }]};
             fps = fps.split("\n");
             var fnum = $("#fnum").val();
@@ -946,7 +1117,40 @@ function getFps() {
             $("#fps_avg").val(average);
             if (div6.style.display == 'none') {div6.style.display = 'inline'};
             if(fChart != null) fChart.destroy();
-            fChart = new Chart(ctx).Line(fpsData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true,scaleBeginAtZero:true});
+            //fChart = new Chart(ctx).Line(fpsData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true,scaleBeginAtZero:true});
+            fChart = Chart.Line(ctx, {
+                data: fpsData,
+
+                options: {
+                    responsive: true,
+                    title:{
+                        display:true,
+                        text:'Bitrate Chart'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }]
+                    }
+                }
+            })
         },
         error: function(jqXHR, textStatus, errorThrown){
             alert('error : ' + textStatus + " " + errorThrown);
@@ -975,15 +1179,14 @@ function getBitrate() {
             var average = 0;
             var num = 0;
             var ctx = document.getElementById("chartgoogBitrate").getContext("2d");
+            var colorNames = Object.keys(window.chartColors);
+            var Color = window.chartColors[colorNames[0]];
             var bitrateData = { labels: [], datasets: [ {
-                label: "My First dataset",
-                fillColor: "rgba(255,255,255,0.5)",
-                strokeColor: "rgba(255,0,0,1)",
-                pointColor: "rgba(255,0,0,0.5)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(255,0,0,1)",
-                data: []
+                label: "Bitrate Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
             }]};
             bitrate = bitrate.split(",");
             var fnum = $("#bnum").val();
@@ -1007,7 +1210,40 @@ function getBitrate() {
             console.log(bitrateData.datasets[0].data);
             if (div7.style.display == 'none') {div7.style.display = 'inline'};
             if(bChart != null) bChart.destroy();
-            bChart = new Chart(ctx).Line(bitrateData, {responsive: true, maintainAspectRatio: true, scaleShowLabels:true,scaleSteps:3,showScale:true,scaleBeginAtZero:true});
+            //bChart = new Chart(ctx).Line(bitrateData, {responsive: true, maintainAspectRatio: true, scaleShowLabels:true,scaleSteps:3,showScale:true,scaleBeginAtZero:true});
+            bChart = Chart.Line(ctx, {
+                data: bitrateData,
+
+                options: {
+                    responsive: true,
+                    title:{
+                        display:true,
+                        text:'Bitrate Chart'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }]
+                    }
+                }
+            })
 
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -1028,15 +1264,15 @@ function getBitrate() {
             var average = 0;
             var num = 0;
             var ctx = document.getElementById("chartgoogBitrate").getContext("2d");
+            var colorNames = Object.keys(window.chartColors);
+            var Color = window.chartColors[colorNames[0]];
+            console.log("Color is ",Color);
             var bitrateData = { labels: [], datasets: [ {
-                label: "My First dataset",
-                fillColor: "rgba(255,255,255,0.5)",
-                strokeColor: "rgba(255,0,0,1)",
-                pointColor: "rgba(255,0,0,0.5)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(255,0,0,1)",
-                data: []
+                label: "Bitrate Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
             }]};
             bitrate = bitrate.split("\n");
             var fnum = $("#bnum").val();
@@ -1059,8 +1295,40 @@ function getBitrate() {
             console.log(bitrateData.datasets[0].data);
             if (div7.style.display == 'none') {div7.style.display = 'inline'};
             if(bChart != null) bChart.destroy();
-            bChart = new Chart(ctx).Line(bitrateData, {responsive: true, maintainAspectRatio: true, scaleShowLabels:true,scaleSteps:3,showScale:true,scaleBeginAtZero:true});
+            //bChart = new Chart(ctx).Line(bitrateData, {responsive: true, maintainAspectRatio: true, scaleShowLabels:true,scaleSteps:3,showScale:true,scaleBeginAtZero:true});
+            bChart = Chart.Line(ctx, {
+                data: bitrateData,
 
+                options: {
+                    responsive: true,
+                    title:{
+                        display:true,
+                        text:'Bitrate Chart'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                            }
+                        }]
+                    }
+                }
+            })
         },
         error: function(jqXHR, textStatus, errorThrown){
             alert('error : ' + textStatus + " " + errorThrown);
@@ -1186,91 +1454,303 @@ function getPESQ() {
 
 }
 
+function getSSIM() {
 
-/*
-function getQuality() {
+    var div1 = document.getElementById("chartSsim");
+    var selectfolder = resultfolder.selectedOptions.length;
+    if (selectfolder) {
+        var strfolder = resultfolder.options[resultfolder.selectedIndex].text;
+        $.ajax({
+            data: {"folder":strfolder,"file":"ssim.txt"},
+            url: '/displayData',
+            type: 'post',
+            cache: false,
+            timeout: 800000,
+            success: function(data){
+                var ssim = data.data;
+                var ctx = document.getElementById("chartSsim").getContext("2d");
+                var colorNames = Object.keys(window.chartColors);
+                var Color = window.chartColors[colorNames[0]];
+                var ssimData = { labels: [], datasets: [ {
+                label: "SSIM Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
+               }]};
+                ssim = ssim.split(",");
+                console.log(ssim);
+                var fnum = $("#qnum").val();
+                fnum = parseInt(fnum);
+                for(var i = 0;i < ssim.length-1;i += 1) {
+                    ssim[0]=ssim[0].replace(/\[\'/i, '');       
+                    ssimData.labels.push(i);
+                    ssimData.datasets[0].data.push(ssim[i]);
+                }
+                if (div1.style.display == 'none') {div1.style.display = 'inline'};
+                if(vChart != null) vChart.destroy();
 
-    var div1 = document.getElementById("chartQuality");
-    var div2 = document.getElementById("chartQuality2");
-    var div3 = document.getElementById("chartQuality3");
-    $.ajax({
-        data: {"blank" : " "},
-        url: '/quality',
-        type: 'post',
-        cache: false,
-        timeout: 800000,
-        success: function(data){
-            var quality = data.quality;
-            var ctx = document.getElementById("chartQuality").getContext("2d");
-            var ctx2 = document.getElementById("chartQuality2").getContext("2d");
-            var ctx3 = document.getElementById("chartQuality3").getContext("2d");
-            var psnrData = { labels: [], datasets: [ {
-                    label: "PSNR",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
+                //vChart = new Chart(ctx).Line(vmafData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+                vChart = Chart.Line(ctx, {
+                data: ssimData,
 
-                    data: []
-                }]};
-
-            var ssimData = { labels: [], datasets: [ {
-                    label: "SSIM",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-                    data: []
-                }]};
-
-            var psData = { labels: [], datasets: [ {
-                    //label: "SSIM&PSNR",
-                    label: "VMAF Score",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-                    data: []
-                }]};
-            quality = quality.split("\n");
-            console.log(quality);
-            var fnum = $("#qnum").val();
-            fnum = parseInt(fnum);
-            for(var i = 0;i < quality.length-1 && i < 3*fnum;i += 3) {
-                psnrData.labels.push(i/3);
-                ssimData.labels.push(i/3);
-                psnrData.datasets[0].data.push(quality[i]);
-                ssimData.datasets[0].data.push(quality[i+1]);
-                //psData.labels.push(quality[i+1]);
-                psData.labels.push(i/3);
-                psData.datasets[0].data.push(quality[i+2]);
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'SSIM Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                alert('error : ' + textStatus + " " + errorThrown);
             }
+        });
 
-            if (div1.style.display == 'none') {div1.style.display = 'inline'};
-            if (div2.style.display == 'none') {div2.style.display = 'inline'};
-            if (div3.style.display == 'none') {div3.style.display = 'inline'};
+     }
+     else{   
+        $.ajax({
+            data: {"blank" : " "},
+            url: '/quality',
+            type: 'post',
+            cache: false,
+            timeout: 800000,
+            success: function(data){
+                var ssim = data.ssim;
+                var ctx = document.getElementById("chartSsim").getContext("2d");
+                var colorNames = Object.keys(window.chartColors);
+                var Color = window.chartColors[colorNames[0]];
+                var ssimData = { labels: [], datasets: [ {
+                label: "SSIM Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
+                }]};
+                ssim = ssim.split("\n");
+                console.log(ssim);
+                var fnum = $("#qnum").val();
+                fnum = parseInt(fnum);
+                for(var i = 0;i < ssim.length-1;i += 1) {
+                    ssimData.labels.push(i);
+                    ssimData.datasets[0].data.push(ssim[i]);
+                }
+                if (div1.style.display == 'none') {div1.style.display = 'inline'};
+                if(vChart != null) vChart.destroy();
 
-            if(qChart != null) qChart.destroy();
-            if(qChart2 != null) qChart2.destroy();
-            if(qChart3 != null) qChart3.destroy();
-            qChart = new Chart(ctx).Line(psnrData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-            qChart2 = new Chart(ctx2).Line(ssimData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-            qChart3 = new Chart(ctx3).Line(psData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-        },
-        error: function(jqXHR, textStatus, errorThrown){
-            alert('error : ' + textStatus + " " + errorThrown);
-        }
-    });
+                vChart = Chart.Line(ctx, {
+                data: ssimData,
 
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'SSIM Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+               // vChart = new Chart(ctx).Line(vmafData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                alert('error : ' + textStatus + " " + errorThrown);
+            }
+        });
+    }
 }
-*/
 
+function getPSNR() {
+
+    var div1 = document.getElementById("chartPsnr");
+    var selectfolder = resultfolder.selectedOptions.length;
+    if (selectfolder) {
+        var strfolder = resultfolder.options[resultfolder.selectedIndex].text;
+        $.ajax({
+            data: {"folder":strfolder,"file":"psnr.txt"},
+            url: '/displayData',
+            type: 'post',
+            cache: false,
+            timeout: 800000,
+            success: function(data){
+                var psnr = data.data;
+                var ctx = document.getElementById("chartPsnr").getContext("2d");
+                var colorNames = Object.keys(window.chartColors);
+                var Color = window.chartColors[colorNames[0]];
+                var psnrData = { labels: [], datasets: [ {
+                label: "psnr Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
+               }]};
+                psnr = psnr.split(",");
+                console.log(psnr);
+                var fnum = $("#qnum").val();
+                fnum = parseInt(fnum);
+                for(var i = 0;i < psnr.length-1;i += 1) {
+                    psnr[0]=psnr[0].replace(/\[\'/i, '');       
+                    psnrData.labels.push(i);
+                    psnrData.datasets[0].data.push(psnr[i]);
+                }
+                if (div1.style.display == 'none') {div1.style.display = 'inline'};
+                if(vChart != null) vChart.destroy();
+
+                //vChart = new Chart(ctx).Line(vmafData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+                vChart = Chart.Line(ctx, {
+                data: psnrData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'psnr Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                alert('error : ' + textStatus + " " + errorThrown);
+            }
+        });
+
+     }
+     else{   
+        $.ajax({
+            data: {"blank" : " "},
+            url: '/quality',
+            type: 'post',
+            cache: false,
+            timeout: 800000,
+            success: function(data){
+                var psnr = data.psnr;
+                var ctx = document.getElementById("chartPsnr").getContext("2d");
+                var colorNames = Object.keys(window.chartColors);
+                var Color = window.chartColors[colorNames[0]];
+                var psnrData = { labels: [], datasets: [ {
+                label: "psnr Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
+                }]};
+                psnr = psnr.split("\n");
+                console.log(psnr);
+                var fnum = $("#qnum").val();
+                fnum = parseInt(fnum);
+                for(var i = 0;i < psnr.length-1;i += 1) {
+                    psnrData.labels.push(i);
+                    psnrData.datasets[0].data.push(psnr[i]);
+                }
+                if (div1.style.display == 'none') {div1.style.display = 'inline'};
+                if(vChart != null) vChart.destroy();
+
+                vChart = Chart.Line(ctx, {
+                data: psnrData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'psnr Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+               // vChart = new Chart(ctx).Line(vmafData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                alert('error : ' + textStatus + " " + errorThrown);
+            }
+        });
+    }
+}
 
 function getVmaf() {
 
@@ -1287,17 +1767,15 @@ function getVmaf() {
             success: function(data){
                 var vmaf = data.data;
                 var ctx = document.getElementById("chartVmaf").getContext("2d");
+                var colorNames = Object.keys(window.chartColors);
+                var Color = window.chartColors[colorNames[0]];
                 var vmafData = { labels: [], datasets: [ {
-                        label: "vmaf",
-                        fillColor: "rgba(151,187,205,0.5)",
-                        strokeColor: "rgba(151,187,205,1)",
-                        pointColor: "rgba(151,187,205,1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(151,187,205,1)",
-
-                        data: []
-                    }]};
+                label: "VMAF Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
+               }]};
                 vmaf = vmaf.split(",");
                 console.log(vmaf);
                 var fnum = $("#qnum").val();
@@ -1309,7 +1787,41 @@ function getVmaf() {
                 }
                 if (div1.style.display == 'none') {div1.style.display = 'inline'};
                 if(vChart != null) vChart.destroy();
-                vChart = new Chart(ctx).Line(vmafData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+
+                //vChart = new Chart(ctx).Line(vmafData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+                vChart = Chart.Line(ctx, {
+                data: vmafData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'VMAF Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
             },
             error: function(jqXHR, textStatus, errorThrown){
                 alert('error : ' + textStatus + " " + errorThrown);
@@ -1327,17 +1839,15 @@ function getVmaf() {
             success: function(data){
                 var vmaf = data.vmaf;
                 var ctx = document.getElementById("chartVmaf").getContext("2d");
+                var colorNames = Object.keys(window.chartColors);
+                var Color = window.chartColors[colorNames[0]];
                 var vmafData = { labels: [], datasets: [ {
-                        label: "vmaf",
-                        fillColor: "rgba(151,187,205,0.5)",
-                        strokeColor: "rgba(151,187,205,1)",
-                        pointColor: "rgba(151,187,205,1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(151,187,205,1)",
-
-                        data: []
-                    }]};
+                label: "VMAF Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
+                }]};
                 vmaf = vmaf.split("\n");
                 console.log(vmaf);
                 var fnum = $("#qnum").val();
@@ -1348,7 +1858,41 @@ function getVmaf() {
                 }
                 if (div1.style.display == 'none') {div1.style.display = 'inline'};
                 if(vChart != null) vChart.destroy();
-                vChart = new Chart(ctx).Line(vmafData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+
+                vChart = Chart.Line(ctx, {
+                data: vmafData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'VMAF Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+               // vChart = new Chart(ctx).Line(vmafData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
             },
             error: function(jqXHR, textStatus, errorThrown){
                 alert('error : ' + textStatus + " " + errorThrown);

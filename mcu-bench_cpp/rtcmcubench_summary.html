@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title> WebRTCMCUBench</title>
+    <title> WebRTCQOSBench</title>
     <link rel="stylesheet" href="css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
@@ -10,19 +10,12 @@
 </script>
 
 <body>
-<h2 style = "text-align:center;"> WebRTCMCUBench: A WebRTC MCU Benchmark </h2>
-<div id = "heading"><h2> Join a WebRTC MCU Connection </h2> </div>
+<h2 style = "text-align:center;"> WebRTCQOSBench: A WebRTC QOS Benchmark </h2>
 
 <div id = "welcome" > </div>
 
 <div id = "how-to-use">
-    <p> After all members having connected to mcu room, click button "Record Video Analysis Data" to start record and upload data. About one minute later, click button "Download Video Analysis Data" button to finish record and upload remained data to server. At last, click buttons "Quality", "Latency" and "Jitter" and the corresponding graphs should be presented.
-</div>
-
-<div title="local medias" >
-    <!--<div id="myVideo" style="width: 1280px; height: 720px; display: inline-block;" title="my camera" ></div>-->
-    <div id = "myVideo" style="width: 1280px; height: 720px; display: none;" title="my camera" ></div>
-    <div id = "mixed-streams" title="mix media"   class="dynamicContainer"></div>
+    <p> Click get the result folder select the indicators folders which you want to measure and compare.
 </div>
 
 
@@ -38,7 +31,7 @@
 
 <div>
 
-      <button id="getResultFolder" onclick = "getResultFolder()" style="width: 200px;height: 30px;">getResultFolder</button>
+      <button id="getResultFolder" onclick = "getCompareResultFolder()" style="width: 200px;height: 30px;">getResultFolder</button>
        <div>
           ResultFolder:<select id="resultfolder"></select>
        </div>
@@ -49,90 +42,87 @@
 <div>
 <p>getQuality Full-Reference (PSNR, SSIM)</p>
     <div>
-    <button id="quality-PSNR" onclick = "getPSNR()" style="width: 250px;height: 50px;">Image Quality (PSNR). Greater value is better</button> 
-    Frame:<input type = "text" id = "qnum" value = "300">
-    <canvas id="chartPSNR" width="400" height="100" style="display: none;"></canvas>
+    <button id="quality-PSNR" onclick = "getComparedResult('PSNRChart','psnr.txt','pthreshold')" style="width: 250px;height: 50px;">Image Quality (PSNR). Greater value is better</button> 
+    Frame:<input type = "text" id = "fnum" value = "300">
+    Threshold:<input type = "text" id = "pthreshold" value = "40">
+    <canvas id="PSNRChart" width="400" height="100" style="display: none;"></canvas>
     </div>
     <div>
-     <button id="quality-SSIM" onclick = "getSSIM()" style="width: 250px;height: 50px;">Image Quality (SSIM). Greater value is better</button>
+     <button id="quality-SSIM" onclick = "getComparedResult('SSIMChart','ssim.txt','sthreshold')" style="width: 250px;height: 50px;">Image Quality (SSIM). Greater value is better</button>
     Frame:<input type = "text" id = "qnum" value = "300">
-    <canvas id="chartSSIM" width="400" height="100" style="display: none;"></canvas>
+    Threshold:<input type = "text" id = "sthreshold" value = "40">
+    <canvas id="SSIMChart" width="400" height="100" style="display: none;"></canvas>
     </div>
 </div>
 
 
 <div>
-    <button id="vmaf-btn" onclick = "getVmaf()" style="width: 250px;height: 50px;">Image Quality (vmaf). Greater value is better</button>
-    <!--Threshold:<input type = "text" id = "iqthreshold" value = "1000">-->
+    <button id="vmaf-btn" onclick = "getComparedResult('VMAFChart','VMAF_score','vthreshold')" style="width: 250px;height: 50px;">Image Quality (vmaf). Greater value is better</button>
+     Threshold:<input type = "text" id = "vthreshold" value = "100">
 
-    <canvas id="chartVmaf" width="400" height="100" style="display: none;"></canvas>
+    <canvas id="VMAFChart" width="400" height="100" style="display: none;"></canvas>
 </div>
 
 <div>
     <p>getNR No-Reference (Blockiness, Blockloss, Interlace, Blur, )</p>
     <div>
-    <button id="NR-Blockiness" onclick = "getBlockiness()" style="width: 250px;height: 50px;">No-Reference (Blockiness) </button>
+    Threshold:<input type = "text" id = "nthreshold" value = "100">
+    <div></div>
+    <button id="NR-Blockiness" onclick = "getComparedResult('VMAFChart','Blockiness_score','nthreshold')" style="width: 250px;height: 50px;">No-Reference (Blockiness) </button>
     Blockiness Normal Range:<a>0.9-1.01</a> . Greater value is better
-    <canvas id="chartBlockiness" width="400" height="100" style="display: none;"></canvas>
+    <canvas id="BlockinessChart" width="400" height="100" style="display: none;"></canvas>
     </div>
     <div>
-    <button id="NR-Blockloss" onclick = "getBlockloss()" style="width: 250px;height: 50px;">No-Reference ( Blockloss)</button>
+    <button id="NR-Blockloss" onclick = "getComparedResult('BlocklossChart','Blockloss_score','nthreshold')" style="width: 250px;height: 50px;">No-Reference ( Blockloss)</button>
     Blockloss Normal Range:<a>0-5</a> . Lower value is better
-    <canvas id="chartBlockloss" width="400" height="100" style="display: none;"></canvas>
+    <canvas id="BlocklossChart" width="400" height="100" style="display: none;"></canvas>
     </div>
      <div>
-    <button id="NR-Interlace" onclick = "getInterlace()" style="width: 250px;height: 50px;">No-Reference (Interlace)</button>
+    <button id="NR-Interlace" onclick = "getComparedResult('InterlaceChart','Interlace_score','nthreshold')" style="width: 250px;height: 50px;">No-Reference (Interlace)</button>
     Interlace Normal Range:<a>0</a> . Lower value is better 
-    <canvas id="chartInterlace" width="400" height="100" style="display: none;"></canvas>
+    <canvas id="InterlaceChart" width="400" height="100" style="display: none;"></canvas>
     </div>
     <div>
-    <button id="NR-Blur" onclick = "getBlur()" style="width: 250px;height: 50px;">No-Reference ( Blur)</button>
+    <button id="NR-Blur" onclick = "getComparedResult('BlurChart','Blur_score','nthreshold')" style="width: 250px;height: 50px;">No-Reference ( Blur)</button>
     Blur Normal Range:<a>0-5</a> . Lower value is better
-    <canvas id="chartBlur" width="400" height="100" style="display: none;"></canvas>
+    <canvas id="BlurChart" width="400" height="100" style="display: none;"></canvas>
     </div>
-    <!--div>
-     <button id="NR-Noise" onclick = "getNoise()" style="width: 250px;height: 50px;">No-Reference ( Noise)</button>
-    Noise Normal Range:<a>0-3.5</a>
-    <canvas id="chartNoise" width="400" height="100" style="display: none;"></canvas>
-    </div-->
-
 </div>
 
 <div>
-    <button id="jitter-btn" onclick = "getJitter()" style="width: 250px;height: 50px;">Jitter (miliseconds)</button>
+    <button id="jitter-btn" onclick = "getComparedResult('jitterChart','jitter.txt','jthreshold')" style="width: 250px;height: 50px;">Jitter (miliseconds)</button>
   Frame:<input type = "text" id = "jnum" value = "300">
   Threshold:<input type = "text" id = "jthreshold" value = "10000">
-    <canvas id="chartJitter" width="400" height="100" style="display: none;"></canvas>
+    <canvas id="jitterChart" width="400" height="100" style="display: none;"></canvas>
 </div>
 
 <div>
-    <button id="latency-btn" onclick = "getLatency()" style="width: 250px;height: 50px;">Latency (miliseconds)</button>
-  Frame:<input type = "text" id = "lnum" value = "300">
-  Threshold:<input type = "text" id = "lthreshold" value = "5000">
-    <canvas id="chartLatency" width="400" height="100" style="display: none;"></canvas>
-</div>
-
-<div>
-    <button id="fps-btn" onclick = "getFps()" style="width: 250px;height: 50px;">Fps</button>
+    <button id="latency-btn" onclick = "getComparedResult('latencyChart','latency.txt','lthreshold')" style="width: 250px;height: 50px;">Latency (miliseconds)</button>
   Frame:<input type = "text" id = "fnum" value = "300">
+  Threshold:<input type = "text" id = "lthreshold" value = "5000">
+    <canvas id="latencyChart" width="400" height="100" style="display: none;"></canvas>
+</div>
+<p>webrtc statistics: FPS and bitrate</p>
+<div>
+    <button id="fps-btn" onclick = "getComparedResult('FPSChart','fps.txt','fthreshold')" style="width: 250px;height: 50px;">Fps</button>
+  
   Threshold:<input type = "text" id = "fthreshold" value = "80">
-    <canvas id="chartgoogFps" width="400" height="100" style="display: none;"></canvas>
+    <canvas id="FPSChart" width="400" height="100" style="display: none;"></canvas>
 </div>
 
 <div>
-    <button id="bitrate-btn" onclick = "getBitrate()" style="width: 250px;height: 50px;">Bitrate (kbps)</button>
-  Frame:<input type = "text" id = "bnum" value = "300">
+    <button id="bitrate-btn" onclick = "getComparedResult('bitrateChart','bitrate.txt','bthreshold')" style="width: 250px;height: 50px;">Bitrate (kbps)</button>
+  Frame:<input type = "text" id = "fnum" value = "300">
   Threshold:<input type = "text" id = "bthreshold" value = "2500">
-    <canvas id="chartgoogBitrate" width="400" height="100" style="display: none;"></canvas>
+    <canvas id="bitrateChart" width="400" height="100" style="display: none;"></canvas>
 </div>
-
+<p>Audio related: pesq</p>
 <div>
-    <button id="pesq-btn" onclick = "getPESQ()" style="width: 250px;height: 50px;">PESQ (mos)</button>
+    <button id="pesq-btn" onclick = "getComparedResult('PESQChart','pesq.txt','pthreshold')" style="width: 250px;height: 50px;">PESQ (mos)</button>
   Frame:<input type = "text" id = "pnum" value = "30">
   Threshold:<input type = "text" id = "pthreshold" value = "2500">
-  Average:<input type = "text" id = "pesq_avg" value = "0">
 
-    <canvas id="chartgoogPESQ" width="400" height="100" style="display: none;"></canvas>
+    <canvas id="PESQChart" width="400" height="100" style="display: none;"></canvas>
 </div>
 
 
@@ -142,7 +132,7 @@
 <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="js/Chart-2.0.js"> </script>
 <script type="text/javascript" src="js/statAll.js"> </script>
-    <script language="JavaScript">
+    <!--script language="JavaScript">
       function getParameterByName(name) {
         name = name.replace(/[\[]/, '\\\[').replace(/[\]]/, '\\\]');
         var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
@@ -160,7 +150,7 @@
         runSocketIOSample();
       }
 
-    </script>
+    </script-->
 
 </body>
 </html>

@@ -11,23 +11,28 @@ import os
 this python scripts is used for read result folder
 '''
 folder = 'report'
+level  = 0
 try:
-   opts, args = getopt.getopt(sys.argv[1:],"h:f:",["help", "folder="])
+   opts, args = getopt.getopt(sys.argv[1:],"h:f:l:",["help", "folder=","level="])
+
+
 except getopt.GetoptError:
-   print 'error : listFolder.py -f <folder>'
+   print 'error : listFolder.py -f <folder> -l <level>'
    sys.exit(2)
 for opt, arg in opts:
-   if opt in ("-h", "--help"):
-      print 'listFolder.py -f <folder> \n'
+   if opt in ("-h","--help"):
+      print 'listFolder.py -f <folder> -l <level> \n'
    elif opt == '-f':
       folder = arg
+   elif opt == '-l':
+      level = int(arg)
    else:
       assert False, "unhandled option"
 
 for dirname, dirnames, filenames in os.walk(folder):
     # print path to all subdirectories first.
     #print (os.path.join(dirnames));
-    if dirname.count(os.sep) - folder.count(os.sep) == 0:
+    if dirname.count(os.sep) - folder.count(os.sep) == level:
         for subdirname in dirnames:
             print(os.path.join(dirname, subdirname))
 

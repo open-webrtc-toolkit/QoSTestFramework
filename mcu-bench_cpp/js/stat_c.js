@@ -25,28 +25,19 @@ function getQuality() {
                 var ctx = document.getElementById("chartQuality").getContext("2d");
                 var ctx2 = document.getElementById("chartQuality2").getContext("2d");
                 var psnrData = { labels: [], datasets: [ {
-                        label: "PSNR",
-                        fillColor: "rgba(151,187,205,0.5)",
-                        strokeColor: "rgba(151,187,205,1)",
-                        pointColor: "rgba(151,187,205,1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(151,187,205,1)",
-
-                        data: []
-                    }]};
-
+                label: "PSNR Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
+               }]};
                 var ssimData = { labels: [], datasets: [ {
-                        label: "SSIM",
-                        fillColor: "rgba(151,187,205,0.5)",
-                        strokeColor: "rgba(151,187,205,1)",
-                        pointColor: "rgba(151,187,205,1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(151,187,205,1)",
-                        data: []
-                    }]};
-
+                label: "SSIM Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
+               }]};
                 quality = quality.split(",");
                 console.log(quality);
                 var fnum = $("#qnum").val();
@@ -69,9 +60,74 @@ function getQuality() {
                 if(qChart != null) qChart.destroy();
                 if(qChart2 != null) qChart2.destroy();
                // if(qChart3 != null) qChart3.destroy();
-                qChart = new Chart(ctx).Line(psnrData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-                qChart2 = new Chart(ctx2).Line(ssimData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-               // qChart3 = new Chart(ctx3).Line(psData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+                //qChart = new Chart(ctx).Line(psnrData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+                qChart = Chart.Line(ctx, {
+                data: psnrData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'VMAF Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+                //qChart2 = new Chart(ctx2).Line(ssimData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+                qChart2 = Chart.Line(ctx, {
+                data: ssimData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'VMAF Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
             },
             error: function(jqXHR, textStatus, errorThrown){
                 alert('error : ' + textStatus + " " + errorThrown);
@@ -92,27 +148,19 @@ function getQuality() {
                 var ctx = document.getElementById("chartQuality").getContext("2d");
                 var ctx2 = document.getElementById("chartQuality2").getContext("2d");
                 var psnrData = { labels: [], datasets: [ {
-                        label: "PSNR",
-                        fillColor: "rgba(151,187,205,0.5)",
-                        strokeColor: "rgba(151,187,205,1)",
-                        pointColor: "rgba(151,187,205,1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(151,187,205,1)",
-
-                        data: []
-                    }]};
-
+                label: "PSNR Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
+               }]};
                 var ssimData = { labels: [], datasets: [ {
-                        label: "SSIM",
-                        fillColor: "rgba(151,187,205,0.5)",
-                        strokeColor: "rgba(151,187,205,1)",
-                        pointColor: "rgba(151,187,205,1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(151,187,205,1)",
-                        data: []
-                    }]};
+                label: "SSIM Chart",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
+               }]};
 
                 quality = quality.split("\n");
                 console.log(quality);
@@ -123,9 +171,6 @@ function getQuality() {
                     ssimData.labels.push(i/2);
                     psnrData.datasets[0].data.push(quality[i]);
                     ssimData.datasets[0].data.push(quality[i+1]);
-                    //psData.labels.push(quality[i+1]);
-                    //psData.labels.push(i/3);
-                    //psData.datasets[0].data.push(quality[i+2]);
                 }
 
                 if (div1.style.display == 'none') {div1.style.display = 'inline'};
@@ -135,8 +180,75 @@ function getQuality() {
                 if(qChart != null) qChart.destroy();
                 if(qChart2 != null) qChart2.destroy();
                // if(qChart3 != null) qChart3.destroy();
-                qChart = new Chart(ctx).Line(psnrData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-                qChart2 = new Chart(ctx2).Line(ssimData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+               // qChart = new Chart(ctx).Line(psnrData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+                //qChart2 = new Chart(ctx2).Line(ssimData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+                qChart = Chart.Line(ctx, {
+                data: psnrData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'VMAF Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+                //qChart2 = new Chart(ctx2).Line(ssimData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+                qChart2 = Chart.Line(ctx, {
+                data: ssimData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'VMAF Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
                // qChart3 = new Chart(ctx3).Line(psData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
             },
             error: function(jqXHR, textStatus, errorThrown){

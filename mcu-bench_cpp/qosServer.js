@@ -31,7 +31,8 @@ app.use(function(req, res, next) {
   }
 });
 
-icsREST.API.init('577cacfe3722a34c0f89bdcf', 'nmPHQ+qPuFbrBtG/cDZedRRcpgYAnS8RQXajYM7tZ6KixPmi2JLDak0wztsizwCleJewjwqPm6XEP+vVVKIGVR7n59Ge+GlIalX2dlI0ZqMpmBUbENZwNF9k7sasr39UPnCzv/UeIWFBblatBS/SzIFgT25A05+4gWicVr4HO8c=', 'http://localhost:3000/', true);
+//icsREST.API.init('577cacfe3722a34c0f89bdcf', 'nmPHQ+qPuFbrBtG/cDZedRRcpgYAnS8RQXajYM7tZ6KixPmi2JLDak0wztsizwCleJewjwqPm6XEP+vVVKIGVR7n59Ge+GlIalX2dlI0ZqMpmBUbENZwNF9k7sasr39UPnCzv/UeIWFBblatBS/SzIFgT25A05+4gWicVr4HO8c=', 'http://localhost:3000/', true);
+icsREST.API.init('5b86ddbad6a97b12aeef7a30', 'LvweCaCTaGKN6ttuirnA3vFfR73l4maS4kakkW9++MrIUqRaQ5jWkSi5V6i7GJQeVx0LYNK9+mlq3F+qlQ0Uh8yv9ow+REDr1plHhp//BRC8tcPDpz/AacA1P+KEGP47QjTsyqWEI/BGlRxDNbEQjy9ARhEpWv3kEEq+JETZIZA=', 'http://10.239.10.127:3000/', true);
 
 
 //N.API.rejectUnauthorizedCert(false);
@@ -114,7 +115,7 @@ app.get('/css/style.css', function(req,res){
     res.sendFile(__dirname + '/css/style.css');
 });
 
-app.get('/js/Chart.js', function(req,res){
+app.get('/js/Chart-2.0.js', function(req,res){
     res.sendFile(__dirname + '/js/Chart.js');
 });
 
