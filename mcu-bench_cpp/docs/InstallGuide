@@ -1,0 +1,62 @@
+# QOS Framework 
+## Introduction 
+QOS Framework is a test framework help you anlysis real-time video/audio quality
+
+## prepare test video
+please follow Readme_TestVideo to generate test video. It included two format video : raw stream and encoded stream.
+
+## prepare testing enviroment 
+1. To enable the deep learning module, you should recompile your OpenCV3.2 with opencv-contrib. The opencv-contrib is not a stable plugin, which changes API dramatically every week. The DNN API I use can neither fit the lastest opencv-contrib or 3.2 branch opencv-contrib. I put the both corresponding OpenCV3.2.zip and OpenCV_contrib.zip under the folder "dependency". Please follow the installation instructions online.
+
+2. To enable vmaf, cd to mcu-bench_cpp/dependency, unzip vmaf.zip, move it to mcu-bench_cpp/python and rename it as vmaf. please install all the requirements as instructed in https://github.com/Netflix/vmaf. Finally, cd to /vmaf and "make".
+
+### Testing steps######
+1. Install dependence and start QOS server.
+   + Install node.js
+    https://nodejs.org/en/download/
+   + Start QOS server 
+
+    ```
+     node qosServer.js
+    ```
+2. Sample with Open WebRTC Tookit server and Client.
+   # start MCU 
+      Download an mcu release package, unzip and change directory to /bin
+   (1) vim the start-all.sh and comment the app of the last line.
+   (2) run `./init-all.sh --deps` to install all mcu runtime dependencies and remember the Sample key and Sample ID.
+   (3) use command "./start-all.sh"
+  # start test client
+   Change directory to mcu-bench_cpp/QOStestclient.
+   (1) libs and include folders are put under `mcu-bench_cpp/dependency`, please unzip them and move to QOStestclient
+   (2) mkdir build and cd to build, run "cmake .." and "make"--- this steps only build on ubuntu 16 machine after 4.0 version. The binary will generated on out folder named as "woogeen_conf_sample"
+
+   # trigger testing useing automation scripts ######
+   There are sample scripts in scripts folder. Please refer h264.sh/vp8.sh in scripts folder.
+   Go to scripts folder, modify testing video file name, reference video file name and mcu conference room in h264.sh/vp8.sh 
+ 
+
+3. Result analysis and comparsion 
+  you can visit https://localhost:4004 or http://localhost:4002 to get visual result for each indicators.
+
+  you can also visit https://<qosServerAddress>:4004/rtcmcubench_summary.html to get comparsion result for each indicators.
+
+## network emulator module
+# we use ipfw as our network emulator, perfer use 3.16.0-71-generic kernel ##
+   (1) install ipfw/dummynet module in your gateway/client/server machine.
+    http://manpages.ubuntu.com/manpages/trusty/man4/dummynet.4freebsd.html
+    http://manpages.ubuntu.com/manpages/trusty/man4/ipaccounting.4freebsd.html
+    make sure run follwing scripts is works 
+    sudo ipfw list 
+
+   (2) run the scripts
+   Go to network_emulator folder , command.sh will show you how to use this module.
+   e.g 
+   sudo python ./emulate.py -p 11 --target-ip=192.168.2.3 --set-way=outgoing
+                               ^the 11th rules in network_emulator.py
+                                            ^ target ip address is 192.168.3.2
+                                                                ^ set rules on outgoing way
+
+
+
+### Docker usage
+Please refer to Readme_docker for details.

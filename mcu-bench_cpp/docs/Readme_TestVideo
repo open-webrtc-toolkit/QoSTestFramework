@@ -32,7 +32,7 @@ How to generate encoded file
 1. Go to webrtc-webrtc-qa/mcu-bench_cpp/videoGenerateScripts
 use mkMCUTestStream_tag_key.py to generate vp8/h264 codec mkv file 
 e.g genStreams.sh
-./mkMCUTestStream_tag_key.py -w 1280 -h  720 -b 2000 -o 1280x720-framerate30-bitrate1000k.mkv -v vp8 $stream
+./mkMCUTestStream.py -w 1280 -h  720 -b 2000 -o 1280x720-framerate30-bitrate1000k.mkv -v vp8 $stream
 It will generate 1280x720-framerate30-bitrate1000k.mkv file.
 2. use genTestStream to insert tag and key frame information in mkv file
 e.g run.sh

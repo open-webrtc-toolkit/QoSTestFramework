@@ -22,4 +22,3 @@ We have several tools.
 
 
 ***
-Any questions, please contact Zhenchao Gan via zhenchao.gan@intel.com

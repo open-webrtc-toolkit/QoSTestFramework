@@ -1,6 +1,6 @@
 #! /usr/bin/python
 
-# @author       jianhui.j.dai@intel.com
+# @author       jianhui.j.dai@intel.com,yanbin.zhang@intel.com
 # @brief
 # @version      0.1
 # @date         2015/01/23
@@ -31,7 +31,7 @@ def PrintUsage():
     print "      -g"
     print "          specify output gop, default 30"
     print "      -v"
-    print "          specify output format, default h264"
+    print "          specify output format (vp8, vp9, h264,h265), default h264"
     print ""
     print "  Sample: "
     print ""
@@ -47,7 +47,6 @@ def getBufSize(bitrate):
 
 def extraceBitSreamH264(inputFile, o_width, o_height, o_framerate, o_bitrate, o_gop, o_file):
     cmd = 'ffmpeg -y -i ' + inputFile \
-        + ' -ss 0:0:0 -t 2' \
         + ' -c:v libx264 ' \
         + ' -g ' + o_gop \
         + ' -b:v ' + o_bitrate + ' -minrate ' + o_bitrate + ' -maxrate ' + o_bitrate + ' -bufsize ' + getBufSize(o_bitrate) \
@@ -56,6 +55,27 @@ def extraceBitSreamH264(inputFile, o_width, o_height, o_framerate, o_bitrate, o_
         + ' -movflags +faststart -vcodec h264 -profile:v baseline -level 3.0 -vbsf h264_mp4toannexb -f h264 ' \
         + o_file
 
+    #        + ' -ss 0:0:0 -t 2' \
+    print cmd
+
+    stream = os.popen(cmd)
+    lines = stream.readlines()
+
+    #sys.exit(1)
+
+    return
+
+def extraceBitSreamH265(inputFile, o_width, o_height, o_framerate, o_bitrate, o_gop, o_file):
+    cmd = 'ffmpeg -y -i ' + inputFile \
+        + ' -c:v libx265 ' \
+        + ' -g ' + o_gop \
+        + ' -b:v ' + o_bitrate + ' -minrate ' + o_bitrate + ' -maxrate ' + o_bitrate + ' -bufsize ' + getBufSize(o_bitrate) \
+        + ' -framerate ' + o_framerate \
+        + ' -s ' + o_width + 'x' + o_height \
+        + ' -vcodec hevc -vbsf hevc_mp4toannexb -f hevc ' \
+        + o_file
+
+    #        + ' -ss 0:0:0 -t 2' \
     print cmd
 
     stream = os.popen(cmd)
@@ -81,12 +101,17 @@ def tagSkip57(input):
     return output;
 
 
-def mkH264(g_output, g_input, g_width, g_height,
-           g_framerate, g_bitrate, g_gop, g_rawBSFile):
-
-    extraceBitSreamH264(g_input, g_width, g_height,
-                        g_framerate, g_bitrate, g_gop, g_rawBSFile)
-
+def mkH26x(g_output, g_input, g_width, g_height,
+           g_framerate, g_bitrate, g_gop, g_rawBSFile,codec):
+    if codec == "h264":
+        extraceBitSreamH264(g_input, g_width, g_height,
+                     g_framerate, g_bitrate, g_gop, g_rawBSFile)
+    else:
+        print "extrace H265"
+        extraceBitSreamH265(g_input, g_width, g_height,
+                     g_framerate, g_bitrate, g_gop, g_rawBSFile)
+       
+'''
     if not os.path.exists(g_rawBSFile):
         print '*' * 10
         print 'Error:', 'Can not extract bitstream'
@@ -143,9 +168,9 @@ def mkH264(g_output, g_input, g_width, g_height,
 
     f_output.close()
     print "Write ", frameNum-1, " frame...Done"
+'''
 
-
-def extraceBitSreamVP8(inputFile, o_width, o_height, o_framerate, o_bitrate, o_gop, o_file):
+def extraceBitSreamVPx(inputFile, o_width, o_height, o_framerate, o_bitrate, o_gop, o_file, codec):
     cmd = 'ffmpeg -y -i ' + inputFile \
         + ' -threads 8 ' \
         + ' -c:v libvpx ' \
@@ -153,7 +178,7 @@ def extraceBitSreamVP8(inputFile, o_width, o_height, o_framerate, o_bitrate, o_g
         + ' -b:v ' + o_bitrate + ' -minrate ' + o_bitrate + ' -maxrate ' + o_bitrate + ' -bufsize ' + getBufSize(o_bitrate) \
         + ' -framerate ' + o_framerate \
         + ' -s ' + o_width + 'x' + o_height \
-        + ' -movflags +faststart -vcodec vp8 -f ivf ' \
+        + ' -movflags +faststart -vcodec ' + codec + ' ' \
         + o_file
 
     print cmd
@@ -183,12 +208,12 @@ bytes 12..   frame data
 '''
 
 
-def mkVP8(g_output, g_input, g_width, g_height,
-          g_framerate, g_bitrate, g_gop, g_rawBSFile):
+def mkVPx(g_output, g_input, g_width, g_height,
+          g_framerate, g_bitrate, g_gop, g_rawBSFile, codec):
 
-    extraceBitSreamVP8(g_input, g_width, g_height,
-                       g_framerate, g_bitrate, g_gop, g_rawBSFile)
-
+    extraceBitSreamVPx(g_input, g_width, g_height,
+                       g_framerate, g_bitrate, g_gop, g_rawBSFile, codec)
+'''
     if not os.path.exists(g_rawBSFile):
         print '*' * 10
         print 'Error:', 'Can not extract bitstream'
@@ -204,8 +229,8 @@ def mkVP8(g_output, g_input, g_width, g_height,
     size = f.tell()
     # print size
 
-    f.close()
-
+    f.close()'''
+'''
     if os.path.exists(g_rawBSFile):
         os.remove(g_rawBSFile)
 
@@ -243,7 +268,7 @@ def mkVP8(g_output, g_input, g_width, g_height,
     f_output.close()
 
     print "Write ", frameNum-1, " frame...Done"
-
+'''
 
 def main(argv):
     try:
@@ -273,7 +298,7 @@ def main(argv):
 
     for option, value in options:
         if option == "-o":
-            g_output = value
+            g_rawBSFile = value
         elif option == "-w":
             g_width = str(value)
         elif option == "-h":
@@ -298,10 +323,15 @@ def main(argv):
 
     if g_format == 'h264':
         g_suffix = '.h624'
-        g_rawBSFile = '.tmp.h264'
+        #g_rawBSFile = '.tmp.h264'
     elif g_format == 'vp8':
         g_suffix = '.vp8'
-        g_rawBSFile = '.tmp.ivf'
+        #g_rawBSFile = '640x480-framerate30-bitrate1000k.mkv'
+    elif g_format == 'vp9':
+        g_suffix = '.vp9'
+        #g_rawBSFile = '640x480-framerate30-bitrate1000k.mkv'
+    elif g_format == 'h265':
+        g_suffix = '.h265'
     else:
         print '*' * 10
         print 'Error:', 'Invalid format, ', g_format
@@ -316,13 +346,19 @@ def main(argv):
         os.remove(g_rawBSFile)
 
     if g_format == 'h264':
-        mkH264(g_output, g_input, g_width, g_height, g_framerate, g_bitrate,
-               g_gop, g_rawBSFile)
-    else:
-        mkVP8(g_output, g_input, g_width, g_height,
-              g_framerate, g_bitrate, g_gop, g_rawBSFile)
+        mkH26x(g_output, g_input, g_width, g_height, g_framerate, g_bitrate,
+               g_gop, g_rawBSFile,'h264')
+    elif g_format == 'h265':
+        mkH26x(g_output, g_input, g_width, g_height, g_framerate, g_bitrate,
+               g_gop, g_rawBSFile,'h265')
+    elif g_format == 'vp8':
+        mkVPx(g_output, g_input, g_width, g_height,
+              g_framerate, g_bitrate, g_gop, g_rawBSFile, 'vp8')
+    elif g_format == 'vp9':
+        mkVPx(g_output, g_input, g_width, g_height,
+              g_framerate, g_bitrate, g_gop, g_rawBSFile, 'vp9')
 
-    print "Generate Done: " + g_output
+    print "Generate Done: " + g_rawBSFile
 
 
 if __name__ == '__main__':

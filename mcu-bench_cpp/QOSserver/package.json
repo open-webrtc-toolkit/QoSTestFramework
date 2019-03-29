@@ -1,8 +1,8 @@
 {
-  "name": "mcu-bench",
+  "name": "QOS-framework",
   "version": "1.0.0",
-  "description": "the mcu testbench project, based on WebrtcBench",
-  "main": "basicServer.js",
+  "description": "realtime video/audio quality testbench project",
+  "main": "qosServer.js",
   "dependencies": {
     "body-parser": "^1.13.2",
     "morgan": "^1.6.1",
@@ -18,8 +18,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "mcu-bench"
+    "qos testbench"
   ],
-  "author": "Dongbin Cheng, Jianlin Qiu",
+  "author": "Jianlin Qiu,yanbin zhang",
   "license": "ISC"
 }
