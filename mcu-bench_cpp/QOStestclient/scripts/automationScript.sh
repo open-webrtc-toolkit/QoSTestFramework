@@ -13,37 +13,37 @@ originFilename="./native/video/$originVideo"
 if [[ $originVideo =~ .*yuv ]]
 then
    echo "origin video is yuv file", $originVideo
-   ./native/iq_yuv ${rawFilename} ${originFilename} ${resolution}
+   ./analysis/native/iq_yuv ${rawFilename} ${originFilename} ${resolution}
 else
    echo "orgin video is avi file", $originVideo
-   ./native/iq_avi ${rawFilename} ${originFilename} ${resolution}
+   ./analysis/native/iq_avi ${rawFilename} ${originFilename} ${resolution}
 fi
 #quality testing for vmaf
-python python/vmaf_calculate.py
+python analysis/python/vmaf_calculate.py
 
 #quality testing for no-reference video
-python python/NR_calculate.py
+python analysis/python/NR_calculate.py
 
 #jitter
-rTagFilename="./native/Data/localLatency.txt";
-./native/FLR ${rTagFilename}
+rTagFilename="./analysis/native/Data/localLatency.txt";
+./analysis/native/FLR ${rTagFilename}
 
 #latency
-sTagFilename="./native/Data/localPublishTime.txt"
-rTagFilename="./native/Data/localLatency.txt"
-./native/latency ${sTagFilename} ${rTagFilename}
+sTagFilename="./analysis/native/Data/localPublishTime.txt"
+rTagFilename="./analysis/native/Data/localLatency.txt"
+./analysis/native/latency ${sTagFilename} ${rTagFilename}
 
 #fps
-fpsFilename="./native/Data/localFPS.txt"
-./native/fps ${fpsFilename}
+fpsFilename="./analysis/native/Data/localFPS.txt"
+./analysis/native/fps ${fpsFilename}
 
 #bitrate
-bitrateFilename="./native/Data/localBitrate.txt"
-./native/bitrate ${bitrateFilename}
+bitrateFilename="./analysis/native/Data/localBitrate.txt"
+./analysis/native/bitrate ${bitrateFilename}
 
 if [ ! -d "report/${currentScenario}" ]; then
    mkdir report/${currentScenario}
 else
    rm -rf report/${currentScenario}/*
 fi
-mv ./native/output/* ./report/${currentScenario}
+mv ./analysis/native/output/* ./analysis/report/${currentScenario}
