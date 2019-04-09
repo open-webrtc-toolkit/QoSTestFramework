@@ -56,14 +56,6 @@ app.get('/public/jquery-3.2.1.min.js', function(req,res){
 app.get('/public/index.js', function(req,res){
     res.sendFile(__dirname + '/public/index.js');
 });
-/*
-app.get('/css/style.css', function(req,res){
-    res.sendFile(__dirname + '/css/style.css');
-});*/
-
-app.get('/js/Chart.js', function(req,res){
-    res.sendFile(__dirname + '/js/Chart.js');
-});
 
 app.get('/js/stat.js', function(req,res){
     res.sendFile(__dirname + '/js/stat.js');
