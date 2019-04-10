@@ -41,10 +41,10 @@ vector<pair<unsigned long long, unsigned int> > datas;
 
 int main(int argc, char *argv[])
 {
-    string rec_timestamp = "./native/Data/rec_timestamp.txt";
+    string rec_timestamp = "../dataset/Data/rec_timestamp.txt";
     ofstream receive_timestamp(rec_timestamp.c_str());
     ifstream received_video(argv[1]);
-    ofstream jitter_out("./native/output/jitter.txt");
+    ofstream jitter_out("../dataset/output/jitter.txt");
     receive_timestamp<<",";
 
     int height = tagsize;
@@ -245,8 +245,8 @@ int test_on_single_photo_dl(Mat img)
 {
     cv::dnn::initModule();  //Required if OpenCV is built as static libs
 
-    String modelTxt = "./native/ml/deploy.prototxt";
-    String modelBin = "./native/ml/lenet_iter_10000.caffemodel";
+    String modelTxt = "./ml/deploy.prototxt";
+    String modelBin = "./ml/lenet_iter_10000.caffemodel";
     Net net = dnn::readNetFromCaffe(modelTxt, modelBin);
     if (net.empty())
     {

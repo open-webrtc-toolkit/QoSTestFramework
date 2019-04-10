@@ -63,9 +63,9 @@ int main(int argc, char *argv[])
     }
 
     ifstream received_video(argv[1]);
-    ofstream psnr_out("./native/output/psnr.txt");
-    ofstream ssim_out("./native/output/ssim.txt");
-    ofstream quality_out("./native/output/quality.txt");
+    ofstream psnr_out("../dataset/output/psnr.txt");
+    ofstream ssim_out("../dataset/output/ssim.txt");
+    ofstream quality_out("../dataset/output/quality.txt");
     std::string res(argv[3]);
     if (res.find("1080") != std::string::npos) {
         video_width = 1920;
@@ -77,8 +77,8 @@ int main(int argc, char *argv[])
         video_width = 640;
         video_height = 480;
     }else{
-        video_width = 320;
-        video_height = 240;
+        video_width = 540;
+        video_height = 360;
     } 
     if(!received_video)
     {
@@ -156,8 +156,8 @@ int main(int argc, char *argv[])
 //////////////////////////////////////////////////////////Load data ////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    FILE* recyuv = fopen("./native/output/rec.yuv","w");
-    FILE* sendyuv = fopen("./native/output/send.yuv","w");
+    FILE* recyuv = fopen("../dataset/output/rec.yuv","w");
+    FILE* sendyuv = fopen("../dataset/output/send.yuv","w");
     initLookupTable();
 
     //ofstream receive_timestamp("./native/Data/receive_timestamp.txt");
@@ -369,8 +369,8 @@ int test_on_single_photo_dl(Mat img)
 {
     cv::dnn::initModule();  //Required if OpenCV is built as static libs
 
-    String modelTxt = "./native/ml/deploy.prototxt";
-    String modelBin = "./native/ml/lenet_iter_10000.caffemodel";
+    String modelTxt = "./ml/deploy.prototxt";
+    String modelBin = "./ml/lenet_iter_10000.caffemodel";
     Net net = dnn::readNetFromCaffe(modelTxt, modelBin);
     if (net.empty())
     {

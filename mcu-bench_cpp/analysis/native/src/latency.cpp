@@ -56,7 +56,7 @@ void help()
 
 int main(int argc, char** argv)
 {
-    string rec_timestamp = "./native/Data/rec_timestamp.txt";
+    string rec_timestamp = "../dataset/Data/rec_timestamp.txt";
     ofstream receive_timestamp(rec_timestamp.c_str());
     ifstream received_video(argv[2]);
     receive_timestamp<<",";
@@ -185,7 +185,7 @@ int main(int argc, char** argv)
     receive_timestamp.close();
     ifstream send_tag(argv[1]);
     ifstream recv_tag(rec_timestamp.c_str());
-    ofstream latency_out("./native/output/latency.txt");
+    ofstream latency_out("../dataset/output/latency.txt");
 
     int tag_s(0);
     long timestamp_s(0);
@@ -274,8 +274,8 @@ int test_on_single_photo_dl(Mat img)
 {
     cv::dnn::initModule();  //Required if OpenCV is built as static libs
 
-    String modelTxt = "./native/ml/deploy.prototxt";
-    String modelBin = "./native/ml/lenet_iter_10000.caffemodel";
+    String modelTxt = "./ml/deploy.prototxt";
+    String modelBin = "./ml/lenet_iter_10000.caffemodel";
     Net net = dnn::readNetFromCaffe(modelTxt, modelBin);
     if (net.empty())
     {

@@ -1,6 +1,5 @@
 import os
 import subprocess as sp
-from string import atoi
 '''
 os.system("rm send.yuv 1>/dev/null")
 os.system("rm rec.yuv 1>/dev/null")
@@ -14,12 +13,12 @@ p = sp.call('ffmpeg -i native/output/receive/%d.tiff -s 1280x720 -pix_fmt yuv420
 p = sp.call('ffmpeg -i native/output/send/%d.tiff -s 1280x720 -pix_fmt yuv420p python/send.yuv', shell=True, stdout=sp.PIPE, stderr=sp.STDOUT)
 '''
 
-cmd = "./analysis/python/vmaf/run_vmaf"
-ref1 = "analysis/native/output/send.yuv"
-ref2 = "analysis/native/output/rec.yuv"
+cmd = "./vmaf/run_vmaf"
+ref1 = "../dataset/output/send.yuv"
+ref2 = "../dataset/output/rec.yuv"
 fmt = "yuv420p"
-width = "1280"
-height = "720"
+width = "540"
+height = "360"
 out = "--out-fmt.json"
 
 cmd_string = cmd + " " + fmt + " " + width + " " + height + " " + ref1 + " " + ref2 + " " + out
@@ -32,12 +31,12 @@ output = out.readlines()
 
 
 VMAF_score = []
-f = open('./analysis/native/output/VMAF_score', 'w')
+f = open('../dataset/output/VMAF_score', 'w')
 for frame in output:
     if frame[0:5] == "Frame":
         pos = frame.find("VMAF_score:")
         if pos != -1:
-            print frame[pos+11:].strip('\n')
+            print( frame[pos+11:].strip('\n'))
             f.write(frame[pos+11:].strip('\n'))
             f.write(',')
             VMAF_score.append(frame[pos+11:].strip('\n'))

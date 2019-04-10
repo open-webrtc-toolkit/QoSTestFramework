@@ -8,26 +8,26 @@ from itertools import islice
 
 #os.popen("ffmpeg -i ../../native/output/receive/%d.tiff -s 1280x720 -pix_fmt yuv420p ../../native/output/receive/rec.yuv")
 #os.popen("ffmpeg -i ../../native/output/send/%d.tiff -s 1280x720 -pix_fmt yuv420p ../../native/output/send/send.yuv")
-cmd = "./python/mitsu/mitsuLinuxMultithread" 
+cmd = "./mitsu/mitsuLinuxMultithread" 
 '''
 yuv = "test_black_mosaic_1280*1024.yuv " 
 width = "1280 "
 height = "1024"
 '''
-yuv = "native/output/rec.yuv" 
-width = "1280"
-height = "720"
+yuv = "../dataset/output/rec.yuv" 
+width = "540"
+height = "360"
 #os.popen("rm python/mitsu/metricsResultsCSV.txt")
 output = os.popen(cmd + " " + yuv + " " + width + " " + height, "r")
 output.read()
 f = open("metricsResultsCSV.txt")
-Blockiness_output = open('./native/output/Blockiness_score', 'w')
-Blockloss_output = open('./native/output/Blockloss_score', 'w')
-Blur_output = open('./native/output/Blur_score', 'w')
-Noise_output = open('./native/output/Noise_score', 'w')
-Freezing_output = open('./native/output/Freezing_score', 'w')
-Interlace_output = open('./native/output/Interlace_score', 'w')
-NR_output = open('./native/output/NR_score', 'w')
+Blockiness_output = open('../dataset/output/Blockiness_score', 'w')
+Blockloss_output = open('../dataset/output/Blockloss_score', 'w')
+Blur_output = open('../dataset/output/Blur_score', 'w')
+Noise_output = open('../dataset/output/Noise_score', 'w')
+Freezing_output = open('../dataset/output/Freezing_score', 'w')
+Interlace_output = open('../dataset/output/Interlace_score', 'w')
+NR_output = open('../dataset/output/NR_score', 'w')
 lines = f.readlines()
 f.close()
 os.popen("rm metricsResultsCSV.txt")
@@ -57,12 +57,12 @@ for frame in list_line:
     Flickering = frame[15]
 
     #print "\n" + "Frame:" + ID
-    print Blockiness
-    print Blockloss
-    print Blur
-    print Noise
-    print Interlace  
-    print Freezing
+    print( Blockiness)
+    print( Blockloss)
+    print( Blur)
+    print( Noise)
+    print( Interlace)  
+    print( Freezing)
     NR_output.write(Blockiness.strip(' '))
     NR_output.write(',')
     NR_output.write(Blockloss.strip(' '))

@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 
     int v(0);
     char c;
-    ofstream of("./native/output/bitrate.txt");
+    ofstream of("../dataset/output/bitrate.txt");
 
     send_tag>>c;
     for(;;)
