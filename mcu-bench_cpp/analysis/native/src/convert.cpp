@@ -10,6 +10,8 @@
 #include <opencv2/highgui/highgui.hpp>  // OpenCV window I/O
 #include <opencv2/ml/ml.hpp>
 
+#include <unistd.h>
+
 using namespace std;
 using namespace cv;
 
@@ -33,9 +35,15 @@ int main(int argc, char **argv)
         help();
         return -1;
     }
-    
-    namedWindow(WIN_RF, CV_WINDOW_AUTOSIZE);
-    cvMoveWindow(WIN_RF, 400       , 0);
+
+    char old_cwd[4096] = {0};
+    getcwd(old_cwd, 4096);
+    string run_path = argv[0];
+    string path = run_path.substr(0, run_path.rfind('/'));
+    chdir(path.c_str());
+
+    namedWindow(WIN_RF, WINDOW_AUTOSIZE);
+    moveWindow(WIN_RF, 400       , 0);
 
     const string inputVideoName = argv[1];
     int owidth = atoi(argv[3]);
@@ -44,30 +52,30 @@ int main(int argc, char **argv)
     int frameNum = -1;          // Frame counter
 
     VideoCapture inputVideo(inputVideoName);
-    
+
     string::size_type pAt = inputVideoName.find_last_of('.');
     const string name = argv[2];
-    int ex = static_cast<int>(inputVideo.get(CV_CAP_PROP_FOURCC));
+    int ex = static_cast<int>(inputVideo.get(CAP_PROP_FOURCC));
 
     if (!inputVideo.isOpened())
     {
         cout  << "Could not open reference " << inputVideoName << endl;
         return -1;
     }
-    
-    Size refS = Size((int) inputVideo.get(CV_CAP_PROP_FRAME_WIDTH),
-                     (int) inputVideo.get(CV_CAP_PROP_FRAME_HEIGHT));
-                     
+
+    Size refS = Size((int) inputVideo.get(CAP_PROP_FRAME_WIDTH),
+                     (int) inputVideo.get(CAP_PROP_FRAME_HEIGHT));
+
     char EXT[] = {(char)(ex & 0xff), (char)((ex & 0xff00) >> 8), (char)((ex & 0xff0000) >> 16), (char)((ex & 0xff000000) >> 24), 0};
 
     cout << "input video frame resolution: Width=" << refS.width << "  Height=" << refS.height
-         << " of nr#: " << inputVideo.get(CV_CAP_PROP_FRAME_COUNT) << endl;
+         << " of nr#: " << inputVideo.get(CAP_PROP_FRAME_COUNT) << endl;
 
     Mat _frameReference, frameReference;
 
     VideoWriter output;
 cout << name << endl;
-    int fcc = CV_FOURCC('I','4','2','0');
+    int fcc = VideoWriter::fourcc('I','4','2','0');
     output.open("./output/"+name, fcc, 30, Size(owidth, oheight), true);
 
     if (!output.isOpened())
@@ -101,8 +109,11 @@ cout << name << endl;
         imshow(WIN_RF, frameReference);
         //imshow(WIN_UT, frameUnderTest);
 
-        char c = (char)cvWaitKey(33);
+        char c = (char)waitKey(33);
         if (c == 27) break;
     }
+
+    chdir(old_cwd);
+
     return 0;
 }

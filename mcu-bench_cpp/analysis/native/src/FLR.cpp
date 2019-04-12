@@ -41,6 +41,12 @@ vector<pair<unsigned long long, unsigned int> > datas;
 
 int main(int argc, char *argv[])
 {
+    char old_cwd[4096] = {0};
+    getcwd(old_cwd, 4096);
+    string run_path = argv[0];
+    string path = run_path.substr(0, run_path.rfind('/'));
+    chdir(path.c_str());
+
     string rec_timestamp = "../dataset/Data/rec_timestamp.txt";
     ofstream receive_timestamp(rec_timestamp.c_str());
     ifstream received_video(argv[1]);
@@ -221,13 +227,15 @@ int main(int argc, char *argv[])
           cout << abs((datas[i].first - datas[i-1].first)/(inter)) << endl;//what's INTERVAL?
           jitter_out << abs((datas[i].first - datas[i-1].first)/(inter));//what's INTERVAL?
           }
-            
+
   //          cout << abs(datas[i].first - datas[i-1].first - INTERVAL) << endl;//what's INTERVAL?
     //  }
             //jitter_out << abs(datas[i].first - datas[i-1].first - INTERVAL);
             jitter_out << ",";
     //  }
     }
+
+    chdir(old_cwd);
 
     return 0;
 
@@ -243,7 +251,7 @@ void getMaxClass(const Mat &probBlob, int *classId, double *classProb)
 
 int test_on_single_photo_dl(Mat img)
 {
-    cv::dnn::initModule();  //Required if OpenCV is built as static libs
+    // cv::dnn::initModule();  //Required if OpenCV is built as static libs
 
     String modelTxt = "./ml/deploy.prototxt";
     String modelBin = "./ml/lenet_iter_10000.caffemodel";
@@ -263,9 +271,9 @@ int test_on_single_photo_dl(Mat img)
     resize(img, img, Size(28, 28));        //GoogLeNet accepts only 224x224 RGB-images
     //Convert Mat to batch of images
     Mat inputBlob = blobFromImage(img);
-    net.setBlob(".data", inputBlob);        //set the network input
-    net.forward();                          //compute output
-    Mat prob = net.getBlob("prob");   //gather output of "prob" layer
+    net.setInput(inputBlob);        //set the network input
+    Mat prob = net.forward();                          //compute output
+    // Mat prob = net.getBlob("prob");   //gather output of "prob" layer
     int classId;
     double classProb;
     getMaxClass(prob, &classId, &classProb);//find the best class

@@ -1,20 +1,24 @@
 # http://vq.kt.agh.edu.pl//metrics.html
-# yonghao.zhao@intel.com
-# 2017.6.1
 
 import os
+import os.path
 from string import atoi
 from itertools import islice
 
 #os.popen("ffmpeg -i ../../native/output/receive/%d.tiff -s 1280x720 -pix_fmt yuv420p ../../native/output/receive/rec.yuv")
 #os.popen("ffmpeg -i ../../native/output/send/%d.tiff -s 1280x720 -pix_fmt yuv420p ../../native/output/send/send.yuv")
-cmd = "./mitsu/mitsuLinuxMultithread" 
+
+old_cwd = os.getcwd()
+targ_cwd = os.path.dirname(os.path.abspath(__file__))
+os.chdir(targ_cwd)
+
+cmd = "./mitsu/mitsuLinuxMultithread"
 '''
-yuv = "test_black_mosaic_1280*1024.yuv " 
+yuv = "test_black_mosaic_1280*1024.yuv "
 width = "1280 "
 height = "1024"
 '''
-yuv = "../dataset/output/rec.yuv" 
+yuv = "../dataset/output/rec.yuv"
 width = "540"
 height = "360"
 #os.popen("rm python/mitsu/metricsResultsCSV.txt")
@@ -61,7 +65,7 @@ for frame in list_line:
     print( Blockloss)
     print( Blur)
     print( Noise)
-    print( Interlace)  
+    print( Interlace)
     print( Freezing)
     NR_output.write(Blockiness.strip(' '))
     NR_output.write(',')
@@ -122,3 +126,5 @@ Blur_output.close()
 Interlace_output.close()
 Noise_output.close()
 Freezing_output.close()
+
+os.chdir(old_cwd)

@@ -9,6 +9,8 @@
 #include <opencv2/highgui.hpp>  // OpenCV window I/O
 #include <opencv2/ml.hpp>
 
+#include <unistd.h>
+
 using namespace std;
 using namespace cv;
 using namespace cv::ml;
@@ -40,9 +42,15 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    char old_cwd[4096] = {0};
+    getcwd(old_cwd, 4096);
+    string run_path = argv[0];
+    string path = run_path.substr(0, run_path.rfind('/'));
+    chdir(path.c_str());
+
     ifstream send_tag(argv[1]);
     //ifstream recv_tag(argv[2]);
-    
+
     if(!send_tag)
     {
         cout << "can't not open file" << endl;
@@ -73,5 +81,8 @@ int main(int argc, char *argv[])
     }
 
     of.close();
+
+    chdir(old_cwd);
+
     return 0;
 }

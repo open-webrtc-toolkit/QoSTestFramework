@@ -36,7 +36,7 @@ int video_height;
 class VIFP{
 public:
     static const int NLEVS = 4;
-    static const float SIGMA_NSQ = 2.0f;
+    static const float SIGMA_NSQ; //= 2.0f;
     float compute(const cv::Mat& original, const cv::Mat& processed);
     void computeVIFP(const cv::Mat& ref, const cv::Mat& dist, int N, double& num, double& den);
     void applyGaussianBlur(const cv::Mat& src, cv::Mat& dst, int ksize, double sigma);
@@ -61,6 +61,12 @@ int main(int argc, char *argv[])
         help();
         return -1;
     }
+
+    char old_cwd[4096] = {0};
+    getcwd(old_cwd, 4096);
+    string run_path = argv[0];
+    string path = run_path.substr(0, run_path.rfind('/'));
+    chdir(path.c_str());
 
     ifstream received_video(argv[1]);
     ofstream psnr_out("../dataset/output/psnr.txt");
@@ -102,8 +108,8 @@ int main(int argc, char *argv[])
     map<int, Mat> originImages;
 
     const char* WIN_RF = "Reference";
-    namedWindow(WIN_RF, CV_WINDOW_AUTOSIZE);
-    cvMoveWindow(WIN_RF, 400       , 0);
+    namedWindow(WIN_RF, WINDOW_AUTOSIZE);
+    moveWindow(WIN_RF, 400       , 0);
 
     int v(0);
     unsigned int r, g, b;
@@ -338,7 +344,7 @@ int main(int argc, char *argv[])
             ssim_out << ",";
             Mat sendyuvtemp;
             unsigned char* pYuvBuf = new unsigned char[width*height*3/2];
-            cvtColor(originImages[framenum2],sendyuvtemp, CV_BGR2YUV_I420);
+            cvtColor(originImages[framenum2],sendyuvtemp, COLOR_BGR2YUV_I420);
             memcpy(pYuvBuf, sendyuvtemp.data, width*height*3/2*sizeof(unsigned char));
             fwrite(pYuvBuf, 1, width*height*3/2*sizeof(unsigned char), sendyuv);
             delete[] pYuvBuf;
@@ -354,6 +360,9 @@ int main(int argc, char *argv[])
     received_video.close();
     psnr_out.close();
     ssim_out.close();
+
+    chdir(old_cwd);
+
     return 0;
 }
 
@@ -367,7 +376,7 @@ void getMaxClass(const Mat &probBlob, int *classId, double *classProb)
 
 int test_on_single_photo_dl(Mat img)
 {
-    cv::dnn::initModule();  //Required if OpenCV is built as static libs
+    // cv::dnn::initModule();  //Required if OpenCV is built as static libs
 
     String modelTxt = "./ml/deploy.prototxt";
     String modelBin = "./ml/lenet_iter_10000.caffemodel";
@@ -387,9 +396,8 @@ int test_on_single_photo_dl(Mat img)
     resize(img, img, Size(28, 28));        //GoogLeNet accepts only 224x224 RGB-images
     //Convert Mat to batch of images
     Mat inputBlob = blobFromImage(img);
-    net.setBlob(".data", inputBlob);        //set the network input
-    net.forward();                          //compute output
-    Mat prob = net.getBlob("prob");   //gather output of "prob" layer
+    net.setInput(inputBlob);        //set the network input
+    Mat prob = net.forward();//gather output of "prob" layer
     int classId;
     double classProb;
     getMaxClass(prob, &classId, &classProb);//find the best class
@@ -472,6 +480,8 @@ Scalar getMSSIM( const Mat& i1, const Mat& i2)
     Scalar mssim = mean(ssim_map);   // mssim = average of ssim map
     return mssim;
 }
+
+const float VIFP::SIGMA_NSQ = 2.0f;
 
 float VIFP::compute(const cv::Mat& original, const cv::Mat& processed)
 {

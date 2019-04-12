@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <opencv2/core.hpp>        // Basic OpenCV structures (cv::Mat, Scalar)
+#include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>  // Gaussian Blur
 #include <opencv2/highgui.hpp>  // OpenCV window I/O
 #include <opencv2/ml.hpp>
@@ -56,8 +57,8 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    namedWindow(WIN_RF, CV_WINDOW_AUTOSIZE);
-    cvMoveWindow(WIN_RF, 400       , 0);
+    namedWindow(WIN_RF, WINDOW_AUTOSIZE);
+    moveWindow(WIN_RF, 400       , 0);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// generate tag images ///////////////////////////////////////////////////////////////////
@@ -113,7 +114,7 @@ int main(int argc, char **argv)
 
     string::size_type pAt = inputVideoName.find_last_of('.');
     const string name = argv[2];
-    int ex = static_cast<int>(inputVideo.get(CV_CAP_PROP_FOURCC));
+    int ex = static_cast<int>(inputVideo.get(CAP_PROP_FOURCC));
 
     if (!inputVideo.isOpened())
     {
@@ -121,18 +122,18 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    Size refS = Size((int) inputVideo.get(CV_CAP_PROP_FRAME_WIDTH),
-                     (int) inputVideo.get(CV_CAP_PROP_FRAME_HEIGHT));
+    Size refS = Size((int) inputVideo.get(CAP_PROP_FRAME_WIDTH),
+                     (int) inputVideo.get(CAP_PROP_FRAME_HEIGHT));
 
     char EXT[] = {(char)(ex & 0xff), (char)((ex & 0xff00) >> 8), (char)((ex & 0xff0000) >> 16), (char)((ex & 0xff000000) >> 24), 0};
 
     cout << "input video frame resolution: Width=" << refS.width << "  Height=" << refS.height
-         << " of nr#: " << inputVideo.get(CV_CAP_PROP_FRAME_COUNT) << endl;
+         << " of nr#: " << inputVideo.get(CAP_PROP_FRAME_COUNT) << endl;
 
     Mat _frameReference, frameReference;
 
     VideoWriter output;
-    int fcc = CV_FOURCC('I','4','2','0');
+    int fcc = VideoWriter::fourcc('I','4','2','0');
     output.open("./output/"+name, fcc, 30, Size(owidth, oheight), true);
 
     if (!output.isOpened())
@@ -147,7 +148,7 @@ int main(int argc, char **argv)
 
         if(framewanted == frameNum) 
         {
-            cvWaitKey(3000);
+            waitKey(3000);
             break;
         }
 
@@ -193,7 +194,7 @@ int main(int argc, char **argv)
         imshow(WIN_RF, frameReference);
         //imshow(WIN_UT, frameUnderTest);
 
-        char c = (char)cvWaitKey(111);
+        char c = (char)waitKey(111);
         if (c == 27) break;
     }
         //cout<<"done"<<endl;
