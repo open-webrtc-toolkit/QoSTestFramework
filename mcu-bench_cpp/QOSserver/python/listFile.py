@@ -10,7 +10,7 @@ import os
 '''
 this python scripts is used for read result folder
 '''
-folder = 'report'
+folder = '../analysis/dataset/output'
 try:
    opts, args = getopt.getopt(sys.argv[1:],"h:f:",["help", "folder="])
 except getopt.GetoptError:

@@ -128,29 +128,9 @@
 
 <!-- Note : This canvas is to store video data, do not touch! -->
 <canvas id="data-canvas" width="1280" height="720" hidden></canvas>
-
-<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
-<script type="text/javascript" src="js/Chart-2.0.js"> </script>
+<script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
 <script type="text/javascript" src="js/statAll.js"> </script>
-    <!--script language="JavaScript">
-      function getParameterByName(name) {
-        name = name.replace(/[\[]/, '\\\[').replace(/[\]]/, '\\\]');
-        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
-          results = regex.exec(location.search);
-        return results === null ? '' : decodeURIComponent(results[1].replace(
-          /\+/g, ' '));
-      }
-
-      var sampleMode = getParameterByName('mode') || 'socketio';
-      if (sampleMode === 'rest') {
-        console.log('Run REST sample!!');
-        runRestSample();
-      } else {
-        console.log('Run SocketIO sample!!');
-        runSocketIOSample();
-      }
-
-    </script-->
 
 </body>
 </html>

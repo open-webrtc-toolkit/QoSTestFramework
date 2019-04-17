@@ -43,6 +43,7 @@ var lChart = null;
 /*var qChart = null;
 var qChart2 = null;
 var qChart3 = null;*/
+var pChart = null;
 var vChart = null;
 var NRChart = null;
 var NRChart2 = null;
@@ -1358,15 +1359,14 @@ function getPESQ() {
             var average = 0;
             var num = 0;
             var ctx = document.getElementById("chartgoogPESQ").getContext("2d");
+            var colorNames = Object.keys(window.chartColors);
+            var Color = window.chartColors[colorNames[0]];
             var pesqData = { labels: [], datasets: [ {
-                label: "My First dataset",
-                fillColor: "rgba(255,255,255,0.5)",
-                strokeColor: "rgba(255,0,0,1)",
-                pointColor: "rgba(255,0,0,0.5)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(255,0,0,1)",
-                data: []
+                label: "PESQ data",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
             }]};
             pesq = pesq.split(",");
             var fnum = $("#bnum").val();
@@ -1390,8 +1390,39 @@ function getPESQ() {
             console.log(pesqData.datasets[0].data);
             if (div7.style.display == 'none') {div7.style.display = 'inline'};
             if(bChart != null) bChart.destroy();
-            bChart = new Chart(ctx).Line(pesqData, {responsive: true, maintainAspectRatio: true, scaleShowLabels:true,scaleSteps:3,showScale:true,scaleBeginAtZero:true});
+             bChart = Chart.Line(ctx, {
+                data: pesqData,
 
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'PESQ Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
         },
         error: function(jqXHR, textStatus, errorThrown){
             alert('error : ' + textStatus + " " + errorThrown);
@@ -1411,15 +1442,14 @@ function getPESQ() {
             var average = 0;
             var num = 0;
             var ctx = document.getElementById("chartgoogPESQ").getContext("2d");
+            var colorNames = Object.keys(window.chartColors);
+            var Color = window.chartColors[colorNames[0]];
             var pesqData = { labels: [], datasets: [ {
-                label: "My First dataset",
-                fillColor: "rgba(255,255,255,0.5)",
-                strokeColor: "rgba(255,0,0,1)",
-                pointColor: "rgba(255,0,0,0.5)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(255,0,0,1)",
-                data: []
+                label: "PESQ data",
+                backgroundColor: Color,
+                borderColor: Color,
+                data: [],
+                fill: false
             }]};
             pesq = pesq.split("\n");
             var fnum = $("#bnum").val();
@@ -1442,8 +1472,40 @@ function getPESQ() {
             console.log(pesqData.datasets[0].data);
             if (div7.style.display == 'none') {div7.style.display = 'inline'};
             if(bChart != null) bChart.destroy();
-            bChart = new Chart(ctx).Line(pesqData, {responsive: true, maintainAspectRatio: true, scaleShowLabels:true,scaleSteps:3,showScale:true,scaleBeginAtZero:true});
+            //bChart = new Chart(ctx).Line(pesqData, {responsive: true, maintainAspectRatio: true, scaleShowLabels:true,scaleSteps:3,showScale:true,scaleBeginAtZero:true});
+             bChart = Chart.Line(ctx, {
+                data: pesqData,
 
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'PESQ Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
         },
         error: function(jqXHR, textStatus, errorThrown){
             alert('error : ' + textStatus + " " + errorThrown);
@@ -1637,10 +1699,10 @@ function getPSNR() {
                     psnrData.datasets[0].data.push(psnr[i]);
                 }
                 if (div1.style.display == 'none') {div1.style.display = 'inline'};
-                if(vChart != null) vChart.destroy();
+                if(pChart != null) pChart.destroy();
 
-                //vChart = new Chart(ctx).Line(vmafData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-                vChart = Chart.Line(ctx, {
+             
+                pChart = Chart.Line(ctx, {
                 data: psnrData,
 
                     options: {
@@ -1708,9 +1770,9 @@ function getPSNR() {
                     psnrData.datasets[0].data.push(psnr[i]);
                 }
                 if (div1.style.display == 'none') {div1.style.display = 'inline'};
-                if(vChart != null) vChart.destroy();
+                if(pChart != null) pChart.destroy();
 
-                vChart = Chart.Line(ctx, {
+                pChart = Chart.Line(ctx, {
                 data: psnrData,
 
                     options: {
@@ -1743,7 +1805,7 @@ function getPSNR() {
                         }
                     }
                 })
-               // vChart = new Chart(ctx).Line(vmafData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+             
             },
             error: function(jqXHR, textStatus, errorThrown){
                 alert('error : ' + textStatus + " " + errorThrown);
@@ -1928,74 +1990,58 @@ function getNR() {
             var ctx4 = document.getElementById("chartNR4").getContext("2d");
             var ctx5 = document.getElementById("chartNR5").getContext("2d");
             var ctx6 = document.getElementById("chartNR6").getContext("2d");
+            var colorNames = Object.keys(window.chartColors);
+            var Color = window.chartColors[colorNames[0]];
+
             var BlockinessData = { labels: [], datasets: [ {
                     label: "blockiness",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-
-                    data: []
+                    backgroundColor: Color,
+                    borderColor: Color,
+                    data: [],
+                    fill: false
                 }]};
 
             var BlocklossData = { labels: [], datasets: [ {
                     label: "Blockloss",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-                    data: []
+                    backgroundColor: Color,
+                    borderColor: Color,
+                    data: [],
+                    fill: false
                 }]};
 
             var BlurData = { labels: [], datasets: [ {
                     //label: "SSIM&PSNR",
                     label: "Blur",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-                    data: []
+                    backgroundColor: Color,
+                    borderColor: Color,
+                    data: [],
+                    fill: false
                 }]};
 
             var NoiseData = { labels: [], datasets: [ {
                     //label: "SSIM&PSNR",
                     label: "Noise",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-                    data: []
+                    backgroundColor: Color,
+                    borderColor: Color,
+                    data: [],
+                    fill: false
                 }]};
 
             var InterlaceData = { labels: [], datasets: [ {
                     //label: "SSIM&PSNR",
-                    label: "Noise",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-                    data: []
+                    label: "Interlace",
+                    backgroundColor: Color,
+                    borderColor: Color,
+                    data: [],
+                    fill: false
                 }]};
            var FreezeData = { labels: [], datasets: [ {
                     //label: "SSIM&PSNR",
                     label: "Freeze",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-                    data: []
+                    backgroundColor: Color,
+                    borderColor: Color,
+                    data: [],
+                    fill: false
                 }]};
 
             NR = NR.split(",");
@@ -2034,12 +2080,205 @@ function getNR() {
             if(NRChart4 != null) NRChart4.destroy();
             if(NRChart5 != null) NRChart5.destroy();
             if(NRChart6 != null) NRChart6.destroy();
-            NRChart = new Chart(ctx).Line(BlockinessData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-            NRChart2 = new Chart(ctx2).Line(BlocklossData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-            NRChart3 = new Chart(ctx3).Line(BlurData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-            NRChart4 = new Chart(ctx4).Line(NoiseData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-            NRChart5 = new Chart(ctx5).Line(InterlaceData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-            NRChart6 = new Chart(ctx6).Line(FreezeData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+            NRChart = Chart.Line(ctx, {
+                data: BlockinessData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'Blockiness Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+               NRChart2 = Chart.Line(ctx2, {
+                data: BlocklossData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'BlocklossData Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+             NRChart3 = Chart.Line(ctx3, {
+                data: BlurData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'BlurData Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+            NRChart4 = Chart.Line(ctx4, {
+                data: NoiseData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'NoiseData Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+               NRChart5 = Chart.Line(ctx5, {
+                data: InterlaceData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'InterlaceData Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+             NRChart6 = Chart.Line(ctx6, {
+                data: FreezeData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'FreezeData Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+         
 
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -2064,72 +2303,53 @@ function getNR() {
             var ctx6 = document.getElementById("chartNR6").getContext("2d");
             var BlockinessData = { labels: [], datasets: [ {
                     label: "blockiness",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-
-                    data: []
+                    backgroundColor: Color,
+                    borderColor: Color,
+                    data: [],
+                    fill: false
                 }]};
 
             var BlocklossData = { labels: [], datasets: [ {
                     label: "Blockloss",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-                    data: []
+                     backgroundColor: Color,
+                    borderColor: Color,
+                    data: [],
+                    fill: false
                 }]};
 
             var BlurData = { labels: [], datasets: [ {
                     //label: "SSIM&PSNR",
                     label: "Blur",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-                    data: []
+                    backgroundColor: Color,
+                    borderColor: Color,
+                    data: [],
+                    fill: false
                 }]};
 
             var NoiseData = { labels: [], datasets: [ {
                     //label: "SSIM&PSNR",
                     label: "Noise",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-                    data: []
+                    backgroundColor: Color,
+                    borderColor: Color,
+                    data: [],
+                    fill: false
                 }]};
 
             var InterlaceData = { labels: [], datasets: [ {
                     //label: "SSIM&PSNR",
-                    label: "Noise",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-                    data: []
+                    label: "Interlace",
+                    backgroundColor: Color,
+                    borderColor: Color,
+                    data: [],
+                    fill: false
                 }]};
            var FreezeData = { labels: [], datasets: [ {
                     //label: "SSIM&PSNR",
                     label: "Freeze",
-                    fillColor: "rgba(151,187,205,0.5)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-                    data: []
+                    backgroundColor: Color,
+                    borderColor: Color,
+                    data: [],
+                    fill: false
                 }]};
 
             NR = NR.split("\n");
@@ -2167,12 +2387,205 @@ function getNR() {
             if(NRChart4 != null) NRChart4.destroy();
             if(NRChart5 != null) NRChart5.destroy();
             if(NRChart6 != null) NRChart6.destroy();
-            NRChart = new Chart(ctx).Line(BlockinessData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-            NRChart2 = new Chart(ctx2).Line(BlocklossData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-            NRChart3 = new Chart(ctx3).Line(BlurData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-            NRChart4 = new Chart(ctx4).Line(NoiseData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-            NRChart5 = new Chart(ctx5).Line(InterlaceData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-            NRChart6 = new Chart(ctx6).Line(FreezeData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
+            NRChart = Chart.Line(ctx, {
+                data: BlockinessData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'Blockiness Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+               NRChart2 = Chart.Line(ctx2, {
+                data: BlocklossData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'BlocklossData Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+             NRChart3 = Chart.Line(ctx3, {
+                data: BlurData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'BlurData Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+            NRChart4 = Chart.Line(ctx4, {
+                data: NoiseData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'NoiseData Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+               NRChart5 = Chart.Line(ctx5, {
+                data: InterlaceData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'InterlaceData Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+             NRChart6 = Chart.Line(ctx6, {
+                data: FreezeData,
+
+                    options: {
+                        responsive: true,
+                        title:{
+                            display:true,
+                            text:'FreezeData Chart'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                }
+                            }]
+                        }
+                    }
+                })
+         
 
         },
         error: function(jqXHR, textStatus, errorThrown){

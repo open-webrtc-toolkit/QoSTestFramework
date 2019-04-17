@@ -24,6 +24,8 @@ function getQuality() {
                 var quality = data.data;
                 var ctx = document.getElementById("chartQuality").getContext("2d");
                 var ctx2 = document.getElementById("chartQuality2").getContext("2d");
+                var colorNames = Object.keys(window.chartColors);
+                var Color = window.chartColors[colorNames[0]];
                 var psnrData = { labels: [], datasets: [ {
                 label: "PSNR Chart",
                 backgroundColor: Color,
@@ -94,8 +96,8 @@ function getQuality() {
                         }
                     }
                 })
-                //qChart2 = new Chart(ctx2).Line(ssimData, {responsive: true, maintainAspectRatio: true, scaleShowLabels: true});
-                qChart2 = Chart.Line(ctx, {
+             
+                qChart2 = Chart.Line(ctx2, {
                 data: ssimData,
 
                     options: {

@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <title> WebRTCMCUBench</title>
-    <link rel="stylesheet" href="css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <script language="javascript">
@@ -123,15 +122,12 @@
 
 <!-- Note : This canvas is to store video data, do not touch! -->
 <canvas id="data-canvas" width="1280" height="720" hidden></canvas>
-<script src="public/jquery-3.2.1.min.js"></script>
-<script src="public/socket.io.js" type="text/javascript"></script>
-<script src="public/adapter.js" type="text/javascript"></script>
-<script src="public/ics.js" type="text/javascript"></script>
-<script src="public/index.js" type="text/javascript"></script>
-<script type="text/javascript" src="js/Chart-2.0.js"> </script>
+<script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+<!--script type="text/javascript" src="js/Chart-2.0.js"> </script-->
 <script type="text/javascript" src="js/stat.js"> </script>
 <script type="text/javascript" src="js/stat_c.js"> </script>
-<script language="JavaScript">
+<!--script language="JavaScript">
       function getParameterByName(name) {
         name = name.replace(/[\[]/, '\\\[').replace(/[\]]/, '\\\]');
         var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
@@ -140,7 +136,7 @@
           /\+/g, ' '));
       }
       runSocketIOSample();
-</script>
+</script-->
 
 </body>
 </html>

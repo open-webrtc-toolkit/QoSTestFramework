@@ -41,21 +41,6 @@ app.get('/rtcmcubench_summary.html', function(req,res){
     res.sendFile(__dirname + '/rtcmcubench_summary.html');
 });
 
-app.get('/public/socket.io.js', function(req,res){
-    res.sendFile(__dirname + '/public/socket.io.js');
-});
-
-app.get('/public/adapter.js', function(req,res){
-    res.sendFile(__dirname + '/public/adapter.js');
-});
-
-app.get('/public/jquery-3.2.1.min.js', function(req,res){
-    res.sendFile(__dirname + '/public/jquery-3.2.1.min.js');
-});
-
-app.get('/public/index.js', function(req,res){
-    res.sendFile(__dirname + '/public/index.js');
-});
 
 app.get('/js/stat.js', function(req,res){
     res.sendFile(__dirname + '/js/stat.js');
@@ -65,16 +50,12 @@ app.get('/js/stat_c.js', function(req,res){
     res.sendFile(__dirname + '/js/stat_c.js');
 });
 
-app.get('/js/Chart-2.0.js', function(req,res){
+/*app.get('/js/Chart-2.0.js', function(req,res){
     res.sendFile(__dirname + '/js/Chart-2.0.js');
-});
+});*/
 
 app.get('/js/statAll.js', function(req,res){
     res.sendFile(__dirname + '/js/statAll.js');
-});
-
-app.get('/js/jquery-2.1.4.min.js', function(req,res){
-    res.sendFile(__dirname + '/js/jquery-2.1.4.min.js');
 });
 
 app.get('/js/testfunction.js', function(req,res){
