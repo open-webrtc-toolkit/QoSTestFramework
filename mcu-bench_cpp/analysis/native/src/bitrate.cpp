@@ -4,9 +4,9 @@
 #include <sstream>  // string to number conversion
 #include <fstream>
 
-#include <opencv2/core.hpp>        // Basic OpenCV structures (cv::Mat, Scalar)
-#include <opencv2/imgproc.hpp>  // Gaussian Blur
-#include <opencv2/highgui.hpp>  // OpenCV window I/O
+#include <opencv2/core.hpp>    // Basic OpenCV structures (cv::Mat, Scalar)
+#include <opencv2/imgproc.hpp> // Gaussian Blur
+#include <opencv2/highgui.hpp> // OpenCV window I/O
 #include <opencv2/ml.hpp>
 
 #include <unistd.h> // change dir
@@ -25,7 +25,8 @@ void help()
     cout << "This program measures WebRTC Video bitrate" << endl;
     cout << "If you want to run it in terminal instead of basicServer, please cd to mcu-bench_cpp folder and use ./native/xxx" << endl;
     cout << "For example: ./native/bitrate ./native/Data/localBitrate.txt" << endl;
-    cout << "/////////////////////////////////////////////////////////////////////////////////" << endl << endl;
+    cout << "/////////////////////////////////////////////////////////////////////////////////" << endl
+         << endl;
 }
 
 long bytes_pre(0);
@@ -34,7 +35,7 @@ int flag = 0;
 
 int main(int argc, char *argv[])
 {
-    if(argc != 2)
+    if (argc != 2)
     {
         help();
         return -1;
@@ -47,45 +48,42 @@ int main(int argc, char *argv[])
     chdir(path.c_str());
 
     ifstream send_tag(argv[1]);
-    //ifstream recv_tag(argv[2]);
 
-    if(!send_tag)
+    if (!send_tag)
     {
         cout << "can't not open file" << endl;
         return -1;
     }
 
-
     int v(0);
     char c;
     ofstream of("../dataset/output/bitrate.txt");
 
-    send_tag>>c;
-    for(;;)
+    send_tag >> c;
+    for (;;)
     {
         ////////////////////////////////////////Get sender data/////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (flag == 0)
         {
-            send_tag>>bytes_pre;
-            send_tag>>c;
+            send_tag >> bytes_pre;
+            send_tag >> c;
             flag = 1;
         }
         else
         {
-            send_tag>>bytes_next;
-            send_tag>>c;
-            if ((bytes_next-bytes_pre) >= 0 && (bytes_pre != -1000) && (bytes_next != -1000))
+            send_tag >> bytes_next;
+            send_tag >> c;
+            if ((bytes_next - bytes_pre) >= 0 && (bytes_pre != -1000) && (bytes_next != -1000))
             {
-                cout << (bytes_next-bytes_pre)*8/1024/3 << endl;
-                of << (bytes_next-bytes_pre)*8/1024/3 << ',';
+                cout << (bytes_next - bytes_pre) * 8 / 1024 / 3 << endl;
+                of << (bytes_next - bytes_pre) * 8 / 1024 / 3 << ',';
             }
             bytes_pre = bytes_next;
             bytes_next = 0;
-            //flag = 0;
         }
 
-        if(send_tag.eof())
+        if (send_tag.eof())
             break;
     }
 

@@ -5,9 +5,9 @@
 #include <fstream>
 #include <vector>
 
-#include <opencv2/core/core.hpp>        // Basic OpenCV structures (cv::Mat, Scalar)
-#include <opencv2/imgproc/imgproc.hpp>  // Gaussian Blur
-#include <opencv2/highgui/highgui.hpp>  // OpenCV window I/O
+#include <opencv2/core/core.hpp>       // Basic OpenCV structures (cv::Mat, Scalar)
+#include <opencv2/imgproc/imgproc.hpp> // Gaussian Blur
+#include <opencv2/highgui/highgui.hpp> // OpenCV window I/O
 #include <opencv2/ml/ml.hpp>
 
 #include <unistd.h>
@@ -15,7 +15,7 @@
 using namespace std;
 using namespace cv;
 
-const char* WIN_RF = "Reference";
+const char *WIN_RF = "Reference";
 
 void help()
 {
@@ -24,13 +24,14 @@ void help()
     cout << "This program measures Frame Loss Rate" << endl;
     cout << "USAGE: ./convert input output outputwidth outputheight" << endl;
     cout << "For example: ./convert video/Megamind.avi test.y4m 640 480" << endl;
-    cout << "/////////////////////////////////////////////////////////////////////////////////" << endl << endl;
+    cout << "/////////////////////////////////////////////////////////////////////////////////" << endl
+         << endl;
 }
 
 int main(int argc, char **argv)
 {
 
-    if(argc != 5)
+    if (argc != 5)
     {
         help();
         return -1;
@@ -43,13 +44,13 @@ int main(int argc, char **argv)
     chdir(path.c_str());
 
     namedWindow(WIN_RF, WINDOW_AUTOSIZE);
-    moveWindow(WIN_RF, 400       , 0);
+    moveWindow(WIN_RF, 400, 0);
 
     const string inputVideoName = argv[1];
     int owidth = atoi(argv[3]);
     int oheight = atoi(argv[4]);
 
-    int frameNum = -1;          // Frame counter
+    int frameNum = -1; // Frame counter
 
     VideoCapture inputVideo(inputVideoName);
 
@@ -59,12 +60,12 @@ int main(int argc, char **argv)
 
     if (!inputVideo.isOpened())
     {
-        cout  << "Could not open reference " << inputVideoName << endl;
+        cout << "Could not open reference " << inputVideoName << endl;
         return -1;
     }
 
-    Size refS = Size((int) inputVideo.get(CAP_PROP_FRAME_WIDTH),
-                     (int) inputVideo.get(CAP_PROP_FRAME_HEIGHT));
+    Size refS = Size((int)inputVideo.get(CAP_PROP_FRAME_WIDTH),
+                     (int)inputVideo.get(CAP_PROP_FRAME_HEIGHT));
 
     char EXT[] = {(char)(ex & 0xff), (char)((ex & 0xff00) >> 8), (char)((ex & 0xff0000) >> 16), (char)((ex & 0xff000000) >> 24), 0};
 
@@ -74,22 +75,22 @@ int main(int argc, char **argv)
     Mat _frameReference, frameReference;
 
     VideoWriter output;
-cout << name << endl;
-    int fcc = VideoWriter::fourcc('I','4','2','0');
-    output.open("./output/"+name, fcc, 30, Size(owidth, oheight), true);
+    cout << name << endl;
+    int fcc = VideoWriter::fourcc('I', '4', '2', '0');
+    output.open("./output/" + name, fcc, 30, Size(owidth, oheight), true);
 
     if (!output.isOpened())
     {
-        cout  << "Could not open output video " << name << endl;
+        cout << "Could not open output video " << name << endl;
         return -1;
     }
 
     inputVideo >> _frameReference;
-    for(;;) //Show the image captured in the window and repeat
+    for (;;) //Show the image captured in the window and repeat
     {
         inputVideo >> _frameReference;
 
-        if (_frameReference.empty() )
+        if (_frameReference.empty())
         {
             cout << " < < <  Video over!  > > > ";
             break;
@@ -107,10 +108,10 @@ cout << name << endl;
 
         ////////////////////////////////// Show Image /////////////////////////////////////////////
         imshow(WIN_RF, frameReference);
-        //imshow(WIN_UT, frameUnderTest);
 
         char c = (char)waitKey(33);
-        if (c == 27) break;
+        if (c == 27)
+            break;
     }
 
     chdir(old_cwd);
