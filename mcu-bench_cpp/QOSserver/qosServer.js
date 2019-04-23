@@ -8,6 +8,13 @@ var express = require('express'),
   fs = require('fs'),
   https = require('https');
 
+var rootDir = __dirname + "/../";
+var analysisDir = rootDir + "analysis/";
+var nativeDir = analysisDir + "native/";
+var dataDir = analysisDir + "dataset/Data/";
+var sourceDir = analysisDir + "dataset/source/"
+var clientDir = rootDir + "QOStestclient/";
+
 var app = express();
 app.use(errorhandler({
   dumpExceptions: true,
@@ -50,10 +57,6 @@ app.get('/js/stat_c.js', function(req,res){
     res.sendFile(__dirname + '/js/stat_c.js');
 });
 
-/*app.get('/js/Chart-2.0.js', function(req,res){
-    res.sendFile(__dirname + '/js/Chart-2.0.js');
-});*/
-
 app.get('/js/statAll.js', function(req,res){
     res.sendFile(__dirname + '/js/statAll.js');
 });
@@ -62,15 +65,10 @@ app.get('/js/testfunction.js', function(req,res){
     res.sendFile(__dirname + '/js/testfunction.js');
 });
 
-
-/*
 app.post('/jitter', function(req, res){
-    //var sTagFilename = "./native/Data/senderTagFile.txt";
-    //var rTagFilename = "./native/Data/receive_timestamp.txt";
-        var rTagFilename = "./native/Data/receive_timestamp.txt"
-
+    var rTagFilename = dataDir + "localLatency.txt";
     var exec = require('child_process').exec;
-    exec('./native/flr ' + rTagFilename, function(err, data, stderr) {
+    exec(nativeDir + 'FLR ' + rTagFilename, function(err, data, stderr) {
         if(data.length > 1) {
             res.json({jitter : data});
         } else {
@@ -81,31 +79,12 @@ app.post('/jitter', function(req, res){
         }
     });
 });
-*/
-
-
-app.post('/jitter', function(req, res){
-    var rTagFilename = "./native/Data/localLatency.txt";
-    var exec = require('child_process').exec;
-    exec('./native/FLR ' + rTagFilename, function(err, data, stderr) {
-        if(data.length > 1) {
-            res.json({jitter : data});
-        } else {
-            console.log('you did not offer args');
-        }
-        if(err) {
-            console.info('stderr:'+stderr);
-        }
-    });
-});
-
-
 
 app.post('/latency', function(req, res){
-    var sTagFilename = "./native/Data/localPublishTime.txt";
-    var rTagFilename = "./native/Data/localLatency.txt";
+    var sTagFilename = dataDir + "localPublishTime.txt";
+    var rTagFilename = dataDir + "localLatency.txt";
     var exec = require('child_process').exec;
-    exec('./native/latency ' + sTagFilename + ' ' + rTagFilename, function(err, data, stderr) {
+    exec(nativeDir + 'latency ' + sTagFilename + ' ' + rTagFilename, function(err, data, stderr) {
         if(data.length > 1) {
             res.json({latency : data});
         } else {
@@ -120,10 +99,10 @@ app.post('/latency', function(req, res){
 
 
 app.post('/fps', function(req, res){
-  var fpsFilename = "./native/Data/localFPS.txt";
+  var fpsFilename = dataDir + "localFPS.txt";
   var exec = require('child_process').exec;
   console.log('in fps post');
-  exec('./native/fps ' + fpsFilename, function(err, data, stderr) {
+  exec(nativeDir + 'fps ' + fpsFilename, function(err, data, stderr) {
     if(data.length > 1) {
       res.json({fps : data});
     } else {
@@ -136,10 +115,10 @@ app.post('/fps', function(req, res){
 });
 
 app.post('/bitrate', function(req, res){
-  var bitrateFilename = "./native/Data/localBitrate.txt";
+  var bitrateFilename = dataDir + "localBitrate.txt";
   var exec = require('child_process').exec;
   console.log('in bitrate post');
-  exec('./native/bitrate ' + bitrateFilename, function(err, data, stderr) {
+  exec(nativeDir + 'bitrate ' + bitrateFilename, function(err, data, stderr) {
     if(data.length > 1) {
       res.json({bitrate : data});
     } else {
@@ -151,14 +130,20 @@ app.post('/bitrate', function(req, res){
   });
 });
 
-
 app.post('/quality', function(req, res){
-    var rawFilename = "./native/Data/localARGB.txt";
-    //var originFilename = "./native/video/football_720p_taged_decoded.yuv"
-    var originFilename = "./native/video/football_720p_taged_vp8_decoded.yuv";
-    var codec = "hd720p";
+    var originFilename = req.body.filename || sourceDir + "FourPeople_540x360_30_taged.avi";
+    var codec = req.body.codec || "hd540p";
+    var rawFilename = dataDir + "localARGB.txt";
     var exec = require('child_process').exec;
-    exec('./native/iq_yuv ' + rawFilename + ' ' + originFilename + ' ' + codec, function(err, data, stderr) {
+    var exec_file;
+    if (originFilename.endsWith('.avi')) {
+        exec_file = 'iq_avi ';
+    } else if (originFilename.endsWith('.yuv')) {
+        exec_file = 'iq_yuv ';
+    } else {
+        console.info('wrong origin file format.');
+    }
+    exec(nativeDir + exec_file + rawFilename + ' ' + originFilename + ' ' + codec, function(err, data, stderr) {
         if(data.length > 1) {
             res.json({quality : data});
         } else {
@@ -170,35 +155,12 @@ app.post('/quality', function(req, res){
     });
 });
 
-/*
-app.post('/quality', function(req, res){
-    var rawFilename = "./native/Data/localARGB.txt";
-    //var originFilename = "./native/video/FourPeople_640x480_30_taged.avi"
-    var originFilename = "./native/video/BBB_720p_4Mbps_audio_44100_30fps_HP_taged.avi"
-   // var originFilename = "./native/video/FourPeople_1280x720_30_taged.avi"
-    var codec = hd720p;
-    var exec = require('child_process').exec;
-    exec('./native/iq_avi ' + rawFilename + ' ' + originFilename + ' ' + codec, function(err, data, stderr) {
-        if(data.length > 1) {
-            res.json({quality : data});
-        } else {
-            console.log('you did not offer args');
-        }
-        if(err) {
-            console.info('stderr from iq:'+stderr);
-        }
-    });
-});
-*/
 app.post('/vmaf', function(req, res){
-
     var exec = require('child_process').exec;
-    var path = require('path');
     process.env['PYTHONPATH'] = (process.env['PYTHONPATH'] || '');
-    process.env['PYTHONPATH']="/home/yanbin/workspace/webrtc-qos-bench/mcu-bench_cpp/python/vmaf/python/src:" + process.env['PYTHONPATH'];
 
-    exec('python python/vmaf_calculate.py', {env: process.env}, function(err, data, stderr) {
-        //console.log(err, data, stderr);
+    exec('python ' + analysisDir + 'python/vmaf_calculate.py', {env: process.env}, function(err, data, stderr) {
+
         //if(data.length > 1) {
             res.json({vmaf : data});
         //} else {
@@ -212,7 +174,7 @@ app.post('/vmaf', function(req, res){
 
 app.post('/NR', function(req, res){
     var exec = require('child_process').exec;
-    exec('python python/NR_calculate.py', function(err, data, stderr) {
+    exec('python ' + analysisDir + 'python/NR_calculate.py', function(err, data, stderr) {
         //console.log(err, data, stderr);
         //if(data.length > 1) {
             res.json({NR : data});
@@ -258,10 +220,9 @@ app.post('/getCompareResultFolder', function(req, res){
                 console.info('stderr from iq:'+stderr);
             }
         });
-
-
     }
 });
+
 app.post('/displayData', function(req, res){
     var exec = require('child_process').exec;
     var folder = req.body.folder;
@@ -276,9 +237,8 @@ app.post('/displayData', function(req, res){
 });
 
 app.post('/startTest', function(req,res){
-
    var exec = require('child_process').exec;
-   exec('./QOStestclient/scripts/vp8_js.sh',function(err){
+   exec(clientDir + 'scripts/vp8_js.sh',function(err){
         if(err) {
             console.info('stderr form vp8.sh:'+err);
           }
@@ -288,7 +248,6 @@ app.post('/startTest', function(req,res){
 
 
 app.post('/stopTest', function(req,res){
-
    var exec = require('child_process').exec;
    exec('ps aux | grep woogeen_conf_sample | grep -v \"grep\" | awk \'{print $2}\'|xargs kill -9 >/dev/null 2>&1 ',function(err){
         if(err) {
