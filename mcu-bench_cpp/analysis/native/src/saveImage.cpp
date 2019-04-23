@@ -31,7 +31,8 @@ void help()
     cout << "USAGE: ./saveImage rawdata" << endl;
     cout << "For example: ./native/saveImage ./native/Data/localARGB.txt hd720p" << endl;
     cout << "The output files will be saved in ./native/output" << endl;
-    cout << "/////////////////////////////////////////////////////////////////////////////////" << endl << endl;
+    cout << "/////////////////////////////////////////////////////////////////////////////////" << endl
+         << endl;
 }
 int video_width;
 int video_height;
@@ -41,49 +42,55 @@ int main(int argc, char *argv[])
 
     ifstream received_video(argv[1]);
     std::string res(argv[3]);
-    if (res.find("1080") != std::string::npos) {
+    if (res.find("1080") != std::string::npos)
+    {
         video_width = 1920;
         video_height = 1080;
-    }else if (res.find("720") != std::string::npos){
+    }
+    else if (res.find("720") != std::string::npos)
+    {
         video_width = 1280;
         video_height = 720;
-        cout <<"-------------------------------------------720P---------------------------------------"<<endl;
-        cout << video_width<< endl;
-        cout << "----------------720--------"<<endl;
-    }else if (res.find("vga") != std::string::npos){
+        cout << "-------------------------------------------720P---------------------------------------" << endl;
+        cout << video_width << endl;
+        cout << "----------------720--------" << endl;
+    }
+    else if (res.find("vga") != std::string::npos)
+    {
         video_width = 640;
         video_height = 480;
-    }else{
+    }
+    else
+    {
         video_width = 320;
         video_height = 240;
-    } 
+    }
     int v(0);
     unsigned int r, g, b;
 
-    long t(0);//get timestamp from file "mixRawFile"
-    int a1, r1, g1, b1;//get ARGB from file "mixRawFile"
+    long t(0);          //get timestamp from file "mixRawFile"
+    int a1, r1, g1, b1; //get ARGB from file "mixRawFile"
     int framecount(0);
 
     int width(video_width);
     int height(video_height);
     int overFlag(0);
 
-    char c;//get ',' from file "mixRawFile"
+    char c; //get ',' from file "mixRawFile"
 
-//////////////////////////////////////////////////////////Load data ////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////Load data ////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     int isFirstData = 0;
 
-
-    for(int f = 0;;f++)
-    {               
-        if(overFlag == 1)//the whole file is over 
+    for (int f = 0;; f++)
+    {
+        if (overFlag == 1) //the whole file is over
         {
             overFlag = 0;
             //cout<<"over!"<<endl;
             break;
         }
-        if(overFlag == 2)//one frame over
+        if (overFlag == 2) //one frame over
         {
             overFlag = 0;
         }
@@ -92,14 +99,14 @@ int main(int argc, char *argv[])
         if (isFirstData == 0)
         {
             isFirstData = 1;
-            received_video >> c;//get first ','
+            received_video >> c; //get first ','
         }
-        received_video >> t;//get a frame's timestamp
+        received_video >> t; //get a frame's timestamp
         received_video >> c;
 
-        for(int i = 0;i < height;i++)
+        for (int i = 0; i < height; i++)
         {
-            for(int j = 0;j < width;j++)
+            for (int j = 0; j < width; j++)
             {
                 framecount++;
                 received_video >> v;
@@ -114,7 +121,6 @@ int main(int argc, char *argv[])
                 received_video >> v;
                 a1 = v;
                 received_video >> c;
-                //cout << a1 << " " << r1 << " " << g1 << " " << b1 << " " << endl;
 
                 image.at<Vec3b>(i, j)[0] = b1;
                 image.at<Vec3b>(i, j)[1] = g1;
@@ -122,51 +128,43 @@ int main(int argc, char *argv[])
 
                 if ((c == 'f'))
                 {
-                    //cout<<"occ1"<<endl;
                     framecount = 0;
                     for (int i = 0; i < 4; ++i)
                     {
                         received_video >> c;
                     }
-                    received_video >> c;//get next char,such as ',' or 'e'.
+                    received_video >> c; //get next char,such as ',' or 'e'.
                     if (c == ' ')
                     {
-                        //cout<<"occ2"<<endl;
-                        overFlag = 1;//file over
+                        overFlag = 1; //file over
                         break;
                     }
-                    if (received_video.eof())//the situation:the file over at 'frame'
+                    if (received_video.eof()) //the situation:the file over at 'frame'
                     {
-                        //cout<<"occ3"<<endl;
-                        overFlag = 1;//file over
+                        overFlag = 1; //file over
                         break;
                     }
                     else
                     {
-                        //cout<<"occ4"<<endl;
-                        overFlag = 2;//one frame over
+                        overFlag = 2; //one frame over
                         break;
                     }
                 }
-                if (received_video.eof())//the situation:the file over at ' '
+                if (received_video.eof()) //the situation:the file over at ' '
                 {
-                    //cout<<"occ5"<<endl;
-                    overFlag = 1;//file over
+                    overFlag = 1; //file over
                     break;
                 }
             }
             if (overFlag >= 1)
             {
-                //cout<<"occ6"<<endl;
-                break;//break to do iq task when a frame over or the whole file over.(maybe a img didn't trans completely,so must make a force break.)
+                break; //break to do iq task when a frame over or the whole file over.(maybe a img didn't trans completely,so must make a force break.)
             }
         }
-               // imshow("frame", image);
-               // waitKey(3000);
         char path[255];
-        sprintf(path,"./output/%d.bmp", f);
-        imwrite(path,image);
-        if(received_video.eof())
+        sprintf(path, "./output/%d.bmp", f);
+        imwrite(path, image);
+        if (received_video.eof())
         {
             break;
         }
