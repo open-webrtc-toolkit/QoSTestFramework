@@ -19,6 +19,9 @@ We have several tools.
 * CALLBACK_INTERVAL.m plot picture of browser maximum callback intervals
 * latency plot picture of latency data
 
+***
 
+* this will use opencv library, to install it
+* run the install_opencv.sh
 
 ***
