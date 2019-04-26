@@ -11,3 +11,6 @@
 /QOStestclient/*.*~
 /QOStestclient/build
 /python/vmaf
+*.o
+.vscode
+venv
