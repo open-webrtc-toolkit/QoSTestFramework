@@ -70,9 +70,8 @@ int main(int argc, char **argv)
     int isFirstData = 0;
     int overFlag = 0;
     int v(0);
-    unsigned int r, g, b;
     long t(0);                   //get timestamp from file "mixRawFile"
-    unsigned int a1, r1, g1, b1; //get ARGB from file "mixRawFile"
+    unsigned int r1, g1, b1; //get ARGB from file "mixRawFile"
     char c;
     int preframe = 0;
 
@@ -102,6 +101,7 @@ int main(int argc, char **argv)
         {
             for (int j = 0; j < width; j++)
             {
+                unsigend int a1;
                 received_video >> v;
                 b1 = v;
                 received_video >> c;
@@ -190,9 +190,6 @@ int main(int argc, char **argv)
 
     //////////////////////////////////////////////////////////Load data ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    int lasts = -1;
-    int lastr = -1;
-    int roomsize = 1; //default
 
     send_tag >> c; //get first ','
     recv_tag >> c; //get first ','
@@ -231,7 +228,7 @@ int main(int argc, char **argv)
             latency_out << latency;
             latency_out << ",";
         }
-        it2++;
+        ++it2;
     }
 
     chdir(old_cwd);

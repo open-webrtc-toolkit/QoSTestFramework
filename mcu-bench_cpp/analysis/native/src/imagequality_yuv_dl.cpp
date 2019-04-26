@@ -106,7 +106,6 @@ int main(int argc, char *argv[])
     }
     fin.seekg(0, ios::end);     //设置文件指针到文件流的尾部
     streampos ps = fin.tellg(); //指出当前的文件指针
-    unsigned long NumberPixe = ps;
     //cout << "file size: " << ps << endl;  //输出指针的位置
     unsigned FrameCount = ps / framesize; //帧大小
     //cout << "frameNuber: " << FrameCount << endl; //输出帧数
@@ -115,8 +114,6 @@ int main(int argc, char *argv[])
     unsigned char *pYuvBuf = new unsigned char[framesize]; //一帧数据大小
 
     //存储到图像
-    int preframe = 0;
-    int framenum = 0;
     Mat frameReference;
     map<int, Mat> originImages;
     Mat ROI;
@@ -127,7 +124,7 @@ int main(int argc, char *argv[])
     int v(0);
 
     long t(0);                   //get timestamp from file "mixRawFile"
-    unsigned int a1, r1, g1, b1; //get ARGB from file "mixRawFile"
+    unsigned int r1, g1, b1; //get ARGB from file "mixRawFile"
     int framecount(0);
 
     int width(video_width);
@@ -149,6 +146,8 @@ int main(int argc, char *argv[])
 
         originImages[i + 1] = frameReference.clone();
     }
+    delete[] pYuvBuf;
+    pYuvBuf = nullptr;
     fclose(fileIn);
 
     //////////////////////////////////////////////////////////Load data ////////////////////////////////////////////////
@@ -197,6 +196,7 @@ int main(int argc, char *argv[])
         {
             for (int j = 0; j < width; j++)
             {
+                unsigned int a1;
                 framecount++;
                 received_video >> v;
                 b1 = v;
@@ -308,6 +308,7 @@ int main(int argc, char *argv[])
             memcpy(pYuvBuf, sendyuvtemp.data, width * height * 3 / 2 * sizeof(unsigned char));
             fwrite(pYuvBuf, 1, width * height * 3 / 2 * sizeof(unsigned char), sendyuv);
             delete[] pYuvBuf;
+            pYuvBuf = nullptr;
         }
 
         if (received_video.eof())
