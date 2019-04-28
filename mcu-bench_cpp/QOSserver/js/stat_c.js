@@ -1,3 +1,4 @@
+'use strict'
 var qChart = null;
 var qChart2 = null;
 var qChart3 = null;
