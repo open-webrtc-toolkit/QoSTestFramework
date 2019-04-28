@@ -6,7 +6,8 @@ var express = require('express'),
   errorhandler = require('errorhandler'),
   morgan = require('morgan'),
   fs = require('fs'),
-  https = require('https');
+  https = require('https'),
+  toobusy = require('node-toobusy');
 
 var rootDir = __dirname + "/../";
 var analysisDir = rootDir + "analysis/";
@@ -16,6 +17,16 @@ var sourceDir = analysisDir + "dataset/source/"
 var clientDir = rootDir + "QOStestclient/";
 
 var app = express();
+
+// add toobusy to poll the monitor
+app.use((req, res, next) => {
+  if(toobusy()) {
+    res.send(503, "Server too busy right now, sorry.");
+  } else {
+    next();
+  }
+});
+
 app.use(errorhandler({
   dumpExceptions: true,
   showStack: true

@@ -9,7 +9,8 @@
     "express": "^4.16.4",
     "morgan": "^1.9.1",
     "socket.io": "^2.2.0",
-    "socket.io-client": "^2.2.0"
+    "socket.io-client": "^2.2.0",
+    "node-toobusy": "^0.6.3"
   },
   "devDependencies": {},
   "scripts": {
