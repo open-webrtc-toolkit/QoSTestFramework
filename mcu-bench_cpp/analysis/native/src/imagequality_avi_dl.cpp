@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
     int v(0);
 
     long t(0);                   //get timestamp from file "mixRawFile"
-    unsigned int a1, r1, g1, b1; //get ARGB from file "mixRawFile"
+    unsigned int r1, g1, b1; //get ARGB from file "mixRawFile"
     int framecount(0);
 
     int width(video_width);
@@ -186,6 +186,7 @@ int main(int argc, char *argv[])
         {
             for (int j = 0; j < width; j++)
             {
+                unsigned int a1;
                 framecount++;
                 received_video >> v;
                 b1 = v;

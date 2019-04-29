@@ -59,9 +59,8 @@ int main(int argc, char *argv[])
     int isFirstData = 0;
     int overFlag = 0;
     int v(0);
-    unsigned int r, g, b;
     long t(0);                   //get timestamp from file "mixRawFile"
-    unsigned int a1, r1, g1, b1; //get ARGB from file "mixRawFile"
+    unsigned int r1, g1, b1; //get ARGB from file "mixRawFile"
     char c;
 
     for (int f = 0;; f++)
@@ -90,6 +89,7 @@ int main(int argc, char *argv[])
         {
             for (int j = 0; j < width; j++)
             {
+                unsigned int a1;
                 received_video >> v;
                 b1 = v;
                 received_video >> c;
@@ -163,14 +163,11 @@ int main(int argc, char *argv[])
 
     unsigned long long int tt = 0;
     int tag(0);
-    int framenum(0);
     //////////////////////////////////////////////////////////Load data ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //for c++
-    unsigned long long lastt = 0;
     int lastf = -1;
-    int roomsize = 1;  //default
     received_tag >> c; //','
     for (;;)
     {
@@ -178,9 +175,9 @@ int main(int argc, char *argv[])
         received_tag >> c;
         received_tag >> tt;
         received_tag >> c;
-        framenum = tag;
+        int framenum(tag);
 
-        lastt = tt;
+        unsigned long long lastt(tt);
         if (lastf != framenum)
         {
             datas.push_back(make_pair(tt, framenum));
@@ -192,7 +189,6 @@ int main(int argc, char *argv[])
 
     for (int i = 2; i < datas.size(); i++)
     {
-        unsigned long long int temp = datas[i].first - datas[i - 1].first;
         int inter = datas[i].second - datas[i - 1].second;
 
         if (inter < 0)

@@ -55,7 +55,6 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    int v(0);
     char c;
     ofstream of("../dataset/output/bitrate.txt");
 

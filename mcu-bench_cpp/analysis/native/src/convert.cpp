@@ -54,7 +54,6 @@ int main(int argc, char **argv)
 
     VideoCapture inputVideo(inputVideoName);
 
-    string::size_type pAt = inputVideoName.find_last_of('.');
     const string name = argv[2];
     int ex = static_cast<int>(inputVideo.get(CAP_PROP_FOURCC));
 
@@ -66,8 +65,6 @@ int main(int argc, char **argv)
 
     Size refS = Size((int)inputVideo.get(CAP_PROP_FRAME_WIDTH),
                      (int)inputVideo.get(CAP_PROP_FRAME_HEIGHT));
-
-    char EXT[] = {(char)(ex & 0xff), (char)((ex & 0xff00) >> 8), (char)((ex & 0xff0000) >> 16), (char)((ex & 0xff000000) >> 24), 0};
 
     cout << "input video frame resolution: Width=" << refS.width << "  Height=" << refS.height
          << " of nr#: " << inputVideo.get(CAP_PROP_FRAME_COUNT) << endl;
@@ -100,9 +97,6 @@ int main(int argc, char **argv)
 
         ++frameNum;
         cout << "Frame: " << frameNum << "# " << endl;
-
-        int number = frameNum;
-        int num = 0;
 
         output << frameReference;
 
