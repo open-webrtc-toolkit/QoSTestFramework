@@ -65,6 +65,10 @@ app.get('/js/testfunction.js', function(req,res){
     res.sendFile(__dirname + '/js/testfunction.js');
 });
 
+app.get('/js/util.js', function(req,res){
+  res.sendFile(__dirname + '/js/util.js');
+});
+
 app.post('/jitter', function(req, res){
     var rTagFilename = dataDir + "localLatency.txt";
     var exec = require('child_process').exec;

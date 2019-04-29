@@ -4,13 +4,13 @@
   "description": "realtime video/audio quality testbench project",
   "main": "qosServer.js",
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "morgan": "^1.9.1",
-    "errorhandler": "^1.5.0",
-    "express": "^4.16.4",
-    "async": "^1.5.2",
-    "socket.io": "^1.7.4",
-    "socket.io-client": "^1.7.4"
+    "async": "^1.4.0",
+    "body-parser": "^1.13.2",
+    "errorhandler": "^1.4.1",
+    "express": "^4.13.1",
+    "morgan": "^1.6.1",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0"
   },
   "devDependencies": {},
   "scripts": {

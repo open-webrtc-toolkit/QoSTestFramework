@@ -1,9 +1,12 @@
 /*
 This file help you compare different 
 */
+
 'use strict'
 
-var selectedResultFolder=[];
+var selectedResultFolder = [];
+var chartMap = new Map()
+
 
 window.chartColors = {
     red: 'rgb(255, 99, 132)',
@@ -17,195 +20,130 @@ window.chartColors = {
     skyblue: 'rgb(0,255,255)',
     bloodred: 'rgb(255,64,0)',
     lightgreen: 'rgb(0,255,0)'
-    };
+};
 
-
-
-function getSizebycount(inputparm){
-    if(inputparm==1) return 1;
-    if(inputparm>1 && inputparm<=4) return 2; //2x2
-    if(inputparm>4 && inputparm<=9) return 3;
-    if(inputparm>9) return 4;
+function getSizebycount(inputparm) {
+    if (inputparm == 1) return 1;
+    if (inputparm > 1 && inputparm <= 4) return 2; //2x2
+    if (inputparm > 4 && inputparm <= 9) return 3;
+    if (inputparm > 9) return 4;
 }
 
-
-
-function getCompareResultFolder(){
-    var resultfolder=document.getElementById("resultfolder");
-    var size = resultfolder.length
-    console.log(size)
-    for(var i = 0;i<size ;i++){
+function getCompareResultFolder() {
+    let resultfolder = document.getElementById("resultfolder");
+    let size = resultfolder.length
+    for (var i = 0; i < size; i++) {
         resultfolder.remove(0)
     }
-    $.ajax({
-        data: {"blank" : " "},
-        url: '/getCompareResultFolder',
-        type: 'post',
-        cache: false,
-        timeout: 800000,
-        async:true,
-        success: function(data){
-            var folders = data.folder.split("\n")
-            console.log(data.folder)
-            for(var i = 0;i<folders.length;i++){
-                var optiondevice=document.createElement('option');
-                optiondevice.text=folders[i]
-                optiondevice.value=folders[i]
-                resultfolder.add(optiondevice,null)
+    doPost('/getCompareResultFolder', {
+            "blank": " "
+        }, 800000)
+        .then(function (data) {
+            let folders = data.folder.split("\n")
+            for (let i = 0; i < folders.length; i++) {
+                let optiondevice = document.createElement('option');
+                optiondevice.text = folders[i]
+                optiondevice.value = folders[i]
+                resultfolder.add(optiondevice, null)
             }
-      
-        },
-        error: function(jqXHR, textStatus, errorThrown){
-            alert('error : ' + textStatus + " " + errorThrown);
-        },
-    });
+        }).catch(function (err) {
+            alert('error : ', err);
+        })
 }
 
-
-
-
-function getSelectedResultFolder(){
-    var resultfolder=document.getElementById("resultfolder");
-    var selectfolder = resultfolder.selectedOptions.length;
+function getSelectedResultFolder() {
+    let resultfolder = document.getElementById("resultfolder");
+    let selectfolder = resultfolder.selectedOptions.length;
     if (selectfolder) {
-        var strfolder = resultfolder.options[resultfolder.selectedIndex].text;
-        $.ajax({
-            data: {"folder" : strfolder},
-            url: '/getCompareResultFolder',
-            type: 'post',
-            cache: false,
-            timeout: 800000,
-            async:true,
-            success: function(data){
+        let strfolder = resultfolder.options[resultfolder.selectedIndex].text;
+        doPost('/getCompareResultFolder', {
+                "folder": strfolder
+            }, 800000)
+            .then(function (data) {
                 selectedResultFolder = data.folder.split("\n")
-            },
-            error: function(jqXHR, textStatus, errorThrown){
-                alert('error : ' + textStatus + " " + errorThrown);
-            },
-        });
-  }
-}
-
-
-function getComparedResult(chartName,resultFile,threshold,) {
-    var div4 = document.getElementById(chartName);
-    var dataArray = [];
-    var dataFolder;
-    if (selectedResultFolder.length) {
-        for(var k = 0;k < selectedResultFolder.length-1;k++) {
-             selectedResultFolder[k].trim();
-             dataArray.push(selectedResultFolder[k]);
-             dataFolder=dataArray.join();
-             console.log(dataFolder);
-         }
-        $.ajax({
-        data: {"folder":dataFolder,"file":resultFile},
-        url: '/displayData',
-        type: 'post',
-        cache: false,
-        timeout: 20000,
-        success: function(data){
-            var aArray = data.data.split("#");
-            var nAverage = 0;
-            var nNum = 0;
-            var ctx = document.getElementById(chartName).getContext("2d");
-            var currentSets = { labels: [], datasets: []};
-            var nLength = $("#jnum").val();
-            nLength = parseInt(nLength);
-            var fThreshold = $("#".threshold).val();
-            fThreshold = parseFloat(fThreshold);
-            var colorNames = Object.keys(window.chartColors);
-                //increase dataset
-            for(var k = 0;k < selectedResultFolder.length-1;k++) {             
-                var colorName = colorNames[currentSets.datasets.length % colorNames.length];
-                var newColor = window.chartColors[colorName];
-                var newDataset = {
-                    label: selectedResultFolder[k],
-                    backgroundColor: newColor,
-                    borderColor: newColor,
-                    data: [],
-                    fill: false
-            };
-            currentSets.datasets.push(newDataset);
-            }
-            var lastlength=0;
-            for(var j = 0;j < aArray.length-1;j++) {
-                currentData= aArray[j].split(',');
-                if (currentData.length > lastlength) {
-                currentSets.labels=[];
-                }
-                for(var i = 0;i < currentData.length-1 && i < nLength;i++) {
-                    currentData[0]=currentData[0].replace(/\[\'/i, '');
-                    currentData[i]=currentData[i].replace(/\'/i, '');
-                    //if(currentData[i] > threshold) continue;
-                    if (currentData[i]!=null && !(currentData[i].trim()==''))
-                    {
-                        console.log("currentData is",currentData[i]);
-                        if (currentData.length > lastlength) {
-
-                           currentSets.labels.push(i);                                  
-                        }
-                        currentSets.datasets[j].data.push(currentData[i]);
-                        nAverage = nAverage + parseFloat(currentData[i]);
-
-                        nNum++;
-                    }
-                    console.log(currentData[i]);
-                 
-                }
-                console.log("currentData.length is", currentData.length);
-                console.log("lastlength is", lastlength);
-                if (currentData.length > lastlength) {
-                 lastlength =currentData.length; 
-                }
-           }
-            nAverage = parseFloat(nAverage/nNum);
-            if (div4.style.display == 'none') {div4.style.display = 'inline'};
-              Chart.Line(ctx, {
-                data: currentSets,
-
-                options: {
-                    responsive: true,
-                    title:{
-                        display:true,
-                        text:chartName,
-                    },
-                    tooltips: {
-                        mode: 'index',
-                        intersect: false,
-                    },
-                    hover: {
-                        mode: 'nearest',
-                        intersect: true
-                    },
-                    scales: {
-                        xAxes: [{
-                            display: true,
-                            scaleLabel: {
-                                display: true,
-                            }
-                        }],
-                        yAxes: [{
-                            display: true,
-                            scaleLabel: {
-                                display: true,
-                            }
-                        }]
-                    }
-                }
+            }).catch(function (err) {
+                alert('error : ', err);
             })
-        },
-        error: function(jqXHR, textStatus, errorThrown){
-            alert('error : ' + textStatus + " " + errorThrown);
-        }
-    });
     }
-
-
 }
 
-
-
-
-
-
+function getComparedResult(canvasId, resultFile, thresholdId) {
+    let chartName = canvasId
+    let dataArray = [];
+    let dataFolder;
+    let nLength = parseInt($("#maxFrame").val());
+    if (isNaN(nLength)) {
+        nLength = 30
+    }
+    let threshold = parseFloat($("#" + thresholdId).val());
+    if (isNaN(threshold)) {
+        threshold = 1000
+    }
+    if (selectedResultFolder.length) {
+        for (let k = 0; k < selectedResultFolder.length - 1; k++) {
+            selectedResultFolder[k].trim();
+            dataArray.push(selectedResultFolder[k]);
+            dataFolder = dataArray.join();
+        }
+        doPost('/displayData', {
+                "folder": dataFolder,
+                "file": resultFile
+            }, 20000)
+            .then(function (data) {
+                let aArray = data.data.split("#");
+                let nAverage = 0;
+                let currentSets = {
+                    labels: [],
+                    datasets: []
+                };
+                let colorNames = Object.keys(window.chartColors);
+                //increase dataset
+                for (let k = 0; k < selectedResultFolder.length - 1; k++) {
+                    let colorName = colorNames[currentSets.datasets.length % colorNames.length];
+                    let newColor = window.chartColors[colorName];
+                    let newDataset = {
+                        label: selectedResultFolder[k],
+                        backgroundColor: newColor,
+                        borderColor: newColor,
+                        data: [],
+                        fill: false
+                    };
+                    currentSets.datasets.push(newDataset);
+                }
+                let lastlength = 0;
+                for (let j = 0; j < aArray.length; j++) {
+                    let nNum = 0;
+                    if (aArray.length > 1 && aArray.length == j + 1) {
+                        break;
+                    }
+                    let currentData = aArray[j].split(',');
+                    if (currentData.length > lastlength) {
+                        currentSets.labels = [];
+                    }
+                    currentData[0] = currentData[0].replace(/\[\'/i, '');
+                    for (let i = 0; i < currentData.length; i++) {
+                        if (nNum > nLength) {
+                            break;
+                        }
+                        currentData[i] = currentData[i].replace(/\'/i, '');
+                        if (currentData[i] != null && !(currentData[i].trim() == '')) {
+                            if (currentData[i] > threshold) continue;
+                            if (currentData.length > lastlength) {
+                                currentSets.labels.push(i);
+                            }
+                            currentSets.datasets[j].data.push(currentData[i]);
+                            nAverage = nAverage + parseFloat(currentData[i]);
+                            nNum++;
+                        }
+                    }
+                    if (currentData.length > lastlength) {
+                        lastlength = currentData.length;
+                    }
+                }
+                if (chartMap.has(chartName)) chartMap.get(chartName).destroy();
+                chartMap.set(chartName,  draw(canvasId, chartName, currentSets))
+            }).catch(function (err) {
+                alert('error : ', err);
+            })
+    }
+}
