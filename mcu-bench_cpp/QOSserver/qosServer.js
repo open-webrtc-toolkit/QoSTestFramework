@@ -23,8 +23,8 @@ app.use(errorhandler({
 
 app.use(errorhandler());
 app.use(morgan('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
+app.use(express.json());
+app.use(express.urlencoded({
   extended: true
 }));
 
@@ -257,7 +257,7 @@ app.post('/stopTest', function(req,res){
    res.send("OK");
 });
 
-app.listen(4002);
+// app.listen(4002);
 
 var cipher = require('./cipher');
 cipher.unlock(cipher.k, 'cert/.woogeen.keystore', function cb(err, obj) {
