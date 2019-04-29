@@ -2,6 +2,7 @@
 This file could help you collect the video data and
 get some parameters about your peer connection
 */
+'use strict'
 
 var video1;
 var video2;

@@ -1,6 +1,7 @@
 /*
 This file help you compare different 
 */
+'use strict'
 
 var selectedResultFolder=[];
 
