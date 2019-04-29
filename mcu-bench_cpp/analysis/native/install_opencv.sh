@@ -12,8 +12,16 @@ sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libp
 # checkout the opencv repository and contribute
 mkdir -p opencv-build
 cd opencv-build
-git clone https://github.com/opencv/opencv.git
-git clone https://github.com/opencv/opencv_contrib.git
+# git clone https://github.com/opencv/opencv.git
+# git clone https://github.com/opencv/opencv_contrib.git
+
+wget -O opencv_contrib.tgz https://github.com/opencv/opencv_contrib/archive/4.1.0.tar.gz
+wget -O opencv.tgz https://github.com/opencv/opencv/archive/4.1.0.tar.gz
+
+tar zxvf opencv.tgz
+mv opencv-4.1.0 opencv
+tar zxvf opencv_contrib.tgz
+mv opencv_contrib-4.1.0 opencv_contrib
 
 # make the build dir
 cd opencv
