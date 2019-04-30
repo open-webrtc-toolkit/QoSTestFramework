@@ -2,11 +2,11 @@
 #define FILEAUDIOFRAMEGENERATOR_H
 
 #include <mutex>
-#include "ics/base/framegeneratorinterface.h"
+#include "owt/base/framegeneratorinterface.h"
 
 /// This class generate audio frames from input file.
 class FileAudioFrameGenerator
-    : public ics::base::AudioFrameGeneratorInterface {
+    : public owt::base::AudioFrameGeneratorInterface {
  public:
   explicit FileAudioFrameGenerator(const std::string& input_filename);
   static FileAudioFrameGenerator* Create(const std::string& input_filename);

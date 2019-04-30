@@ -5,14 +5,14 @@
 */
 #include <iostream>
 
-#include "ics/conference/remotemixedstream.h"
+#include "owt/conference/remotemixedstream.h"
 #include "conferencesampleobserver.h"
 #include "myVideoRenderer.h"
 #include "basicserverConnector.h"
 //#include "dfbvideorenderer.h"
 using namespace std;
-using namespace ics::base;
-using namespace ics::conference;
+using namespace owt::base;
+using namespace owt::conference;
 
 ConferenceSampleObserver::ConferenceSampleObserver(shared_ptr<ConferenceClient> client)
   :client_(client) {

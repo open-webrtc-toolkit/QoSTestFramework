@@ -14,7 +14,7 @@ int countTag = 1;
 FileFrameGenerator::FileFrameGenerator(int width, int height, int fps, std::string filename ) {
   width_ = width;
   height_ = height;
-  type_ = ics::base::VideoFrameGeneratorInterface::I420;
+  type_ = owt::base::VideoFrameGeneratorInterface::I420;
   fps_ = fps;
   rawfile_ = filename;
   int size = width_ * height_;
@@ -43,7 +43,7 @@ int FileFrameGenerator::GetHeight() { return height_; }
 int FileFrameGenerator::GetWidth() { return width_; }
 int FileFrameGenerator::GetFps() { return fps_; }
 
-ics::base::VideoFrameGeneratorInterface::VideoFrameCodec FileFrameGenerator::GetType() { return type_; }
+owt::base::VideoFrameGeneratorInterface::VideoFrameCodec FileFrameGenerator::GetType() { return type_; }
 
 uint32_t FileFrameGenerator::GenerateNextFrame(uint8_t* frame_buffer, const uint32_t capacity) {
   if (capacity < frame_data_size_) {

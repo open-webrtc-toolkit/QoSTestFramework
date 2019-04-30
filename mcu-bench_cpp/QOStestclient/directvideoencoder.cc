@@ -9,9 +9,9 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-using namespace ics::base;
+using namespace owt::base;
 
-DirectVideoEncoder::DirectVideoEncoder(ics::base::VideoCodec codec, std::string file) {
+DirectVideoEncoder::DirectVideoEncoder(owt::base::VideoCodec codec, std::string file) {
     codec_ = codec;
     filename_ = file;
     timeval tv_publish;
@@ -23,7 +23,7 @@ DirectVideoEncoder::~DirectVideoEncoder() {
         fclose(fd_);
 }
 
-bool DirectVideoEncoder::InitEncoderContext(Resolution& resolution, uint32_t fps, uint32_t bitrate, ics::base::VideoCodec video_codec) {
+bool DirectVideoEncoder::InitEncoderContext(Resolution& resolution, uint32_t fps, uint32_t bitrate, owt::base::VideoCodec video_codec) {
     //Open the resource file.
     //fd_ = fopen("./source.vp8", "rb");
     //fd_ = fopen("./1280x720-framerate30-bitrate2000k-gop30.vp8", "rb");
@@ -142,12 +142,12 @@ bool DirectVideoEncoder::EncodeOneFrame(std::vector<uint8_t>& buffer, bool keyFr
 }
 
 
-DirectVideoEncoder* DirectVideoEncoder::Create(ics::base::VideoCodec codec, std::string encodedFile) {
+DirectVideoEncoder* DirectVideoEncoder::Create(owt::base::VideoCodec codec, std::string encodedFile) {
     DirectVideoEncoder* video_encoder = new DirectVideoEncoder(codec, encodedFile);
     return video_encoder;
 }
 
-ics::base::VideoEncoderInterface* DirectVideoEncoder::Copy() {
+owt::base::VideoEncoderInterface* DirectVideoEncoder::Copy() {
     DirectVideoEncoder* video_encoder = new DirectVideoEncoder(codec_, filename_);
     return video_encoder;
 }

@@ -11,8 +11,8 @@
 #include "basicserverConnector.h"
 
 using namespace std;
-using namespace ics::base;
-using namespace ics::conference;
+using namespace owt::base;
+using namespace owt::conference;
 
 ConferenceSampleForwardObserver::ConferenceSampleForwardObserver(shared_ptr<ConferenceClient> client)
   :client_(client) {

@@ -1,15 +1,15 @@
 #ifndef MY_VIDEO_RENDERER_H_
 #define MY_VIDEO_RENDERER_H_
 
-#include "ics/base/videorendererinterface.h"
+#include "owt/base/videorendererinterface.h"
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/time.h>
 #include <unistd.h>
 
-using namespace ics::base;
-//namespace ics {
+using namespace owt::base;
+//namespace owt {
 //namespace base {
 
 class MyVideoRenderer : public VideoRendererInterface

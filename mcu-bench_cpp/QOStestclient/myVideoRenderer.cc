@@ -3,7 +3,7 @@
 #include "basicserverConnector.h"
 
 using namespace std;
-//using namespace ics::base;
+//using namespace owt::base;
 
 
 
@@ -45,7 +45,7 @@ void MyVideoRenderer::RenderFrame(std::unique_ptr<VideoBuffer> video_frame)
 }
 
 VideoRendererType MyVideoRenderer::Type() {
-   return ics::base::VideoRendererType::kARGB ;
+   return owt::base::VideoRendererType::kARGB ;
 }
 
 MyVideoRenderer::~MyVideoRenderer() 
