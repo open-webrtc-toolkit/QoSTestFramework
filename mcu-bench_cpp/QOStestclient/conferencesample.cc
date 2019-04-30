@@ -4,13 +4,13 @@
 // testclient.cc : Defines the entry point for the console application.
 //
 #include <iostream>
-#include "ics/conference/conferenceclient.h"
-#include "ics/conference/remotemixedstream.h"
-#include "ics/conference/conferencepublication.h"
-#include "ics/conference/conferencesubscription.h"
-#include "ics/base/globalconfiguration.h"
-#include "ics/base/localcamerastreamparameters.h"
-#include "ics/base/stream.h"
+#include "owt/conference/conferenceclient.h"
+#include "owt/conference/remotemixedstream.h"
+#include "owt/conference/conferencepublication.h"
+#include "owt/conference/conferencesubscription.h"
+#include "owt/base/globalconfiguration.h"
+#include "owt/base/localcamerastreamparameters.h"
+#include "owt/base/stream.h"
 #include "fileframegenerator.h"
 #include "encodedframegenerator.h"
 //#include "fileaudioframegenerator.h"
@@ -29,8 +29,8 @@
 
 
 using namespace std;
-using namespace ics::base;
-using namespace ics::conference;
+using namespace owt::base;
+using namespace owt::conference;
 
 std::shared_ptr<RemoteMixedStream> remote_mixed_stream;
 ConferenceClientConfiguration configuration;
@@ -38,8 +38,8 @@ ConferenceClientConfiguration configuration;
 int main(int argc, char** argv)
 {
   //daemon(1,1);
-  using namespace ics::base;
-  using namespace ics::conference;
+  using namespace owt::base;
+  using namespace owt::conference;
  // std::string audiopath("");
   std::string videopath("");
   std::string roomId("");
@@ -182,7 +182,7 @@ int main(int argc, char** argv)
     videopath.append("/testFourPeopleHD720P.avi");
   }
 
-  std::unique_ptr<ics::base::AudioFrameGeneratorInterface> audio_generator(FileAudioFrameGenerator::Create(audiopath));
+  std::unique_ptr<owt::base::AudioFrameGeneratorInterface> audio_generator(FileAudioFrameGenerator::Create(audiopath));
   if (audio_generator == nullptr){
     return -1;
   }*/
@@ -191,19 +191,19 @@ int main(int argc, char** argv)
   }
   //GlobalConfiguration::SetCustomizedAudioInputEnabled(true, std::move(audio_generator));
 
-  ics::base::VideoCodec codec_name;
+  owt::base::VideoCodec codec_name;
   if (codec_used.find("h264") != std::string::npos) {
-    cout <<" ============codec_name is ics::base::VideoCodec::kH264==========";
-    codec_name = ics::base::VideoCodec::kH264;
+    cout <<" ============codec_name is owt::base::VideoCodec::kH264==========";
+    codec_name = owt::base::VideoCodec::kH264;
   } else if(codec_used.find("vp9") != std::string::npos) {
-    codec_name = ics::base::VideoCodec::kVp9;
+    codec_name = owt::base::VideoCodec::kVp9;
     cout << "codec_name is vp9 ";
   } else if(codec_used.find("vp8") != std::string::npos) {
-    codec_name = ics::base::VideoCodec::kVp8;
+    codec_name = owt::base::VideoCodec::kVp8;
   } else if(codec_used.find("h265") != std::string::npos) {
-    codec_name = ics::base::VideoCodec::kH265;
+    codec_name = owt::base::VideoCodec::kH265;
   } else {
-    codec_name = ics::base::VideoCodec::kVp8;
+    codec_name = owt::base::VideoCodec::kVp8;
   }
 
 
@@ -234,7 +234,7 @@ int main(int argc, char** argv)
  // cin.ignore();
 
   string token = getToken(scheme, roomId, "", "", false,"presenter");
-  std::shared_ptr<ics::base::LocalStream> shared_stream;
+  std::shared_ptr<owt::base::LocalStream> shared_stream;
     cout << "token is" << token <<endl;
 // following code is used for raw file input
   if(rawfileMode){

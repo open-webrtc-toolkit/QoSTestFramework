@@ -54,7 +54,7 @@ target_link_libraries(woogeen_conf_sample
   "-lboost_random"
   "-lssl"
   "-lcrypto"
-  "-lics"
+  "-lowt"
   "-Wl,--end-group"
   "-lrt"
   "-lm"
