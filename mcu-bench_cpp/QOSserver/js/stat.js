@@ -47,9 +47,7 @@ function getResultFolder() {
   for (let i = 0; i < size; i++) {
     resultfolder.remove(0)
   }
-  doPost('/getResultFolder', {
-    "blank": " "
-  }, getHeader(), 800000)
+  doPost('/getResultFolder', undefined, getHeader(), 800000)
     .then(function(data) {
       let folders = data.folder.split("\n")
       for (var i = 0; i < folders.length; i++) {
@@ -110,9 +108,7 @@ function getQuality(thresholdId) {
         alert(error);
       })
   } else {
-    doPost('/quality', {
-      "blank": " "
-    }, getHeader(), 800000)
+    doPost('/quality', undefined, getHeader(), 800000)
       .then(function(data) {
         $("#quality-btn").removeAttr('disabled');
         $("#vmaf-btn").removeAttr('disabled');
@@ -220,9 +216,7 @@ function getData(canvasId, thresholdId, chartName, avgId = undefined) {
         alert(error);
       })
   } else {
-    doPost(url, {
-      "blank": " "
-    }, getHeader(), 20000)
+    doPost(url, undefined, getHeader(), 20000)
       .then(function(data) {
         if (chartName === 'jitter') {
           dataList = data.jitter.split("\n")
@@ -309,9 +303,7 @@ function getNR() {
         alert(error);
       })
   } else {
-    doPost('/NR', {
-      "blank": " "
-    }, getHeader(), 800000)
+    doPost('/NR', undefined, getHeader(), 800000)
       .then(function(data) {
         let NR = data.NR.split("\n");
         NR[0] = NR[0].replace(/\[\'/i, '');
