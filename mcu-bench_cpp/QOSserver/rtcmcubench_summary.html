@@ -1,135 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+  <head>
     <title> WebRTCQOSBench</title>
     <link rel="stylesheet" href="css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-</head>
-<script language="javascript">
+  </head>
+  <script language="javascript">
 
-</script>
+  </script>
 
-<body>
+  <body>
     <h2 style="text-align:center;"> WebRTCQOSBench: A WebRTC QOS Benchmark </h2>
 
     <div id="how-to-use">
-        <p> Click get the result folder select the indicators folders which you want to measure and compare.
+      <p> Click get the result folder select the indicators folders which you
+        want to measure and compare.
     </div>
 
     <div>
-        <canvas id="blank space" style="width: 640px;height: 50px;" style="display: none;"></canvas>
+      <canvas id="blank space" style="width: 640px;height: 50px;"
+        style="display: none;"></canvas>
     </div>
 
     <div>
-        <button id="getResultFolder" onclick="getCompareResultFolder()"
-            style="width: 200px;height: 30px;">getResultFolder</button>
-        <div>
-            ResultFolder:<select id="resultfolder"></select>
-        </div>
-        <button id="OK" onclick="getSelectedResultFolder()" style="width: 200px;height: 30px;">OK</button>
+      Authorization token: <input type="password" id="authorization">
+    </div>
+    <div>
+      <button id="getResultFolder" onclick="getCompareResultFolder()"
+        style="width: 200px;height: 30px;">getResultFolder</button>
+      <div>
+        ResultFolder:<select id="resultfolder"></select>
+      </div>
+      <button id="OK" onclick="getSelectedResultFolder()"
+        style="width: 200px;height: 30px;">OK</button>
     </div>
 
     <div>
-        Frame:<input type="text" id="maxFrame" value="300">
+      Frame:<input type="text" id="maxFrame" value="300">
     </div>
     <div>
-        <p>getQuality Full-Reference (PSNR, SSIM)</p>
-        <div>
-            <button id="quality-PSNR" onclick="getComparedResult('PSNRChart','psnr.txt','pthreshold')"
-                style="width: 250px;height: 50px;">Image Quality (PSNR). Greater value is better</button>
-            Threshold:<input type="text" id="pthreshold" value="40">
-            <canvas id="PSNRChart" width="400" height="100" style="display: none;"></canvas>
-        </div>
-        <div>
-            <button id="quality-SSIM" onclick="getComparedResult('SSIMChart','ssim.txt','sthreshold')"
-                style="width: 250px;height: 50px;">Image Quality (SSIM). Greater value is better</button>
-            Threshold:<input type="text" id="sthreshold" value="40">
-            <canvas id="SSIMChart" width="400" height="100" style="display: none;"></canvas>
-        </div>
+      <p>getQuality Full-Reference (PSNR, SSIM)</p>
+      <div>
+        <button id="quality-PSNR"
+          onclick="getComparedResult('PSNRChart','psnr.txt','pthreshold')"
+          style="width: 250px;height: 50px;">Image Quality (PSNR). Greater value
+          is better</button>
+        Threshold:<input type="text" id="pthreshold" value="40">
+        <canvas id="PSNRChart" width="400" height="100"
+          style="display: none;"></canvas>
+      </div>
+      <div>
+        <button id="quality-SSIM"
+          onclick="getComparedResult('SSIMChart','ssim.txt','sthreshold')"
+          style="width: 250px;height: 50px;">Image Quality (SSIM). Greater value
+          is better</button>
+        Threshold:<input type="text" id="sthreshold" value="40">
+        <canvas id="SSIMChart" width="400" height="100"
+          style="display: none;"></canvas>
+      </div>
     </div>
 
 
     <div>
-        <button id="vmaf-btn" onclick="getComparedResult('VMAFChart','VMAF_score','vthreshold')"
-            style="width: 250px;height: 50px;">Image Quality (vmaf). Greater value is better</button>
-        Threshold:<input type="text" id="vthreshold" value="100">
-        <canvas id="VMAFChart" width="400" height="100" style="display: none;"></canvas>
-    </div>
-
-    <div>
-        <p>getNR No-Reference (Blockiness, Blockloss, Interlace, Blur, )</p>
-        <div>
-            Threshold:<input type="text" id="nthreshold" value="100">
-            <div></div>
-            <button id="NR-Blockiness"
-                onclick="getComparedResult('BlockinessChart','Blockiness_score','nthreshold')"
-                style="width: 250px;height: 50px;">No-Reference (Blockiness) </button>
-            Blockiness Normal Range:<a>0.9-1.01</a> . Greater value is better
-            <canvas id="BlockinessChart" width="400" height="100" style="display: none;"></canvas>
-        </div>
-        <div>
-            <button id="NR-Blockloss"
-                onclick="getComparedResult('BlocklossChart','Blockloss_score','nthreshold')"
-                style="width: 250px;height: 50px;">No-Reference ( Blockloss)</button>
-            Blockloss Normal Range:<a>0-5</a> . Lower value is better
-            <canvas id="BlocklossChart" width="400" height="100" style="display: none;"></canvas>
-        </div>
-        <div>
-            <button id="NR-Interlace"
-                onclick="getComparedResult('InterlaceChart','Interlace_score','nthreshold')"
-                style="width: 250px;height: 50px;">No-Reference (Interlace)</button>
-            Interlace Normal Range:<a>0</a> . Lower value is better
-            <canvas id="InterlaceChart" width="400" height="100" style="display: none;"></canvas>
-        </div>
-        <div>
-            <button id="NR-Blur" onclick="getComparedResult('BlurChart','Blur_score','nthreshold')"
-                style="width: 250px;height: 50px;">No-Reference ( Blur)</button>
-            Blur Normal Range:<a>0-5</a> . Lower value is better
-            <canvas id="BlurChart" width="400" height="100" style="display: none;"></canvas>
-        </div>
+      <button id="vmaf-btn"
+        onclick="getComparedResult('VMAFChart','VMAF_score','vthreshold')"
+        style="width: 250px;height: 50px;">Image Quality (vmaf). Greater value
+        is better</button>
+      Threshold:<input type="text" id="vthreshold" value="100">
+      <canvas id="VMAFChart" width="400" height="100"
+        style="display: none;"></canvas>
     </div>
 
     <div>
-        <button id="jitter-btn" onclick="getComparedResult('jitterChart','jitter.txt','jthreshold')"
-            style="width: 250px;height: 50px;">Jitter (miliseconds)</button>
-        Threshold:<input type="text" id="jthreshold" value="10000">
-        <canvas id="jitterChart" width="400" height="100" style="display: none;"></canvas>
+      <p>getNR No-Reference (Blockiness, Blockloss, Interlace, Blur, )</p>
+      <div>
+        Threshold:<input type="text" id="nthreshold" value="100">
+        <div></div>
+        <button id="NR-Blockiness"
+          onclick="getComparedResult('BlockinessChart','Blockiness_score','nthreshold')"
+          style="width: 250px;height: 50px;">No-Reference (Blockiness) </button>
+        Blockiness Normal Range:<a>0.9-1.01</a> . Greater value is better
+        <canvas id="BlockinessChart" width="400" height="100"
+          style="display: none;"></canvas>
+      </div>
+      <div>
+        <button id="NR-Blockloss"
+          onclick="getComparedResult('BlocklossChart','Blockloss_score','nthreshold')"
+          style="width: 250px;height: 50px;">No-Reference ( Blockloss)</button>
+        Blockloss Normal Range:<a>0-5</a> . Lower value is better
+        <canvas id="BlocklossChart" width="400" height="100"
+          style="display: none;"></canvas>
+      </div>
+      <div>
+        <button id="NR-Interlace"
+          onclick="getComparedResult('InterlaceChart','Interlace_score','nthreshold')"
+          style="width: 250px;height: 50px;">No-Reference (Interlace)</button>
+        Interlace Normal Range:<a>0</a> . Lower value is better
+        <canvas id="InterlaceChart" width="400" height="100"
+          style="display: none;"></canvas>
+      </div>
+      <div>
+        <button id="NR-Blur"
+          onclick="getComparedResult('BlurChart','Blur_score','nthreshold')"
+          style="width: 250px;height: 50px;">No-Reference ( Blur)</button>
+        Blur Normal Range:<a>0-5</a> . Lower value is better
+        <canvas id="BlurChart" width="400" height="100"
+          style="display: none;"></canvas>
+      </div>
     </div>
 
     <div>
-        <button id="latency-btn" onclick="getComparedResult('latencyChart','latency.txt','lthreshold')"
-            style="width: 250px;height: 50px;">Latency (miliseconds)</button>
-        Threshold:<input type="text" id="lthreshold" value="5000">
-        <canvas id="latencyChart" width="400" height="100" style="display: none;"></canvas>
+      <button id="jitter-btn"
+        onclick="getComparedResult('jitterChart','jitter.txt','jthreshold')"
+        style="width: 250px;height: 50px;">Jitter (miliseconds)</button>
+      Threshold:<input type="text" id="jthreshold" value="10000">
+      <canvas id="jitterChart" width="400" height="100"
+        style="display: none;"></canvas>
+    </div>
+
+    <div>
+      <button id="latency-btn"
+        onclick="getComparedResult('latencyChart','latency.txt','lthreshold')"
+        style="width: 250px;height: 50px;">Latency (miliseconds)</button>
+      Threshold:<input type="text" id="lthreshold" value="5000">
+      <canvas id="latencyChart" width="400" height="100"
+        style="display: none;"></canvas>
     </div>
     <p>webrtc statistics: FPS and bitrate</p>
     <div>
-        <button id="fps-btn" onclick="getComparedResult('FPSChart','fps.txt','fthreshold')"
-            style="width: 250px;height: 50px;">Fps</button>
-        Threshold:<input type="text" id="fthreshold" value="80">
-        <canvas id="FPSChart" width="400" height="100" style="display: none;"></canvas>
+      <button id="fps-btn"
+        onclick="getComparedResult('FPSChart','fps.txt','fthreshold')"
+        style="width: 250px;height: 50px;">Fps</button>
+      Threshold:<input type="text" id="fthreshold" value="80">
+      <canvas id="FPSChart" width="400" height="100"
+        style="display: none;"></canvas>
     </div>
 
     <div>
-        <button id="bitrate-btn" onclick="getComparedResult('bitrateChart','bitrate.txt','bthreshold')"
-            style="width: 250px;height: 50px;">Bitrate (kbps)</button>
-        Threshold:<input type="text" id="bthreshold" value="2500">
-        <canvas id="bitrateChart" width="400" height="100" style="display: none;"></canvas>
+      <button id="bitrate-btn"
+        onclick="getComparedResult('bitrateChart','bitrate.txt','bthreshold')"
+        style="width: 250px;height: 50px;">Bitrate (kbps)</button>
+      Threshold:<input type="text" id="bthreshold" value="2500">
+      <canvas id="bitrateChart" width="400" height="100"
+        style="display: none;"></canvas>
     </div>
     <p>Audio related: pesq</p>
     <div>
-        <button id="pesq-btn" onclick="getComparedResult('PESQChart','pesq.txt','pthreshold')"
-            style="width: 250px;height: 50px;">PESQ (mos)</button>
-        Threshold:<input type="text" id="pthreshold" value="2500">
+      <button id="pesq-btn"
+        onclick="getComparedResult('PESQChart','pesq.txt','pthreshold')"
+        style="width: 250px;height: 50px;">PESQ (mos)</button>
+      Threshold:<input type="text" id="pthreshold" value="2500">
 
-        <canvas id="PESQChart" width="400" height="100" style="display: none;"></canvas>
+      <canvas id="PESQChart" width="400" height="100"
+        style="display: none;"></canvas>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
     <script type="text/javascript" src="js/statAll.js"> </script>
     <script type="text/javascript" src="js/util.js"> </script>
-</body>
+  </body>
 
 </html>

@@ -29,6 +29,12 @@ function getSizebycount(inputparm) {
   if (inputparm > 9) return 4;
 }
 
+function getHeader() {
+  return {
+    "Authorization": $("#authorization").val()
+  }
+}
+
 function getCompareResultFolder() {
   let resultfolder = document.getElementById("resultfolder");
   let size = resultfolder.length
@@ -37,7 +43,7 @@ function getCompareResultFolder() {
   }
   doPost('/getCompareResultFolder', {
     "blank": " "
-  }, 800000)
+  }, getHeader(), 800000)
     .then(function(data) {
       let folders = data.folder.split("\n")
       for (let i = 0; i < folders.length; i++) {
@@ -47,7 +53,7 @@ function getCompareResultFolder() {
         resultfolder.add(optiondevice, null)
       }
     }).catch(function(err) {
-      alert('error : ', err);
+      alert(err);
     })
 }
 
@@ -58,11 +64,11 @@ function getSelectedResultFolder() {
     let strfolder = resultfolder.options[resultfolder.selectedIndex].text;
     doPost('/getCompareResultFolder', {
       "folder": strfolder
-    }, 800000)
+    }, getHeader(), 800000)
       .then(function(data) {
         selectedResultFolder = data.folder.split("\n")
       }).catch(function(err) {
-        alert('error : ', err);
+        alert(err);
       })
   }
 }
@@ -88,7 +94,7 @@ function getComparedResult(canvasId, resultFile, thresholdId) {
     doPost('/displayData', {
       "folder": dataFolder,
       "file": resultFile
-    }, 20000)
+    }, getHeader(), 20000)
       .then(function(data) {
         let aArray = data.data.split("#");
         let nAverage = 0;
@@ -144,7 +150,7 @@ function getComparedResult(canvasId, resultFile, thresholdId) {
         if (chartMap.has(chartName)) chartMap.get(chartName).destroy();
         chartMap.set(chartName, draw(canvasId, chartName, currentSets))
       }).catch(function(err) {
-        alert('error : ', err);
+        alert(err);
       })
   }
 }

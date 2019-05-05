@@ -1,8 +1,9 @@
 'use strict'
 
-function doPost(url, data, timeout) {
+function doPost(url, data, headers,timeout) {
   return new Promise((resolve, reject) => {
     $.ajax({
+      headers: headers,
       data: data,
       url: url,
       type: 'post',
@@ -13,7 +14,7 @@ function doPost(url, data, timeout) {
         resolve(data);
       },
       error: function(jqXHR, textStatus, errorThrown) {
-        reject('error : ' + textStatus + " " + errorThrown);
+        reject(textStatus + " " + errorThrown);
       },
     });
   });

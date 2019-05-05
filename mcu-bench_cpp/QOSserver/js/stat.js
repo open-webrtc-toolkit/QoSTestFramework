@@ -7,9 +7,15 @@ get some parameters about your peer connection
 var chartMap = new Map()
 var Color = 'rgb(255, 99, 132)';
 
+function getHeader() {
+  return {
+    "Authorization": $("#authorization").val()
+  }
+}
 
 function startVideoQualityMeasureTesting() {
   $.ajax({
+    headers: getHeader(),
     data: {
       "blank": " "
     },
@@ -23,6 +29,7 @@ function startVideoQualityMeasureTesting() {
 
 function stopVideoQualityMeasureTesting() {
   $.ajax({
+    headers: getHeader(),
     data: {
       "blank": " "
     },
@@ -42,7 +49,7 @@ function getResultFolder() {
   }
   doPost('/getResultFolder', {
     "blank": " "
-  }, 800000)
+  }, getHeader(), 800000)
     .then(function(data) {
       let folders = data.folder.split("\n")
       for (var i = 0; i < folders.length; i++) {
@@ -52,7 +59,7 @@ function getResultFolder() {
         resultfolder.add(optiondevice, null)
       }
     }).catch(function(error) {
-      alert('error : ' + error);
+      alert(error);
     })
 }
 
@@ -79,7 +86,7 @@ function getQuality(thresholdId) {
     doPost('/displayData', {
       "folder": strfolder,
       "file": "quality.txt"
-    }, 800000)
+    }, getHeader(), 800000)
       .then(function(data) {
         $("#quality-btn").removeAttr('disabled');
         $("#vmaf-btn").removeAttr('disabled');
@@ -97,12 +104,15 @@ function getQuality(thresholdId) {
         setData("ssim", "chartSsim", "SSIM Chart", ssimData, ssimArray,
           fCount, threshold);
       }).catch(function(error) {
-        alert('error : ' + error);
+        $("#quality-btn").removeAttr('disabled');
+        $("#vmaf-btn").removeAttr('disabled');
+        $("#NR-btn").removeAttr('disabled');
+        alert(error);
       })
   } else {
     doPost('/quality', {
       "blank": " "
-    }, 800000)
+    }, getHeader(), 800000)
       .then(function(data) {
         $("#quality-btn").removeAttr('disabled');
         $("#vmaf-btn").removeAttr('disabled');
@@ -120,7 +130,10 @@ function getQuality(thresholdId) {
         setData("ssim", "chartSsim", "SSIM Chart", ssimData, ssimArray,
           fCount, threshold);
       }).catch(function(error) {
-        alert('error : ' + error);
+        $("#quality-btn").removeAttr('disabled');
+        $("#vmaf-btn").removeAttr('disabled');
+        $("#NR-btn").removeAttr('disabled');
+        alert(error);
       })
   }
 }
@@ -198,18 +211,18 @@ function getData(canvasId, thresholdId, chartName, avgId = undefined) {
     doPost('/displayData', {
       "folder": strfolder,
       "file": fileName
-    }, 20000)
+    }, getHeader(), 20000)
       .then(function(data) {
         dataList = data.data.split(",");
         setData(chartName, canvasId, chartTitle, chartData, dataList, fCount,
           threshold, avgId);
       }).catch(function(error) {
-        alert('error : ' + error);
+        alert(error);
       })
   } else {
     doPost(url, {
       "blank": " "
-    }, 20000)
+    }, getHeader(), 20000)
       .then(function(data) {
         if (chartName === 'jitter') {
           dataList = data.jitter.split("\n")
@@ -225,7 +238,7 @@ function getData(canvasId, thresholdId, chartName, avgId = undefined) {
         setData(chartName, canvasId, chartTitle, chartData, dataList, fCount,
           threshold, avgId);
       }).catch(function(error) {
-        alert('error : ' + error);
+        alert(error);
       })
   }
 }
@@ -249,7 +262,7 @@ function getNR() {
     doPost('/displayData', {
       "folder": strfolder,
       "file": "NR_score"
-    }, 800000)
+    }, getHeader(), 800000)
       .then(function(data) {
         let NR = data.data.split(",");
         NR[0] = NR[0].replace(/\[\'/i, '');
@@ -293,12 +306,12 @@ function getNR() {
         chartMap.set('FreezeChart', draw('chartNR6', 'FreezeData Chart',
           FreezeData))
       }).catch(function(error) {
-        alert('error : ' + error);
+        alert(error);
       })
   } else {
     doPost('/NR', {
       "blank": " "
-    }, 800000)
+    }, getHeader(), 800000)
       .then(function(data) {
         let NR = data.NR.split("\n");
         NR[0] = NR[0].replace(/\[\'/i, '');
@@ -341,7 +354,7 @@ function getNR() {
         chartMap.set('FreezeChart', draw('chartNR6', 'FreezeData Chart',
           FreezeData))
       }).catch(function(error) {
-        alert('error : ' + error);
+        alert(error);
       })
   }
 }
@@ -355,7 +368,7 @@ function getPESQ() {
     doPost('/displayData', {
       "folder": strfolder,
       "file": "pesq.txt"
-    }, 20000)
+    }, getHeader(), 20000)
       .then(function(data) {
         let pesq = data.data.split(",");
         let average = 0;
@@ -373,12 +386,12 @@ function getPESQ() {
         console.log(pesqData.datasets[0].data);
         draw('chartgoogPESQ', 'PESQ Chart', pesqData);
       }).catch(function(error) {
-        alert('error : ' + error);
+        alert(error);
       })
   } else {
     doPost('/pesq', {
       "blank": " "
-    }, 20000)
+    }, getHeader(), 20000)
       .then(function(data) {
         let pesq = data.pesq.split("\n");
         let average = 0;
@@ -394,7 +407,7 @@ function getPESQ() {
         console.log(pesqData.datasets[0].data);
         draw('chartgoogPESQ', 'PESQ Chart', pesqData);
       }).catch(function(error) {
-        alert('error : ' + error);
+        alert(error);
       })
   }
 }
