@@ -10,6 +10,8 @@ const https = require('https');
 const toobusy = require('node-toobusy');
 const crypto = require('crypto');
 const uuid = require('uuid/v4');
+const exec = require('child_process').exec;
+const cipher = require('./cipher');
 
 const rootDir = __dirname + "/../";
 const analysisDir = rootDir + "analysis/";
@@ -53,7 +55,6 @@ app.use(function(req, res, next) {
   }
 });
 
-
 app.get('/', function(req, res) {
   res.sendFile(__dirname + '/rtcmcubench_withoutjs.html');
 });
@@ -61,7 +62,6 @@ app.get('/', function(req, res) {
 app.get('/rtcmcubench_summary.html', function(req, res) {
   res.sendFile(__dirname + '/rtcmcubench_summary.html');
 });
-
 
 app.get('/js/stat.js', function(req, res) {
   res.sendFile(__dirname + '/js/stat.js');
@@ -115,8 +115,7 @@ app.post('/jitter', function(req, res) {
       return res.status(403).send('Forbidden');
     }
   }
-  var rTagFilename = dataDir + "localLatency.txt";
-  var exec = require('child_process').exec;
+  let rTagFilename = dataDir + "localLatency.txt";
   exec(nativeDir + 'FLR ' + rTagFilename, function(err, data, stderr) {
     if (data.length > 1) {
       res.json({
@@ -140,9 +139,8 @@ app.post('/latency', function(req, res) {
       return res.status(403).send('Forbidden');
     }
   }
-  var sTagFilename = dataDir + "localPublishTime.txt";
-  var rTagFilename = dataDir + "localLatency.txt";
-  var exec = require('child_process').exec;
+  let sTagFilename = dataDir + "localPublishTime.txt";
+  let rTagFilename = dataDir + "localLatency.txt";
   exec(nativeDir + 'latency ' + sTagFilename + ' ' + rTagFilename, function(
     err, data, stderr) {
     if (data.length > 1) {
@@ -158,8 +156,6 @@ app.post('/latency', function(req, res) {
   });
 });
 
-
-
 app.post('/fps', function(req, res) {
   let authorization = req.headers.authorization
   if (authorization === undefined) {
@@ -169,8 +165,7 @@ app.post('/fps', function(req, res) {
       return res.status(403).send('Forbidden');
     }
   }
-  var fpsFilename = dataDir + "localFPS.txt";
-  var exec = require('child_process').exec;
+  let fpsFilename = dataDir + "localFPS.txt";
   console.log('in fps post');
   exec(nativeDir + 'fps ' + fpsFilename, function(err, data, stderr) {
     if (data.length > 1) {
@@ -195,8 +190,7 @@ app.post('/bitrate', function(req, res) {
       return res.status(403).send('Forbidden');
     }
   }
-  var bitrateFilename = dataDir + "localBitrate.txt";
-  var exec = require('child_process').exec;
+  let bitrateFilename = dataDir + "localBitrate.txt";
   console.log('in bitrate post');
   exec(nativeDir + 'bitrate ' + bitrateFilename, function(err, data,stderr) {
     if (data.length > 1) {
@@ -221,12 +215,11 @@ app.post('/quality', function(req, res) {
       return res.status(403).send('Forbidden');
     }
   }
-  var originFilename = req.body.filename || sourceDir +
+  let originFilename = req.body.filename || sourceDir +
     "FourPeople_540x360_30_taged.avi";
-  var codec = req.body.codec || "hd540p";
-  var rawFilename = dataDir + "localARGB.txt";
-  var exec = require('child_process').exec;
-  var exec_file;
+  let codec = req.body.codec || "hd540p";
+  let rawFilename = dataDir + "localARGB.txt";
+  let exec_file = undefined;
   if (originFilename.endsWith('.avi')) {
     exec_file = 'iq_avi ';
   } else if (originFilename.endsWith('.yuv')) {
@@ -258,7 +251,6 @@ app.post('/vmaf', function(req, res) {
       return res.status(403).send('Forbidden');
     }
   }
-  var exec = require('child_process').exec;
   process.env['PYTHONPATH'] = (process.env['PYTHONPATH'] || '');
 
   exec('python ' + analysisDir + 'python/vmaf_calculate.py', {
@@ -287,7 +279,6 @@ app.post('/NR', function(req, res) {
       return res.status(403).send('Forbidden');
     }
   }
-  var exec = require('child_process').exec;
   exec('python ' + analysisDir + 'python/NR_calculate.py', function(err,
     data, stderr) {
     //console.log(err, data, stderr);
@@ -314,7 +305,6 @@ app.post('/getResultFolder', function(req, res) {
       return res.status(403).send('Forbidden');
     }
   }
-  var exec = require('child_process').exec;
   exec('python python/listFolder.py -l 1', function(err, data, stderr) {
     console.log(data);
     res.json({
@@ -335,8 +325,7 @@ app.post('/getCompareResultFolder', function(req, res) {
       return res.status(403).send('Forbidden');
     }
   }
-  var exec = require('child_process').exec;
-  var folder = req.body.folder;
+  let folder = req.body.folder;
   if (folder != undefined) {
     console.log("folder is", folder);
     exec('python python/listFolder.py ' + '-f ' + folder, function(err,
@@ -372,9 +361,8 @@ app.post('/displayData', function(req, res) {
       return res.status(403).send('Forbidden');
     }
   }
-  var exec = require('child_process').exec;
-  var folder = req.body.folder;
-  var file = req.body.file;
+  let folder = req.body.folder;
+  let file = req.body.file;
   console.log("folder is", folder, "file is", file);
   exec('python python/display_data.py ' + '-c ' + folder + ' ' + '-f ' +
     file, function(err, data, stderr) {
@@ -396,7 +384,6 @@ app.post('/startTest', function(req, res) {
       return res.status(403).send('Forbidden');
     }
   }
-  var exec = require('child_process').exec;
   exec(clientDir + 'scripts/vp8_js.sh', function(err) {
     if (err) {
       console.info('stderr form vp8.sh:' + err);
@@ -404,7 +391,6 @@ app.post('/startTest', function(req, res) {
   });
   res.send("OK");
 });
-
 
 app.post('/stopTest', function(req, res) {
   let authorization = req.headers.authorization
@@ -415,7 +401,6 @@ app.post('/stopTest', function(req, res) {
       return res.status(403).send('Forbidden');
     }
   }
-  var exec = require('child_process').exec;
   exec(
     'ps aux | grep woogeen_conf_sample | grep -v \"grep\" | awk \'{print $2}\'|xargs kill -9 >/dev/null 2>&1 ',
     function(err) {
@@ -428,7 +413,6 @@ app.post('/stopTest', function(req, res) {
 
 // app.listen(4002);
 
-var cipher = require('./cipher');
 cipher.unlock(cipher.k, 'cert/.woogeen.keystore', function cb(err, obj) {
   if (!err) {
     try {

@@ -1,32 +1,32 @@
 /* global require, module */
 'use strict';
 
-var crypto = require('crypto');
-var algorithm = 'aes-256-ctr';
-var stream = require('stream');
-var fs = require('fs');
-var zlib = require('zlib');
+const crypto = require('crypto');
+const algorithm = 'aes-256-ctr';
+const stream = require('stream');
+const fs = require('fs');
+const zlib = require('zlib');
 
 function encrypt(password, text) {
-  var cipher = crypto.createCipher(algorithm, password);
-  var enc = cipher.update(text, 'utf8', 'hex');
+  let cipher = crypto.createCipher(algorithm, password);
+  let enc = cipher.update(text, 'utf8', 'hex');
   enc += cipher.final('hex');
   return enc;
 }
 
 function decrypt(password, text) {
-  var decipher = crypto.createDecipher(algorithm, password);
-  var dec = decipher.update(text, 'hex', 'utf8');
+  let decipher = crypto.createDecipher(algorithm, password);
+  let dec = decipher.update(text, 'hex', 'utf8');
   dec += decipher.final('utf8');
   return dec;
 }
 
 function lock(password, object, filename, cb) {
-  var s = new stream.Readable();
+  let s = new stream.Readable();
   s._read = function noop() {};
   s.push(JSON.stringify(object));
   s.push(null);
-  var out = fs.createWriteStream(filename);
+  let out = fs.createWriteStream(filename);
   out.on('error', function(e) {
     cb(e);
   });
@@ -38,12 +38,12 @@ function lock(password, object, filename, cb) {
 }
 
 function unlock(password, filename, cb) {
-  var s = fs.createReadStream(filename);
+  let s = fs.createReadStream(filename);
   s.on('error', function(e) {
     cb(e);
   });
-  var unzip = zlib.createGunzip();
-  var buf = '';
+  let unzip = zlib.createGunzip();
+  let buf = '';
   unzip.on('data', function(chunk) {
     buf += chunk.toString();
   });
