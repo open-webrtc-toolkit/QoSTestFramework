@@ -14,6 +14,7 @@ function doPost(url, data, headers,timeout) {
         resolve(data);
       },
       error: function(jqXHR, textStatus, errorThrown) {
+        console.log(textStatus,errorThrown)
         reject(textStatus + " " + errorThrown);
       },
     });

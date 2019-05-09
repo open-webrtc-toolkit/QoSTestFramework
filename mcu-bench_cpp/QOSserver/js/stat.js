@@ -9,7 +9,7 @@ var Color = 'rgb(255, 99, 132)';
 
 function getHeader() {
   return {
-    "Authorization": $("#authorization").val()
+    "Authorization": "key=" + $("#sampleKey").val() + ",id=" + $("#sampleId").val()
   }
 }
 

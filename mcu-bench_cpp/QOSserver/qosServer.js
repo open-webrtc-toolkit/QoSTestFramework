@@ -3,31 +3,31 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const errorhandler = require('errorhandler');
+const spdy = require('spdy');
 const morgan = require('morgan');
 const fs = require('fs');
 const https = require('https');
 const crypto = require('crypto');
 const uuid = require('uuid/v4');
 const exec = require('child_process').exec;
-const cipher = require('./cipher');
-
+const path = require('path')
 const rootDir = __dirname + "/../";
 const analysisDir = rootDir + "analysis/";
 const nativeDir = analysisDir + "native/";
 const dataDir = analysisDir + "dataset/Data/";
 const sourceDir = analysisDir + "dataset/source/"
 const clientDir = rootDir + "QOStestclient/";
-
+const authorizationFileName  = 'token.txt'
 const app = express();
 
-app.use(errorhandler({
-  dumpExceptions: true,
-  showStack: true
-}));
+const httpsOptions = {
+  key: fs.readFileSync('cert/key.pem').toString(),
+  cert: fs.readFileSync('cert/cert.pem').toString()
+};
 
-app.use(errorhandler());
-app.use(morgan('dev'));
+const httpServer = spdy.createServer(httpsOptions, app);
+httpServer.listen(4004);
+
 app.use(express.json());
 app.use(express.urlencoded({
   extended: true
@@ -57,154 +57,208 @@ app.get('/js/stat.js', function(req, res) {
   res.sendFile(__dirname + '/js/stat.js');
 });
 
-app.get('/js/stat_c.js', function(req, res) {
-  res.sendFile(__dirname + '/js/stat_c.js');
-});
-
 app.get('/js/statAll.js', function(req, res) {
   res.sendFile(__dirname + '/js/statAll.js');
-});
-
-app.get('/js/testfunction.js', function(req, res) {
-  res.sendFile(__dirname + '/js/testfunction.js');
 });
 
 app.get('/js/util.js', function(req, res) {
   res.sendFile(__dirname + '/js/util.js');
 });
 
-const tokenStore = function() {
-  fs.open('token.txt', 'wx', (err, fd) => {
-    if (err) {
-      if (err.code === 'EEXIST') {
-        return;
-      }
-      throw err;
-    }
-    let token = uuid();
-    let md5 = crypto.createHash('md5');
-    md5.update(token);
-    let writeStr = {
-      'token': md5.digest('hex')
-    };
-    fs.writeSync(fd, JSON.stringify(writeStr))
-  });
+const tokenStore = function(fileName) {
+  if (fs.existsSync(fileName)) {
+    fs.unlinkSync(fileName)
+  }
+  let key = crypto.randomBytes(64).toString('hex');;
+  console.log("Key:", key)
+  let id = crypto.randomBytes(32).toString('hex');
+  console.log("Id:", id)
+  let writeStr = {
+    'authorization': calculateClientSignature(id, key)
+  };
+  fs.writeFileSync(fileName, JSON.stringify(writeStr))
 };
 
-const getToken = function() {
-  let accessDate = JSON.parse(fs.readFileSync('token.txt').toString());
-  return accessDate['token'];
+const checkFile = function(fileName) {
+  return fs.existsSync(fileName) && !fs.lstatSync(fileName).isSymbolicLink()
 }
 
-app.post('/jitter', function(req, res) {
+const getAuthorization = function(fileName) {
+  if (!checkFile(fileName)) {
+    return undefined
+  }
+  return JSON.parse(fs.readFileSync(fileName).toString())['authorization'];
+}
+
+const calculateClientSignature = function(id, key) {
+  let hash = crypto.createHmac('sha256', id)
+    .update(key)
+    .digest('hex');
+  return hash
+}
+
+const parseHeader = function(header) {
+  var params = {},
+    array = [],
+    p = header.split(','),
+    i,
+    j,
+    val;
+
+  for (i = 0; i < p.length; i += 1) {
+
+    array = p[i].split('=');
+    val = '';
+
+    for (j = 1; j < array.length; j += 1) {
+      if (array[j] === '') {
+        val += '=';
+      } else {
+        val += array[j];
+      }
+    }
+
+    params[array[0]] = val;
+
+  }
+  return params;
+};
+
+morgan.token('errormsg', function getErrorMsg(req) {
+  return req.errormsg
+})
+
+var logDirectory = path.join(__dirname, 'logs')
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
+var accessLogStream = fs.createWriteStream(path.join(logDirectory, 'error.log'), {
+  flags: 'a'
+})
+
+// setup the logger
+app.use(morgan('combined', {
+  stream: accessLogStream,
+  skip: function(req, res) {
+    return res.statusCode < 400
+  }
+}))
+app.use(morgan(':errormsg', {
+  stream: accessLogStream,
+  skip: function(req, res) {
+    return res.statusCode < 400
+  }
+}))
+
+const authPath = ['/jitter', '/latency', '/fps', '/bitrate', '/quality',
+  '/vmaf', '/NR', '/getResultFolder', '/getCompareResultFolder',
+  '/displayData', '/startTest', '/stopTest'
+];
+app.use(authPath, function(req, res, next) {
   let authorization = req.headers.authorization
   if (authorization === undefined) {
     return res.status(401).send('Unauthorized');
   } else {
-    if (authorization != getToken()) {
+    let parm = parseHeader(authorization)
+    if (getAuthorization(authorizationFileName) != calculateClientSignature(parm.id, parm.key)) {
       return res.status(403).send('Forbidden');
     }
   }
+  next();
+});
+
+app.post('/jitter', function(req, res) {
   let rTagFilename = dataDir + "localLatency.txt";
   exec(nativeDir + 'FLR ' + rTagFilename, function(err, data, stderr) {
+    if (err) {
+      console.info('stderr:' + err.message);
+      req.errormsg = err.stack
+      res.status(500).send("Internal Server Error")
+      return
+    }
     if (data.length > 1) {
       res.json({
         jitter: data
       });
     } else {
       console.log('you did not offer args');
-    }
-    if (err) {
-      console.info('stderr:' + stderr);
+      res.json({
+        errmsg: 'you did not offer args'
+      });
     }
   });
 });
 
 app.post('/latency', function(req, res) {
-  let authorization = req.headers.authorization
-  if (authorization === undefined) {
-    return res.status(401).send('Unauthorized');
-  } else {
-    if (authorization != getToken()) {
-      return res.status(403).send('Forbidden');
-    }
-  }
   let sTagFilename = dataDir + "localPublishTime.txt";
   let rTagFilename = dataDir + "localLatency.txt";
   exec(nativeDir + 'latency ' + sTagFilename + ' ' + rTagFilename, function(
     err, data, stderr) {
+    if (err) {
+      console.info('stderr:' + stderr);
+      req.errormsg = err.stack
+      res.status(500).send("Internal Server Error")
+      return
+    }
     if (data.length > 1) {
       res.json({
         latency: data
       });
     } else {
       console.log('you did not offer args');
-    }
-    if (err) {
-      console.info('stderr:' + stderr);
+      res.json({
+        errmsg: 'you did not offer args'
+      });
     }
   });
 });
 
 app.post('/fps', function(req, res) {
-  let authorization = req.headers.authorization
-  if (authorization === undefined) {
-    return res.status(401).send('Unauthorized');
-  } else {
-    if (authorization != getToken()) {
-      return res.status(403).send('Forbidden');
-    }
-  }
   let fpsFilename = dataDir + "localFPS.txt";
   console.log('in fps post');
   exec(nativeDir + 'fps ' + fpsFilename, function(err, data, stderr) {
+    if (err) {
+      console.info('stderr from fps:' + stderr);
+      req.errormsg = err.stack
+      res.status(500).send("Internal Server Error")
+      return
+    }
     if (data.length > 1) {
       res.json({
         fps: data
       });
     } else {
       console.log('fps file trans error');
-    }
-    if (err) {
-      console.info('stderr from fps:' + stderr);
+      res.json({
+        errmsg: 'fps file trans error'
+      });
     }
   });
 });
 
 app.post('/bitrate', function(req, res) {
-  let authorization = req.headers.authorization
-  if (authorization === undefined) {
-    return res.status(401).send('Unauthorized');
-  } else {
-    if (authorization != getToken()) {
-      return res.status(403).send('Forbidden');
-    }
-  }
   let bitrateFilename = dataDir + "localBitrate.txt";
   console.log('in bitrate post');
-  exec(nativeDir + 'bitrate ' + bitrateFilename, function(err, data,stderr) {
+  exec(nativeDir + 'bitrate ' + bitrateFilename, function(err, data,
+    stderr) {
+    if (err) {
+      console.info('stderr from bitrate:' + stderr);
+      req.errormsg = err.stack
+      res.status(500).send("Internal Server Error")
+      return
+    }
     if (data.length > 1) {
       res.json({
         bitrate: data
       });
     } else {
       console.log('bitrate file trans error');
-    }
-    if (err) {
-      console.info('stderr from bitrate:' + stderr);
+      res.json({
+        errmsg: 'bitrate file trans error'
+      });
     }
   });
 });
 
 app.post('/quality', function(req, res) {
-  let authorization = req.headers.authorization
-  if (authorization === undefined) {
-    return res.status(401).send('Unauthorized');
-  } else {
-    if (authorization != getToken()) {
-      return res.status(403).send('Forbidden');
-    }
-  }
   let originFilename = req.body.filename || sourceDir +
     "FourPeople_540x360_30_taged.avi";
   let codec = req.body.codec || "hd540p";
@@ -212,11 +266,15 @@ app.post('/quality', function(req, res) {
   let exec_file = undefined;
   if (originFilename.indexOf(';') !== -1) {
     console.err("wrong file name");
-    res.json({errmsg: "wrong file name"});
+    res.json({
+      errmsg: "wrong file name"
+    });
   }
   if (codec.indexOf(';') !== -1) {
     console.err("wrong resolution");
-    res.json({errmsg: "wrong file name"});
+    res.json({
+      errmsg: "wrong file name"
+    });
   }
   if (originFilename.endsWith('.avi')) {
     exec_file = 'iq_avi ';
@@ -227,174 +285,142 @@ app.post('/quality', function(req, res) {
   }
   exec(nativeDir + exec_file + rawFilename + ' ' + originFilename + ' ' +
     codec, function(err, data, stderr) {
+    if (err) {
+      console.info('stderr from quality:' + stderr);
+      req.errormsg = err.stack
+      res.status(500).send("Internal Server Error")
+      return
+    }
     if (data.length > 1) {
       res.json({
         quality: data
       });
     } else {
       console.log('you did not offer args');
-    }
-    if (err) {
-      console.info('stderr from iq:' + stderr);
+      res.json({
+        errmsg: 'you did not offer args'
+      });
     }
   });
 });
 
 app.post('/vmaf', function(req, res) {
-  let authorization = req.headers.authorization
-  if (authorization === undefined) {
-    return res.status(401).send('Unauthorized');
-  } else {
-    if (authorization != getToken()) {
-      return res.status(403).send('Forbidden');
-    }
-  }
   process.env['PYTHONPATH'] = (process.env['PYTHONPATH'] || '');
-
   exec('python ' + analysisDir + 'python/vmaf_calculate.py', {
     env: process.env
   }, function(err, data, stderr) {
-
-    //if(data.length > 1) {
+    if (err) {
+      console.info('stderr from vmaf:' + stderr);
+      req.errormsg = err.stack
+      res.status(500).send("Internal Server Error")
+      return
+    }
     res.json({
       vmaf: data
     });
-    //} else {
-    //  console.log('you did not offer args');
-    //}
-    if (err) {
-      console.info('stderr from iq:' + stderr);
-    }
   });
 });
 
 app.post('/NR', function(req, res) {
-  let authorization = req.headers.authorization
-  if (authorization === undefined) {
-    return res.status(401).send('Unauthorized');
-  } else {
-    if (authorization != getToken()) {
-      return res.status(403).send('Forbidden');
-    }
-  }
   exec('python ' + analysisDir + 'python/NR_calculate.py', function(err,
     data, stderr) {
-    //console.log(err, data, stderr);
-    //if(data.length > 1) {
+    if (err) {
+      console.info('stderr from NR:' + stderr);
+      req.errormsg = err.stack
+      res.status(500).send("Internal Server Error")
+      return
+    }
     res.json({
       NR: data
     });
-    //} else {
-    //  console.log('you did not offer args');
-    //}
-    if (err) {
-      console.info('stderr from iq:' + stderr);
-    }
   });
 });
 
 app.post('/getResultFolder', function(req, res) {
-  let authorization = req.headers.authorization
-  console.log(authorization)
-  if (authorization === undefined) {
-    return res.status(401).send('Unauthorized');
-  } else {
-    if (authorization != getToken()) {
-      return res.status(403).send('Forbidden');
-    }
-  }
   exec('python python/listFolder.py -l 1', function(err, data, stderr) {
     console.log(data);
+    if (err) {
+      console.info('stderr :' + stderr);
+      req.errormsg = err.stack
+      res.status(500).send("Internal Server Error")
+      return
+    }
     res.json({
       folder: data
     });
-    if (err) {
-      console.info('stderr from iq:' + stderr);
-    }
   });
 });
 
 app.post('/getCompareResultFolder', function(req, res) {
-    let authorization = req.headers.authorization
-    if (authorization === undefined) {
-      return res.status(401).send('Unauthorized');
-    } else {
-      if (authorization != getToken()) {
-        return res.status(403).send('Forbidden');
-
-    }
-  }
-  var exec = require('child_process').exec;
   let folder = req.body.folder;
   if (folder != undefined) {
     console.log("folder is", folder);
     if (folder.indexOf(";") !== -1) {
       console.log("error file name");
-      res.json({errmsg: "wrong file name"});
+      res.json({
+        errmsg: "wrong file name"
+      });
     }
     exec('python python/listFolder.py ' + '-f ' + folder, function(err,
       data, stderr) {
+      if (err) {
+        console.info('stderr :' + stderr);
+        req.errormsg = err.stack
+        res.status(500).send("Internal Server Error")
+        return
+      }
       console.log(data);
       res.json({
         folder: data
       });
-      if (err) {
-        console.info('stderr from iq:' + stderr);
-      }
     });
   } else {
     exec('python python/listFolder.py -l 0', function(err, data, stderr) {
       console.log(data);
+      if (err) {
+        console.info('stderr :' + stderr);
+        req.errormsg = err.stack
+        res.status(500).send("Internal Server Error")
+        return
+      }
       res.json({
         folder: data
       });
-      if (err) {
-        console.info('stderr from iq:' + stderr);
-      }
     });
   }
 });
 
 app.post('/displayData', function(req, res) {
-  let authorization = req.headers.authorization
-  if (authorization === undefined) {
-    return res.status(401).send('Unauthorized');
-  } else {
-    if (authorization != getToken()) {
-      return res.status(403).send('Forbidden');
-    }
-  }
   let folder = req.body.folder;
   let file = req.body.file;
   console.log("folder is", folder, "file is", file);
   if (folder.indexOf(";") !== -1) {
     console.log("wrong file name");
-    res.json({errmsg: "wrong file name"});
+    res.json({
+      errmsg: "wrong file name"
+    });
   }
   if (file.indexOf(";") !== -1) {
     console.log("wrong file name");
-    res.json({errmsg: "wrong file name"});
+    res.json({
+      errmsg: "wrong file name"
+    });
   }
   exec('python python/display_data.py ' + '-c ' + folder + ' ' + '-f ' +
     file, function(err, data, stderr) {
+    if (err) {
+      console.info('stderr :' + stderr);
+      req.errormsg = err.stack
+      res.status(500).send("Internal Server Error")
+      return
+    }
     res.json({
       data: data
     });
-    if (err) {
-      console.info('stderr from iq:' + stderr);
-    }
   });
 });
 
 app.post('/startTest', function(req, res) {
-  let authorization = req.headers.authorization
-  if (authorization === undefined) {
-    return res.status(401).send('Unauthorized');
-  } else {
-    if (authorization != getToken()) {
-      return res.status(403).send('Forbidden');
-    }
-  }
   exec(clientDir + 'scripts/vp8_js.sh', function(err) {
     if (err) {
       console.info('stderr form vp8.sh:' + err);
@@ -404,14 +430,6 @@ app.post('/startTest', function(req, res) {
 });
 
 app.post('/stopTest', function(req, res) {
-  let authorization = req.headers.authorization
-  if (authorization === undefined) {
-    return res.status(401).send('Unauthorized');
-  } else {
-    if (authorization != getToken()) {
-      return res.status(403).send('Forbidden');
-    }
-  }
   exec(
     'ps aux | grep woogeen_conf_sample | grep -v \"grep\" | awk \'{print $2}\'|xargs kill -9 >/dev/null 2>&1 ',
     function(err) {
@@ -422,23 +440,12 @@ app.post('/stopTest', function(req, res) {
   res.send("OK");
 });
 
-// app.listen(4002);
-
-cipher.unlock(cipher.k, 'cert/.woogeen.keystore', function cb(err, obj) {
-  if (!err) {
-    try {
-      https.createServer({
-        pfx: fs.readFileSync('cert/certificate.pfx'),
-        passphrase: obj.sample
-      }, app).listen(4004);
-    } catch (e) {
-      err = e;
-    }
-  }
-  if (err) {
-    console.error('Failed to setup secured server:', err);
-    return process.exit();
-  }
+app.use(function(err, req, res, next) {
+  console.error(err); // Log error message in our server's console
+  if (!err.statusCode) err.statusCode =
+    500; // If err has no specified error code, set error code to 'Internal Server Error (500)'
+  req.errormsg = err.stack
+  res.status(err.statusCode).send(err.message); // All HTTP requests must have a response, so let's send back an error with its status code and message
 });
 
-tokenStore()
+tokenStore(authorizationFileName)
