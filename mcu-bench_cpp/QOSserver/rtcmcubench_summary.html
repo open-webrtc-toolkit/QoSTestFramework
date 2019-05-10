@@ -23,7 +23,7 @@
     </div>
 
     <div>
-      Authorization token: <input type="password" id="authorization">
+      Authorization token: <input type="password" id="authorization" autocomplete="off">
     </div>
     <div>
       <button id="getResultFolder" onclick="getCompareResultFolder()"
@@ -36,7 +36,7 @@
     </div>
 
     <div>
-      Frame:<input type="text" id="maxFrame" value="300">
+      Frame:<input type="text" id="maxFrame" value="300" autocomplete="off">
     </div>
     <div>
       <p>getQuality Full-Reference (PSNR, SSIM)</p>
@@ -45,7 +45,7 @@
           onclick="getComparedResult('PSNRChart','psnr.txt','pthreshold')"
           style="width: 250px;height: 50px;">Image Quality (PSNR). Greater value
           is better</button>
-        Threshold:<input type="text" id="pthreshold" value="40">
+        Threshold:<input type="text" id="pthreshold" value="40" autocomplete="off">
         <canvas id="PSNRChart" width="400" height="100"
           style="display: none;"></canvas>
       </div>
@@ -54,7 +54,7 @@
           onclick="getComparedResult('SSIMChart','ssim.txt','sthreshold')"
           style="width: 250px;height: 50px;">Image Quality (SSIM). Greater value
           is better</button>
-        Threshold:<input type="text" id="sthreshold" value="40">
+        Threshold:<input type="text" id="sthreshold" value="40" autocomplete="off">
         <canvas id="SSIMChart" width="400" height="100"
           style="display: none;"></canvas>
       </div>
@@ -66,7 +66,7 @@
         onclick="getComparedResult('VMAFChart','VMAF_score','vthreshold')"
         style="width: 250px;height: 50px;">Image Quality (vmaf). Greater value
         is better</button>
-      Threshold:<input type="text" id="vthreshold" value="100">
+      Threshold:<input type="text" id="vthreshold" value="100" autocomplete="off">
       <canvas id="VMAFChart" width="400" height="100"
         style="display: none;"></canvas>
     </div>
@@ -74,7 +74,7 @@
     <div>
       <p>getNR No-Reference (Blockiness, Blockloss, Interlace, Blur, )</p>
       <div>
-        Threshold:<input type="text" id="nthreshold" value="100">
+        Threshold:<input type="text" id="nthreshold" value="100" autocomplete="off">
         <div></div>
         <button id="NR-Blockiness"
           onclick="getComparedResult('BlockinessChart','Blockiness_score','nthreshold')"
@@ -113,7 +113,7 @@
       <button id="jitter-btn"
         onclick="getComparedResult('jitterChart','jitter.txt','jthreshold')"
         style="width: 250px;height: 50px;">Jitter (miliseconds)</button>
-      Threshold:<input type="text" id="jthreshold" value="10000">
+      Threshold:<input type="text" id="jthreshold" value="10000" autocomplete="off">
       <canvas id="jitterChart" width="400" height="100"
         style="display: none;"></canvas>
     </div>
@@ -122,7 +122,7 @@
       <button id="latency-btn"
         onclick="getComparedResult('latencyChart','latency.txt','lthreshold')"
         style="width: 250px;height: 50px;">Latency (miliseconds)</button>
-      Threshold:<input type="text" id="lthreshold" value="5000">
+      Threshold:<input type="text" id="lthreshold" value="5000" autocomplete="off">
       <canvas id="latencyChart" width="400" height="100"
         style="display: none;"></canvas>
     </div>
@@ -131,7 +131,7 @@
       <button id="fps-btn"
         onclick="getComparedResult('FPSChart','fps.txt','fthreshold')"
         style="width: 250px;height: 50px;">Fps</button>
-      Threshold:<input type="text" id="fthreshold" value="80">
+      Threshold:<input type="text" id="fthreshold" value="80" autocomplete="off">
       <canvas id="FPSChart" width="400" height="100"
         style="display: none;"></canvas>
     </div>
@@ -140,7 +140,7 @@
       <button id="bitrate-btn"
         onclick="getComparedResult('bitrateChart','bitrate.txt','bthreshold')"
         style="width: 250px;height: 50px;">Bitrate (kbps)</button>
-      Threshold:<input type="text" id="bthreshold" value="2500">
+      Threshold:<input type="text" id="bthreshold" value="2500" autocomplete="off">
       <canvas id="bitrateChart" width="400" height="100"
         style="display: none;"></canvas>
     </div>
@@ -149,7 +149,7 @@
       <button id="pesq-btn"
         onclick="getComparedResult('PESQChart','pesq.txt','pesqthreshold')"
         style="width: 250px;height: 50px;">PESQ (mos)</button>
-      Threshold:<input type="text" id="pesqthreshold" value="2500">
+      Threshold:<input type="text" id="pesqthreshold" value="2500" autocomplete="off">
 
       <canvas id="PESQChart" width="400" height="100"
         style="display: none;"></canvas>

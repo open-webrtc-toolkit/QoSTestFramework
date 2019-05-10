@@ -17,7 +17,7 @@
 
     <div id="welcome"> </div>
     <div>
-      Authorization token: <input type="password" id="authorization">
+      Authorization token: <input type="password" id="authorization" autocomplete="off">
     </div>
     <div style="clear: both">
       <button id="start test" onclick="startVideoQualityMeasureTesting();"
@@ -41,13 +41,13 @@
       </div>
     </div>
 
-    <div>Frame:<input type="text" id="maxFrame" value="300"></div>
+    <div>Frame:<input type="text" id="maxFrame" value="300" autocomplete="off"></div>
 
     <div>
       <button id="quality-btn" onclick="getQuality('qualitythreshold')"
         style="width: 250px;height: 50px;">Image
         Quality (PSNR & SSIM & VIF)</button>
-      Threshold:<input type="text" id="qualitythreshold" value="1000">
+      Threshold:<input type="text" id="qualitythreshold" value="1000" autocomplete="off">
       <canvas id="chartPsnr" width="400" height="100"
         style="display: none;"></canvas>
       <canvas id="chartSsim" width="400" height="100"
@@ -58,7 +58,7 @@
       <button id="vmaf-btn"
         onclick="getData('chartVmaf', 'vmafthreshold', 'vmaf')"
         style="width: 250px;height: 50px;">Image Quality (vmaf)</button>
-      Threshold:<input type="text" id="vmafthreshold" value="1000">
+      Threshold:<input type="text" id="vmafthreshold" value="1000" autocomplete="off">
       <canvas id="chartVmaf" width="400" height="100"
         style="display: none;"></canvas>
     </div>
@@ -91,7 +91,7 @@
       <button id="jitter-btn"
         onclick="getData('chartJitter', 'jthreshold', 'jitter', 'jitter_avg')"
         style="width: 250px;height: 50px;">Jitter (miliseconds)</button>
-      Threshold:<input type="text" id="jthreshold" value="3000">
+      Threshold:<input type="text" id="jthreshold" value="3000" autocomplete="off">
       Average: <input type="text" id="jitter_avg" value="0" readonly>
       <canvas id="chartJitter" width="400" height="100"
         style="display: none;"></canvas>
@@ -101,7 +101,7 @@
       <button id="latency-btn"
         onclick="getData('chartLatency', 'lthreshold', 'latency', 'latency_avg')"
         style="width: 250px;height: 50px;">Latency (miliseconds)</button>
-      Threshold:<input type="text" id="lthreshold" value="1000">
+      Threshold:<input type="text" id="lthreshold" value="1000" autocomplete="off">
       Average:<input type="text" id="latency_avg" value="0" readonly>
       <canvas id="chartLatency" width="400" height="100"
         style="display: none;"></canvas>
@@ -111,7 +111,7 @@
       <button id="fps-btn"
         onclick="getData('chartgoogFps', 'fthreshold', 'fps', 'fps_avg')"
         style="width: 250px;height: 50px;">Fps</button>
-      Threshold:<input type="text" id="fthreshold" value="80">
+      Threshold:<input type="text" id="fthreshold" value="80" autocomplete="off">
       Average:<input type="text" id="fps_avg" value="0" readonly>
       <canvas id="chartgoogFps" width="400" height="100"
         style="display: none;"></canvas>
@@ -121,7 +121,7 @@
       <button id="bitrate-btn"
         onclick="getData('chartgoogBitrate', 'bthreshold', 'bitrate', 'bitrate_avg')"
         style="width: 250px;height: 50px;">Bitrate (kbps)</button>
-      Threshold:<input type="text" id="bthreshold" value="2500">
+      Threshold:<input type="text" id="bthreshold" value="2500" autocomplete="off">
       Average:<input type="text" id="bitrate_avg" value="0" readonly>
       <canvas id="chartgoogBitrate" width="400" height="100"
         style="display: none;"></canvas>
