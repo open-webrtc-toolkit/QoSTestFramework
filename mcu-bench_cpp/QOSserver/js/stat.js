@@ -64,12 +64,14 @@ function getResultFolder() {
 function getQuality(thresholdId) {
   let resultfolder = document.getElementById("resultfolder");
   let fCount = parseInt($("#maxFrame").val());
-  if (isNaN(fCount)) {
-    fCount = 30
+  if (isNaN(fCount) || fCount < 0 || fCount > Number.MAX_SAFE_INTEGER) {
+    console.log('max frame size must be a int or must big then zero and smaller then MAX_SAFE_INTEGER')
+    return
   }
   let threshold = parseFloat($("#" + thresholdId).val());
   if (isNaN(threshold)) {
-    threshold = 1000
+    console.log('threshold must be a Float')
+    return
   }
   let selectfolder = resultfolder.selectedOptions.length;
   let psnrArray = new Array()
@@ -169,12 +171,14 @@ function getData(canvasId, thresholdId, chartName, avgId = undefined) {
   let resultfolder = document.getElementById("resultfolder");
   let selectfolder = resultfolder.selectedOptions.length;
   let fCount = parseInt($("#maxFrame").val());
-  if (isNaN(fCount)) {
-    fCount = 30
+  if (isNaN(fCount) || fCount < 0 || fCount > Number.MAX_SAFE_INTEGER) {
+    console.log('max frame size must be a int or must big then zero and smaller then MAX_SAFE_INTEGER')
+    return
   }
   let threshold = parseFloat($("#" + thresholdId).val());
   if (isNaN(threshold)) {
-    threshold = 1000
+    console.log('threshold must be a Float')
+    return
   }
   let chartData = initChartDate(chartName, Color);
   let fileName = undefined;
@@ -241,8 +245,9 @@ function getNR() {
   let resultfolder = document.getElementById("resultfolder");
   let selectfolder = resultfolder.selectedOptions.length;
   let fCount = parseInt($("#maxFrame").val());
-  if (isNaN(fCount)) {
-    fCount = 30
+  if (isNaN(fCount) || fCount < 0 || fCount > Number.MAX_SAFE_INTEGER) {
+    console.log('max frame size must be a int or must big then zero and smaller then MAX_SAFE_INTEGER')
+    return
   }
   let BlockinessData = initChartDate("blockiness", Color);
   let BlocklossData = initChartDate("Blockloss", Color);

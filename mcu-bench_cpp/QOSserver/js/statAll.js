@@ -78,12 +78,14 @@ function getComparedResult(canvasId, resultFile, thresholdId) {
   let dataArray = [];
   let dataFolder;
   let nLength = parseInt($("#maxFrame").val());
-  if (isNaN(nLength)) {
-    nLength = 30
+  if (isNaN(fCount) || fCount < 0 || fCount > Number.MAX_SAFE_INTEGER) {
+    console.log('max frame size must be a int or must big then zero and smaller then MAX_SAFE_INTEGER')
+    return
   }
   let threshold = parseFloat($("#" + thresholdId).val());
   if (isNaN(threshold)) {
-    threshold = 1000
+    console.log('threshold must be a Float')
+    return
   }
   if (selectedResultFolder.length) {
     for (let k = 0; k < selectedResultFolder.length - 1; k++) {
