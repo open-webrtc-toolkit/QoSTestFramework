@@ -220,6 +220,14 @@ app.post('/quality', function(req, res) {
   let codec = req.body.codec || "hd540p";
   let rawFilename = dataDir + "localARGB.txt";
   let exec_file = undefined;
+  if (originFilename.indexOf(';') !== -1) {
+    console.err("wrong file name");
+    res.json({errmsg: "wrong file name"});
+  }
+  if (codec.indexOf(';') !== -1) {
+    console.err("wrong resolution");
+    res.json({errmsg: "wrong file name"});
+  }
   if (originFilename.endsWith('.avi')) {
     exec_file = 'iq_avi ';
   } else if (originFilename.endsWith('.yuv')) {
@@ -317,17 +325,23 @@ app.post('/getResultFolder', function(req, res) {
 });
 
 app.post('/getCompareResultFolder', function(req, res) {
-  let authorization = req.headers.authorization
-  if (authorization === undefined) {
-    return res.status(401).send('Unauthorized');
-  } else {
-    if (authorization != getToken()) {
-      return res.status(403).send('Forbidden');
+    let authorization = req.headers.authorization
+    if (authorization === undefined) {
+      return res.status(401).send('Unauthorized');
+    } else {
+      if (authorization != getToken()) {
+        return res.status(403).send('Forbidden');
+
     }
   }
+  var exec = require('child_process').exec;
   let folder = req.body.folder;
   if (folder != undefined) {
     console.log("folder is", folder);
+    if (folder.indexOf(";") !== -1) {
+      console.log("error file name");
+      res.json({errmsg: "wrong file name"});
+    }
     exec('python python/listFolder.py ' + '-f ' + folder, function(err,
       data, stderr) {
       console.log(data);
@@ -338,7 +352,6 @@ app.post('/getCompareResultFolder', function(req, res) {
         console.info('stderr from iq:' + stderr);
       }
     });
-
   } else {
     exec('python python/listFolder.py -l 0', function(err, data, stderr) {
       console.log(data);
@@ -364,6 +377,14 @@ app.post('/displayData', function(req, res) {
   let folder = req.body.folder;
   let file = req.body.file;
   console.log("folder is", folder, "file is", file);
+  if (folder.indexOf(";") !== -1) {
+    console.log("wrong file name");
+    res.json({errmsg: "wrong file name"});
+  }
+  if (file.indexOf(";") !== -1) {
+    console.log("wrong file name");
+    res.json({errmsg: "wrong file name"});
+  }
   exec('python python/display_data.py ' + '-c ' + folder + ' ' + '-f ' +
     file, function(err, data, stderr) {
     res.json({
