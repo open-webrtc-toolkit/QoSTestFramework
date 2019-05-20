@@ -1,62 +1,180 @@
-# QOS Framework 
-## Introduction 
-QOS Framework is a test framework help you anlysis real-time video/audio quality
+# QoS Framework
+## Introduction
+QOS Framework is a test framework help you anlysis real-time video/audio quality. Major components are included QoS Server, Preprocess module, Analysis module and Video transmission adapter module. It can also combined with IATF( Interactive API Test Framework) module to handle cross-platform and multi-device API test automation. Please following to install it.
 
-## prepare test video
-please follow Readme_TestVideo to generate test video. It included two format video : raw stream and encoded stream.
+## Preprocess module setup
+This section describes the dependencies and steps for setup Preprocess module, all scripts and code can be found at preprocess folder.
+### Install dependencies
+To enable the deep learning module, you should compile the latest OpenCV. We recommend version 4.1.0. Refer https://opencv.org for the details and installation.
+### Generate tagged file as testing input video
+Two format video stream format: raw file or encoded file as testing input video were provided.
+#### Raw file:
+1. Generate tagged avi file:
+``` bash
+tag input.y4m tagged.avi resolution_width resolution_height tagsize framenumber
+```
+*eg ./tag ./video/FourPeople_1280x720_60.y4m FourPeople_1280x720_30_tagged.avi 1280 720 3 600*
 
-## prepare testing enviroment 
-1. To enable the deep learning module, you should recompile your OpenCV3.2 with opencv-contrib. The opencv-contrib is not a stable plugin, which changes API dramatically every week. The DNN API I use can neither fit the lastest opencv-contrib or 3.2 branch opencv-contrib. I put the both corresponding OpenCV3.2.zip and OpenCV_contrib.zip under the folder "dependency". Please follow the installation instructions online.
+It will generate FourPeople_1280x720_30_taged.avi in native output folder, which resolution is 1280x720, one number tag size width is 20*3, total frame numberr is 60.
 
-2. To enable vmaf, cd to mcu-bench_cpp/dependency, unzip vmaf.zip, move it to mcu-bench_cpp/python and rename it as vmaf. please install all the requirements as instructed in https://github.com/Netflix/vmaf. Finally, cd to /vmaf and "make".
+2. use `ffmpeg` to generate requested input format video
+```
+ffmpeg -i tagged.avi tagged.yuv
+```
+*eg ffmpeg -i FourPeople_1280x720_30_taged.avi FourPeople_1280x720_30_taged.yuv*
 
-### Testing steps######
-1. Install dependence and start QOS server.
-   + Install node.js
-    https://nodejs.org/en/download/
-   + Start QOS server 
+It will generate FourPeople_1280x720_30_taged.yuv
+#### Encoded file:
+1. Generate mkv file
+```
+Python mkTestStream.py –w <width> -h <height> -b <bitrate> -o <output.mkv> -v <codec> <input_stream>
+```
+*e.g ./mkMCUTestStream.py -w 1280 -h  720 -b 2000 -o 1280x720-framerate30-vp8_bitrate1000k.mkv -v vp8 1280x720_30_taged.avi*
 
-    ```
-     node qosServer.js
-    ```
-2. Sample with Open WebRTC Tookit server and Client.
-   # start MCU 
-      Download an mcu release package, unzip and change directory to /bin
-   (1) vim the start-all.sh and comment the app of the last line.
-   (2) run `./init-all.sh --deps` to install all mcu runtime dependencies and remember the Sample key and Sample ID.
-   (3) use command "./start-all.sh"
-  # start test client
-   Change directory to mcu-bench_cpp/QOStestclient.
-   (1) libs and include folders are put under `mcu-bench_cpp/dependency`, please unzip them and move to QOStestclient
-   (2) mkdir build and cd to build, run "cmake .." and "make"--- this steps only build on ubuntu 16 machine after 4.0 version. The binary will generated on out folder named as "woogeen_conf_sample"
+It will generate encoded mkv file 1280x720-framerate30-bitrate1000k.mkv
+2. Inset  key frame and tag information to encoded video file
+```
+./genTestStream -i <MKV file>
+```
+*e.g ./genTestStream -i 1280x720-framerate30-vp8_bitrate1000k.mkv*
 
-   # trigger testing useing automation scripts ######
-   There are sample scripts in scripts folder. Please refer h264.sh/vp8.sh in scripts folder.
-   Go to scripts folder, modify testing video file name, reference video file name and mcu conference room in h264.sh/vp8.sh 
- 
+It will generate corresponding encoded key frame and tag information format encode file , end with vp8/h264/vp9/h265
 
-3. Result analysis and comparsion 
-  you can visit https://localhost:4004 or http://localhost:4002 to get visual result for each indicators.
+**This file format is "key frame"+ "frame length"+"tag"+"frame data"**
 
-  you can also visit https://<qosServerAddress>:4004/rtcmcubench_summary.html to get comparsion result for each indicators.
+3. Decode encoded file to raw file for comparison
+```
+ffmpeg  -i <MKV file> -c:v rawvideo -pix_fmt yuv420p <Decoded file>
+```
+*e.g ffmpeg -i FourPeople_720p_taged_H264.mkv -c:v rawvideo -pix_fmt yuv420p FourPeople_720p_taged_H264_decoded.yuv*
 
-## network emulator module
-# we use ipfw as our network emulator, perfer use 3.16.0-71-generic kernel ##
-   (1) install ipfw/dummynet module in your gateway/client/server machine.
-    http://manpages.ubuntu.com/manpages/trusty/man4/dummynet.4freebsd.html
-    http://manpages.ubuntu.com/manpages/trusty/man4/ipaccounting.4freebsd.html
-    make sure run follwing scripts is works 
-    sudo ipfw list 
+It will decode FourPeople_720p_taged_H264.mkv to FourPeople_720p_taged_H264_decoded.yuv
 
-   (2) run the scripts
-   Go to network_emulator folder , command.sh will show you how to use this module.
-   e.g 
-   sudo python ./emulate.py -p 11 --target-ip=192.168.2.3 --set-way=outgoing
-                               ^the 11th rules in network_emulator.py
-                                            ^ target ip address is 192.168.3.2
-                                                                ^ set rules on outgoing way
+## Analysis module setup
+Analysis module help to do performance data result analysis included reference video quality indicate e.g PSNR, SSIM , VMAF and non-reference video quality indicate e.g blockniess, blockloss etc.
+### Install Dependencies
+To enable vmaf, clone the vmaf repo from the github and install all the requirements as instructed in https://github.com/Netflix/vmaf and finally "`make`".
 
+To enable non-reference indicator, please go to http://vq.kt.agh.edu.pl//metrics.html to download executable binary and found detail description about each non-reference video quality indicators
 
+To compile other module in src folder, you should compile the latest OpenCV and the OpenCV_contrib modules, We recommend version 4.1.0 . Refer  https://opencv.org for the details and installation.
+### Generate analysis data
+To generate analysis data follow these steps. Please copy the out `Data` folder of the QOStestclient into the `dataset` folder first.
+1. Generate basic data for compare, use the iq_yuv or iq_avi to generate the basic data
+```
+iq_yuv <ARGBrawFile> <originalVideoFile> <resolution>
+```
+*e.g iq_yuv localARGB.txt FourPeople_720p_taged.yuv hd720p*
 
-### Docker usage
-Please refer to Readme_docker for details.
+It will process the video and generate data for other analysis
+
+**If the `<originalVideoFile>` is avi format, please use iq_avi instead.**
+
+2. Quality testing for vmaf
+```
+python /path/to/vmaf_calculate.py
+```
+*e.g python analysis/python/vmaf_calculate.py*
+
+It will test the quality use vmaf module and generate result data.
+
+3. Quality testing for no-reference video
+```
+python /path/to/NR_calculate.py
+```
+*e.g python analysis/python/NR_calculate.py*
+
+It will test the quality use no-reference method and generate result data.
+
+4. Calculate jitter
+```
+FLR {latencyFile}
+```
+*e.g ./analysis/native/FLR localLatency.txt*
+
+It will calculate the jitter result
+5. Caculate latency
+```
+latency {publishTimeFile} {latencyFile}
+```
+*e.g ./analysis/native/latency localPublishTime.txt localLatency.txt*
+
+It will calculate the latency result
+
+6. Calculate fps
+```
+fps {FpsFile}
+```
+*e.g ./analysis/native/fps localFPS.txt*
+
+It will calculate the fps result
+
+7. Calculate bitrate
+```
+bitrate {bitrateFile}
+```
+*e.g ./analysis/native/bitrate localBitrate.txt*
+
+It will calculate the fps result
+
+**All result data can be visual in QOS server page**
+
+## Video transmission adapter module
+Video transmission adapt module help to establish SUT( system under testing) transmission channel and generate corresponding performance input data for Analysis module. We provide one Simple sample named QoStestclient which used Linux SDK of owt-client-native to testing performance for Open WebRTC Toolkit owt-server conference mode.
+#### Sample with Open WebRTC Tookit server and Client
+1. Start Open WebRTC Tookit  Conference Server
+
+Please following instruction at https://github.com/open-webrtc-toolkit/owt-server to start Conference Server
+
+2. Build Open WebRTC Toolkit Native SDK
+
+Please following instruction at  https://github.com/open-webrtc-toolkit/owt-client-native to build Open WebRTC Toolkit Native SDK.
+
+3. Build QoStestclient
+
+Go to QoStestclient directory run following command
+
+```
+mkdir build
+cd build
+cmake ../
+make
+```
+
+4. Run QoStestclient
+```
+python runQosClient.py
+```
+
+#### QoS server and web application setup and usage
+QoS server Test task trigger and visualization of analysis result showing. The result can be showed in two ways. 1. calculate and show the single indicator directly at web page. 2. genereate and show compared results
+
+##### Install Dependencies and start QOS server
+To run the server you need the latest nodejs and node modules. Please refer to https://nodejs.org/en/download/ for install nodejs in your system. And after that use npm to install the modules, eg. `‘npm install’`.
+
+After install runtime environment and necessary modules, start the server with:
+```
+node qosServer.js
+```
+
+##### Web application setup and usage
+After you run the analysis steps described in 1.1.2.2-2, the result file will locate in `analysis/dataset/out`, and you should create your own subfolder and move all the result file in it.
+
+Create your own subfolder in the `analysis/dataset/`out folder
+```
+cd {analysisOutFolder}
+mkdir –p {date}/{testnumber}
+```
+*eg:<br>
+cd analysis/dataset/out<br>
+mkdir –p 20190501/1*
+
+this will create the necessary directory structure
+
+**single indicator visualization**
+
+After that you can visit https://localhost:4004 to get visual result for each indicators.
+
+**multi indicators compared visualization**
+
+To see the compared results, you can visit https://\<qosServerAddress\>:4004/webrtcmcubench_summary.html to get comparsion result for each indicators. It will compare data with different “testnumber” in the same “date” dir which created in last step.
