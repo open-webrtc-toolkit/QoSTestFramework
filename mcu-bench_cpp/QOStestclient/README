@@ -1,12 +1,51 @@
-This folder is QOS client by C++ Client SDK.
-For 4.0 MCU , it need build on ubuntu 16
-It provide two kind of input format video encoded video and raw video .
-sample usage please refer h264.sh
-1. git clone source code. 
-2. mkdir build
-3. cd build cmake ../
-4. make 
-5. cp h264.sh to out folder 
-6. if you want use raw file, please also copy the raw video file to out folder and modify the audio file name in fileframegenerator.cc and read file format is correct in conferencesample.cc
-7. if you want use encoded file, please also copy encode video file to out folder and modify the file name to source.yuv and read file format is correct in conferencesample.cc
+# QOS client by C++ Client SDK
 
+## Introduction
+This folder is QOS client by C++ Client SDK.
+It provide two kinds of input format video encoded video and raw video.
+
+- Supported Linux platform: Ubuntu 18.04.
+- Supported MCU version: 4.2.
+
+##Prepare the development environment
+Before you start, make sure you have following prerequisites installed/built:
+
+- [Open WebRTC Toolkit Native SDK](https://github.com/open-webrtc-toolkit/owt-client-native/).
+- [OpenSSL 1.1.0](https://www.openssl.org/source/).
+- [Socket.IO C++ Client](https://github.com/socketio/socket.io-client-cpp/).
+- [Boost 1.67.0 or higher](https://www.boost.org/users/download/).
+
+### How to build Open WebRTC Toolkit Native SDK
+- python scripts/build_linux.py --gn_gen --sdk --arch x64 --ssl_root <openssl_path> --scheme release --output_path <output_path>
+
+### How to build OpenSSL
+- ./config shared -m64 --prefix=<openssl_path> --openssldir=<openssl_path>
+- make
+- make install
+
+### How to build Boost
+- ./bootstrap.sh
+- ./b2 variant=release link=shared runtime-link=shared --with-system --with-random --with-date_time --with-regex --with-thread --with-filesystem --with-chrono --with-atomic
+
+### How to build socket.io-client-cpp
+- git clone --recurse-submodules https://github.com/socketio/socket.io-client-cpp.git
+- cd socket.io-client-cpp/lib/websocketpp
+- git pull origin master
+- cd ../..
+- mkdir build
+- cmake -DBOOST_ROOT:STRING=<boost_path> -DSSL_ROOT:STRING=<openssl_path> ../
+- make
+
+## How to config
+Configuration in config.json file.
+`server` is the mcu server address.
+`libsPath` is the third party lib path the program need to link.
+`encoded` set true will use encoded video file, set false will use raw video.
+
+## How to build
+1. cd scripts
+2. ./build.sh
+
+## How to run
+1. Configure the config.json file
+2. python runQosClient.py

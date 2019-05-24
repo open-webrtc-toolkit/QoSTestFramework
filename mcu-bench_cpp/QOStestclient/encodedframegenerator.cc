@@ -1,55 +1,185 @@
 /*
+ * Copyright © 2019 Intel Corporation. All Rights Reserved.
  *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#include <iostream>
+// encodedframegenerator.cpp : implementation file
+//
 #include "encodedframegenerator.h"
+#include "log.h"
+#include <iostream>
+#include <sys/time.h>
+#include <thread>
 
-EncodedFrameGenerator::EncodedFrameGenerator(const std::string& input_filename, int width, int height, int fps, EncodedMimeType codecType):input_filename_(input_filename) {
-  width_ = width;
-  height_ = height;
-  fps_ = fps;
-  /*type_ = owt::base::VideoFrameCodec::H264;
-  fd = fopen("./source.h264", "rb");*/
-  if(codecType == ENCODED_VP8){
-    type_ = owt::base::VideoFrameGeneratorInterface::VP8;
-  }else if(codecType == ENCODED_H264){
-    type_ = owt::base::VideoFrameGeneratorInterface::H264;
-  }
-
-  std::cout << "width:" << width_ << " height:" << height_ << " fps:" << fps_ << " codec:" << type_;
-
-  fd = fopen(input_filename_.c_str(), "rb");
-  if(!fd) {
-    std::cout << "failed to open the source.video." << std::endl;
-  } else {
-    std::cout << "sucessfully open the source.video." << std::endl;
-  }
+CEncodedVideoInput::CEncodedVideoInput(const string &videoFile, VideoCodec codec)
+{
+    LOG_DEBUG("");
+    m_codec = codec;
+    m_videoPath = videoFile;
+    m_fLocalPublishTime = nullptr;
+    m_fd = nullptr;
 }
 
-EncodedFrameGenerator::~EncodedFrameGenerator() {
-  fclose(fd);
+CEncodedVideoInput::~CEncodedVideoInput()
+{
+    LOG_DEBUG("");
+    if (m_fd)
+    {
+        fclose(m_fd);
+    }
+    if (m_fLocalPublishTime)
+    {
+        fclose(m_fLocalPublishTime);
+        m_fLocalPublishTime = nullptr;
+    }
 }
 
-uint32_t EncodedFrameGenerator::GetNextFrameSize() {
-   if(fread(&frame_data_size_, 1, sizeof(int), fd) != sizeof(int)) {
-    fseek(fd, 0, SEEK_SET);
-    fread(&frame_data_size_, 1, sizeof(int), fd);
-  }
-  return frame_data_size_;
+bool CEncodedVideoInput::InitEncoderContext(Resolution &resolution, uint32_t fps, uint32_t bitrate, VideoCodec video_codec)
+{
+    LOG_DEBUG("");
+    m_fd = fopen(m_videoPath.c_str(), "rb");
+
+    if (!m_fd)
+    {
+        LOG_DEBUG("Failed to open the source.h264");
+    }
+    else
+    {
+        LOG_DEBUG("Successfully open the source.h264");
+    }
+    return true;
 }
 
-int EncodedFrameGenerator::GetHeight() { return height_; }
-int EncodedFrameGenerator::GetWidth() { return width_; }
-int EncodedFrameGenerator::GetFps() { return fps_; }
-owt::base::VideoFrameGeneratorInterface::VideoFrameCodec EncodedFrameGenerator::GetType() { return type_; }
+bool CEncodedVideoInput::EncodeOneFrame(std::vector<uint8_t> &buffer, bool keyFrame)
+{
+    if (keyFrame == false)
+    {
+        int keyFrame_data;
+        if (fread(&keyFrame_data, 1, sizeof(int), m_fd) != sizeof(int))
+        {
+            fseek(m_fd, 0, SEEK_SET);
+            fread(&keyFrame_data, 1, sizeof(int), m_fd);
+        }
 
-uint32_t EncodedFrameGenerator::GenerateNextFrame(uint8_t* frame_buffer, const uint32_t capacity) {
-  if (capacity < frame_data_size_) {
-    return 0;
-  } else {
-    fread(frame_buffer, 1, frame_data_size_, fd);
-    return frame_data_size_;
-  }
+        uint32_t frameDataSize;
+        if (fread(&frameDataSize, 1, sizeof(int), m_fd) != sizeof(int))
+        {
+            fseek(m_fd, 0, SEEK_SET);
+            fread(&frameDataSize, 1, sizeof(int), m_fd);
+        }
+        int countTag;
+        if (fread(&countTag, 1, sizeof(int), m_fd) != sizeof(int))
+        {
+            fseek(m_fd, 0, SEEK_SET);
+            fread(&countTag, 1, sizeof(int), m_fd);
+        }
+        if (m_fLocalPublishTime)
+        {
+            struct timeval tv_publish;
+            gettimeofday(&tv_publish, NULL);
+            long timeStamp = tv_publish.tv_sec % 10000 * 1000 + tv_publish.tv_usec / 1000;
+            fprintf(m_fLocalPublishTime, ",%d", countTag);
+            fprintf(m_fLocalPublishTime, ",%ld", timeStamp);
+            fflush(m_fLocalPublishTime);
+        }
+
+        uint8_t *data = new uint8_t[frameDataSize];
+        fread(data, 1, frameDataSize, m_fd);
+        buffer.insert(buffer.begin(), data, data + frameDataSize);
+        delete[] data;
+        return true;
+    }
+    else
+    {
+        int keyFrame_data;
+        if (fread(&keyFrame_data, 1, sizeof(int), m_fd) != sizeof(int))
+        {
+            fseek(m_fd, 0, SEEK_SET);
+            fread(&keyFrame_data, 1, sizeof(int), m_fd);
+        }
+        uint32_t frameDataSize;
+        if (fread(&frameDataSize, 1, sizeof(int), m_fd) != sizeof(int))
+        {
+            fseek(m_fd, 0, SEEK_SET);
+            fread(&frameDataSize, 1, sizeof(int), m_fd);
+        }
+        while (keyFrame_data != 1)
+        {
+            int temp;
+            if (fread(&temp, 1, sizeof(int), m_fd) != sizeof(int))
+            {
+                fseek(m_fd, 0, SEEK_SET);
+                fread(&temp, 1, sizeof(int), m_fd);
+            }
+            uint8_t *data = new uint8_t[frameDataSize];
+            fread(data, 1, frameDataSize, m_fd);
+            delete[] data;
+            fread(&keyFrame_data, 1, sizeof(int), m_fd);
+            fread(&frameDataSize, 1, sizeof(int), m_fd);
+        }
+        int countTag;
+        if (fread(&countTag, 1, sizeof(int), m_fd) != sizeof(int))
+        {
+            fseek(m_fd, 0, SEEK_SET);
+            fread(&countTag, 1, sizeof(int), m_fd);
+        }
+        if (m_fLocalPublishTime)
+        {
+            struct timeval tv_publish;
+            gettimeofday(&tv_publish, NULL);
+            long timeStamp = tv_publish.tv_sec % 10000 * 1000 + tv_publish.tv_usec / 1000;
+            fprintf(m_fLocalPublishTime, ",%d", countTag);
+            fprintf(m_fLocalPublishTime, ",%ld", timeStamp);
+            fflush(m_fLocalPublishTime);
+        }
+
+        uint8_t *data = new uint8_t[frameDataSize];
+        fread(data, 1, frameDataSize, m_fd);
+        buffer.insert(buffer.begin(), data, data + frameDataSize);
+        delete[] data;
+        return true;
+    }
+}
+
+CEncodedVideoInput *CEncodedVideoInput::Create(const string &videoFile, VideoCodec codec)
+{
+    CEncodedVideoInput *videoEncoder = new CEncodedVideoInput(videoFile, codec);
+    return videoEncoder;
+}
+
+VideoEncoderInterface *CEncodedVideoInput::Copy()
+{
+    CEncodedVideoInput *videoEncoder = new CEncodedVideoInput(m_videoPath, m_codec);
+    return videoEncoder;
+}
+
+bool CEncodedVideoInput::Release()
+{
+    return true;
+}
+
+void CEncodedVideoInput::SetPublishTimeFile(const string &file)
+{
+    LOG_DEBUG("");
+    m_fLocalPublishTime = fopen(file.c_str(), "w");
 }

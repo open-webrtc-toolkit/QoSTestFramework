@@ -23,33 +23,56 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-// fileframegenerator.h : header file
+// data.h : header file
 //
 
 #pragma once
 
+#include "log.h"
 #include "owt.h"
 #include <stdio.h>
 #include <string>
 
 using namespace std;
 
-class CEncodedVideoInput : public VideoEncoderInterface
+class CData
 {
-public:
-    static CEncodedVideoInput *Create(const string &videoFile, VideoCodec codec);
-    CEncodedVideoInput(const string &videoFile, VideoCodec codec);
-    ~CEncodedVideoInput();
 
-    virtual bool InitEncoderContext(Resolution &resolution, uint32_t fps, uint32_t bitrate, VideoCodec video_codec) override;
-    virtual bool EncodeOneFrame(vector<uint8_t> &buffer, bool keyFrame) override;
-    virtual bool Release() override;
-    virtual VideoEncoderInterface *Copy() override;
-    void SetPublishTimeFile(const string &file);
+public:
+    bool ParsingParameters(int argc, char **argv);
+    string GetRoomId();
+    string GetServerAddress();
+    string GetVideoPath();
+    VideoCodec GetCodec();
+    int GetWidth();
+    int GetHeight();
+    int GetFps();
+    bool GetIfPublish();
+    bool GetIfSubscribe();
+    float GetBandwidthRate();
+    int GetRunTime();
+    bool GetIfEncoded();
+    string GetLocalPublishTimeFilePath();
+    string GetLocalARGBFilePath();
+    string GetLocalLatencyFilePath();
+    string GetLocalFpsFilePath();
+    string GetLocalBitrateFilePath();
+
+    CData();
+    ~CData();
 
 private:
+    string m_dataDir;
+    string m_roomId;
+    string m_serverAddress;
     string m_videoPath;
     VideoCodec m_codec;
-    FILE *m_fd;
-    FILE *m_fLocalPublishTime;
+    int m_width;
+    int m_height;
+    int m_fps;
+    bool m_publish;
+    bool m_subscribe;
+    bool m_encoded;
+    float m_bandwidthRate;
+    int m_runTime;
 };

@@ -23,33 +23,36 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-// fileframegenerator.h : header file
+// log.h : header file
 //
 
 #pragma once
 
-#include "owt.h"
-#include <stdio.h>
 #include <string>
 
 using namespace std;
 
-class CEncodedVideoInput : public VideoEncoderInterface
+enum class LogLevel : int
+{
+    Debug = 1,
+    Info,
+    Warring,
+    Error
+};
+
+#define LOG(level, ...) CLog::log(level, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__);
+#define LOG_DEBUG(...) LOG(LogLevel::Debug, __VA_ARGS__);
+#define LOG_INFO(...) LOG(LogLevel::Info, __VA_ARGS__);
+#define LOG_WARRING(...) LOG(LogLevel::Warring, __VA_ARGS__);
+#define LOG_ERROR(...) LOG(LogLevel::Error, __VA_ARGS__);
+
+class CLog
 {
 public:
-    static CEncodedVideoInput *Create(const string &videoFile, VideoCodec codec);
-    CEncodedVideoInput(const string &videoFile, VideoCodec codec);
-    ~CEncodedVideoInput();
-
-    virtual bool InitEncoderContext(Resolution &resolution, uint32_t fps, uint32_t bitrate, VideoCodec video_codec) override;
-    virtual bool EncodeOneFrame(vector<uint8_t> &buffer, bool keyFrame) override;
-    virtual bool Release() override;
-    virtual VideoEncoderInterface *Copy() override;
-    void SetPublishTimeFile(const string &file);
+    static void log(LogLevel level, string file, string func, int line, const char *format, ...);
+    static void setLogParam(LogLevel level, string path);
 
 private:
-    string m_videoPath;
-    VideoCodec m_codec;
-    FILE *m_fd;
-    FILE *m_fLocalPublishTime;
+    CLog();
+    ~CLog();
 };

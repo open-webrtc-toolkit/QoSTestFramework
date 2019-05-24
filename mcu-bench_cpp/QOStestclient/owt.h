@@ -23,33 +23,24 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-// fileframegenerator.h : header file
+// owt.h : header file
 //
 
 #pragma once
 
-#include "owt.h"
-#include <stdio.h>
-#include <string>
+#include "owt/base/commontypes.h"
+#include "owt/base/deviceutils.h"
+#include "owt/base/framegeneratorinterface.h"
+#include "owt/base/globalconfiguration.h"
+#include "owt/base/localcamerastreamparameters.h"
+#include "owt/base/logging.h"
+#include "owt/base/stream.h"
+#include "owt/base/videodecoderinterface.h"
+#include "owt/base/videoencoderinterface.h"
+#include "owt/conference/conferenceclient.h"
+#include "owt/conference/conferencepublication.h"
+#include "owt/conference/conferencesubscription.h"
+#include "owt/conference/remotemixedstream.h"
 
-using namespace std;
-
-class CEncodedVideoInput : public VideoEncoderInterface
-{
-public:
-    static CEncodedVideoInput *Create(const string &videoFile, VideoCodec codec);
-    CEncodedVideoInput(const string &videoFile, VideoCodec codec);
-    ~CEncodedVideoInput();
-
-    virtual bool InitEncoderContext(Resolution &resolution, uint32_t fps, uint32_t bitrate, VideoCodec video_codec) override;
-    virtual bool EncodeOneFrame(vector<uint8_t> &buffer, bool keyFrame) override;
-    virtual bool Release() override;
-    virtual VideoEncoderInterface *Copy() override;
-    void SetPublishTimeFile(const string &file);
-
-private:
-    string m_videoPath;
-    VideoCodec m_codec;
-    FILE *m_fd;
-    FILE *m_fLocalPublishTime;
-};
+using namespace owt::base;
+using namespace owt::conference;

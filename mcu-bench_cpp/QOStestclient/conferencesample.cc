@@ -1,430 +1,157 @@
+/*
+ * Copyright © 2019 Intel Corporation. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+// conferencesample.cpp : implementation file
 //
-//Intel License
-//
-// testclient.cc : Defines the entry point for the console application.
-//
-#include <iostream>
-#include "owt/conference/conferenceclient.h"
-#include "owt/conference/remotemixedstream.h"
-#include "owt/conference/conferencepublication.h"
-#include "owt/conference/conferencesubscription.h"
-#include "owt/base/globalconfiguration.h"
-#include "owt/base/localcamerastreamparameters.h"
-#include "owt/base/stream.h"
-#include "fileframegenerator.h"
-#include "encodedframegenerator.h"
-//#include "fileaudioframegenerator.h"
+
 #include "asio_token.h"
-#include "conferencesampleforwardobserver.h"
-#include "basicserverConnector.h"
-#include "directvideoencoder.h"
-#include "myVideoRenderer.h"
-#include <unistd.h>
+#include "conferenceforwardobserver.h"
+#include "data.h"
+#include "encodedframegenerator.h"
+#include "fileframegenerator.h"
+#include "myvideorenderer.h"
+#include "owt.h"
 #include <chrono>
+#include <cmath>
 #include <ctime>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-#include <cmath>
-
+#include <thread>
+#include <unistd.h>
 
 using namespace std;
-using namespace owt::base;
-using namespace owt::conference;
 
-std::shared_ptr<RemoteMixedStream> remote_mixed_stream;
+shared_ptr<RemoteMixedStream> remote_mixed_stream;
 ConferenceClientConfiguration configuration;
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-  //daemon(1,1);
-  using namespace owt::base;
-  using namespace owt::conference;
- // std::string audiopath("");
-  std::string videopath("");
-  std::string roomId("");
-  std::string scheme("http://");
-  std::string suffix("/createToken");
-  std::string encodedFile("");
-  std::string rawFile("");
-  bool rawfileMode = true;
-  EncodedMimeType type;
-  int width;
-  int height;
-  int fps;
-  bool publish = true;
-  bool subscribe = true;
-  //true for mix mode, false for forward mode
-  bool mode = true;
-  std::string isp("");
-  std::string region("");
-  std::string codec_used("");
-  float bandwidthRate;
-  if(argc >= 2){
-    std::string hosturl(argv[1]);
-    scheme.append(hosturl);
-  }else{
-    std::string fixed("10.239.44.59:3004");
-    scheme.append(fixed);
-  }
-
-  if(argc >= 3){
-    std::string roomStr(argv[2]);
-    roomId.append(roomStr);
-  }
-
-  if(argc >= 4){
-    std::string codec(argv[3]);
-    if (codec.find("h264") != std::string::npos) {
-      codec_used ="h264";
-      cout <<" ============codec is h264==========";
-      type = EncodedMimeType::ENCODED_H264;
-    }else if (codec.find("vp9") != std::string::npos){
-      codec_used = "vp9";
-      cout <<" ============codec is vp9==========";
-      type = EncodedMimeType::ENCODED_VP9;
-    }else if (codec.find("h265") != std::string::npos){
-      codec_used = "h265";
-      type = EncodedMimeType::ENCODED_H265;
-    }else{
-      codec_used = "vp8";
-      type = EncodedMimeType::ENCODED_VP8;
-    }
-  }else{
-    codec_used = "vp8";
-    type = EncodedMimeType::ENCODED_VP8;
-  }
-
-  if(argc >= 5){
-    std::string res(argv[4]);
-    if (res.find("1080") != std::string::npos) {
-      width = 1920;
-      height = 1080;
-    }else if (res.find("720") != std::string::npos){
-      width = 1280;
-      height = 720;
-      cout <<"-------------------------------------------720P---------------------------------------"<<endl;
-      cout << width<< endl;
-      cout << "----------------720--------"<<endl;
-      //pause();
-    }else if (res.find("vga") != std::string::npos){
-      width = 640;
-      height = 480;
-    }else{
-      width = 320;
-      height = 240;
-    }
-  }else{
-    width = 640;
-    height = 480;
-  }
-
-  if(argc >= 6){
-    fps = atoi(argv[5]);
-  }else{
-    fps = 20;
-  }
-
-  if(argc >= 7){
-    std::string ps(argv[6]);
-    cout <<" ============ps param:"<<ps;
-    if ((ps.find("p") == std::string::npos) && (ps.find("P") == std::string::npos)) {
-      cout <<" ============false publish==========";
-      publish = false;
+    LOG_DEBUG("");
+    CData *data = new CData();
+    bool retVal = data->ParsingParameters(argc, argv);
+    if (!retVal)
+    {
+        LOG_DEBUG("ParsingParameters error");
+        return 1;
     }
 
-    if ((ps.find("s") == std::string::npos) && (ps.find("S") == std::string::npos)) {
-      cout <<" ============false subscribe==========";
-      subscribe = false;
+    shared_ptr<LocalStream> stream;
+    if (data->GetIfEncoded())
+    {
+        GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
+        CEncodedVideoInput *externalEncoder = CEncodedVideoInput::Create(data->GetVideoPath(), data->GetCodec());
+        externalEncoder->SetPublishTimeFile(data->GetLocalPublishTimeFilePath());
+        shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true));
+        lcsp->Resolution(data->GetWidth(), data->GetHeight());
+        lcsp->Fps(data->GetFps());
+        lcsp->Bitrate(data->GetBandwidthRate());
+        stream = LocalStream::Create(lcsp, externalEncoder);
     }
-  }
-
-  if(argc >= 8){
-    std::string sMode(argv[7]);
-    if ((sMode.find("f") != std::string::npos) | (sMode.find("F") != std::string::npos)) {
-      mode = false;
+    else
+    {
+        LOG_DEBUG("VideoPath is %s", data->GetVideoPath().c_str());
+        unique_ptr<CFileFrameGenerator> framer(new CFileFrameGenerator(data->GetWidth(), data->GetHeight(), data->GetFps(), data->GetVideoPath()));
+        framer->SetPublishTimeFile(data->GetLocalPublishTimeFilePath());
+        shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true));
+        stream = LocalStream::Create(lcsp, move(framer));
     }
-  }
-  if(argc >= 9){
-    std::string fileStr(argv[8]);
-    if ((fileStr.find(".vp8") != std::string::npos) | (fileStr.find(".vp9") != std::string::npos) | (fileStr.find(".h264") != std::string::npos) | (fileStr.find(".h265") != std::string::npos)){
-      cout << "use encoded file as input";
-      encodedFile.append(fileStr);
-      rawfileMode = false;
+
+    IceServer ice;
+    ice.urls.push_back("stun:61.152.239.56");
+    ice.username = "";
+    ice.password = "";
+    vector<IceServer> ice_servers;
+    ice_servers.push_back(ice);
+    configuration.ice_servers = ice_servers;
+
+    shared_ptr<ConferenceClient> room = ConferenceClient::Create(configuration);
+    CConferenceForwardObserver *forwardObserver = nullptr;
+    if (data->GetIfSubscribe())
+    {
+        forwardObserver = new CConferenceForwardObserver(room);
+        room->AddObserver(*forwardObserver);
     }
-    else {
-      rawFile.append(fileStr);
+
+    string serverAddress = data->GetServerAddress();
+    string roomId = data->GetRoomId();
+    string token = getToken(serverAddress, roomId, "", "", false, "presenter");
+    LOG_DEBUG("token is: %s", token.c_str());
+
+    if (token != "")
+    {
+        room->Join(token,
+                   [=](shared_ptr<ConferenceInfo> info) {
+                       LOG_DEBUG("Join succeeded!");
+                       if (data->GetIfPublish())
+                       {
+                           PublishOptions options;
+                           VideoCodecParameters codecParam;
+                           codecParam.name = data->GetCodec();
+                           VideoEncodingParameters encodingParam(codecParam, 0, false);
+                           options.video.push_back(encodingParam);
+
+                           room->Publish(stream,
+                                         options,
+                                         [=](shared_ptr<ConferencePublication> publication) {
+                                             LOG_DEBUG("Publish succeed");
+                                             string pubId = publication->Id();
+                                             forwardObserver->setPubId(pubId);
+                                             forwardObserver->setData(data);
+                                         },
+                                         [=](unique_ptr<Exception> err) {
+                                             LOG_DEBUG("Publish failed : %s!", err->Message().c_str());
+                                         });
+                       }
+                       LOG_DEBUG("Join succeeded!");
+                   },
+                   [=](unique_ptr<Exception> err) {
+                       LOG_DEBUG("Join failed : %s!", err->Message().c_str());
+                   });
     }
-  }
-  if(argc >=10){
-   std::string fileStr(argv[9]);
-   bandwidthRate = atof(argv[9]);
-   cout << "bandwidthRate is " << endl;
-   cout << bandwidthRate <<endl;
-  }else{
-    bandwidthRate = 1;
-   cout << "bandwidthRate is " << endl;
-   cout << bandwidthRate <<endl;
-  }
-/*
-  if(argc >= 9){
-    std::string path(argv[8]);
-    audiopath.append(path);
-    audiopath.append("/audio_long16.pcm");
-    videopath.append(path);
-    //videopath.append("/source.avi");
-    //videopath.append("/testFourPeopleHD720P.avi");
-    videopath.append("/testFourPeopleHD720P.avi");
-  }else{
-    audiopath.append("./audio_long16.pcm");
-    //videopath.append("./source.avi");
-    //videopath.append("/testFourPeopleHD720P.avi");
-    videopath.append("/testFourPeopleHD720P.avi");
-  }
-
-  std::unique_ptr<owt::base::AudioFrameGeneratorInterface> audio_generator(FileAudioFrameGenerator::Create(audiopath));
-  if (audio_generator == nullptr){
-    return -1;
-  }*/
-  if(!rawfileMode){
-     GlobalConfiguration::SetEncodedVideoFrameEnabled(true);
-  }
-  //GlobalConfiguration::SetCustomizedAudioInputEnabled(true, std::move(audio_generator));
-
-  owt::base::VideoCodec codec_name;
-  if (codec_used.find("h264") != std::string::npos) {
-    cout <<" ============codec_name is owt::base::VideoCodec::kH264==========";
-    codec_name = owt::base::VideoCodec::kH264;
-  } else if(codec_used.find("vp9") != std::string::npos) {
-    codec_name = owt::base::VideoCodec::kVp9;
-    cout << "codec_name is vp9 ";
-  } else if(codec_used.find("vp8") != std::string::npos) {
-    codec_name = owt::base::VideoCodec::kVp8;
-  } else if(codec_used.find("h265") != std::string::npos) {
-    codec_name = owt::base::VideoCodec::kH265;
-  } else {
-    codec_name = owt::base::VideoCodec::kVp8;
-  }
-
-
-  IceServer ice;
-  ice.urls.push_back("stun:61.152.239.56");
-  ice.username = "";
-  ice.password = "";
-  vector<IceServer> ice_servers;
-  ice_servers.push_back(ice);
-  configuration.ice_servers = ice_servers;
-
-  scheme.append(suffix);
-  std::shared_ptr<ConferenceClient> room = ConferenceClient::Create(configuration);
-
-  ConferenceSampleForwardObserver *forwardobserver = nullptr;
-  if(subscribe) {
-    if(mode) {
-      cout <<" ============Mix mode==========";
+    else
+    {
+        LOG_DEBUG("token is null!");
     }
-    else {
-      cout <<" ============Forward mode==========";
-      forwardobserver = new ConferenceSampleForwardObserver(room);
-      room->AddObserver(*forwardobserver);
+    int cnt = data->GetRunTime();
+    while (cnt)
+    {
+        sleep(1);
+        cnt--;
     }
-  }
 
-//  cout << "Press Enter to connect room." << std::endl;
- // cin.ignore();
-
-  string token = getToken(scheme, roomId, "", "", false,"presenter");
-  std::shared_ptr<owt::base::LocalStream> shared_stream;
-    cout << "token is" << token <<endl;
-// following code is used for raw file input
-  if(rawfileMode){
-     std::unique_ptr<FileFrameGenerator> framer(new FileFrameGenerator(width, height, 30, rawFile));
-     std::shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true));
-     shared_stream = LocalStream::Create(lcsp, std::move(framer));
-   }
-  else{
-// following code is used for encoded file input
-    cout << "encoded file is " << endl;
-    cout << encodedFile << endl;
-    VideoEncoderInterface* external_encoder = DirectVideoEncoder::Create(codec_name, encodedFile);
-    Resolution res(width, height);
-    shared_ptr<LocalCustomizedStreamParameters> lcsp(new LocalCustomizedStreamParameters(true, true, res, 30, 2000));
-    shared_stream = LocalStream::Create(lcsp, external_encoder);
-   }
-  if (token != "") {
-      room->Join(token,
-          [=](std::shared_ptr<ConferenceInfo> info) {
-              // Subscribe mixed stream if indicated so 
-              if (subscribe && mode) {
-                std::vector<std::shared_ptr<RemoteStream>> remote_streams = info->RemoteStreams();
-                for (auto& remote_stream : remote_streams) {
-                  if (remote_stream->Source().video == VideoSourceInfo::kMixed) {
-                    remote_mixed_stream = std::static_pointer_cast<RemoteMixedStream>(remote_stream);
-                    break;
-                  }
-                }
-
-                SubscribeOptions options;
-                VideoCodecParameters codec_param1;
-                codec_param1.name = codec_name;
-                options.video.codecs.push_back(codec_param1);
-                auto multipliers= remote_mixed_stream->Capabilities().video.bitrate_multipliers;
-                Resolution res(width,height);
-                options.video.resolution = res;
-                if ((1-bandwidthRate)>0.1){ 
-                  for (auto it = multipliers.begin(); it != multipliers.end(); it++ ){
-                    if (fabs((*it)-bandwidthRate)<0.00001){
-                       options.video.bitrateMultiplier = (*it);
-                       cout << "birate is changed" << endl;
-                       cout << bandwidthRate << endl;
-                       cout << (*it) << endl;
-                    }
-                  }
-                }
-                room->Subscribe(remote_mixed_stream,
-                                options,
-                                [=](std::shared_ptr<ConferenceSubscription> subscription) {
-                                  cout << "==============Subscribe succeed===========" << endl;
-                      MyVideoRenderer* myVideoRenderer = new MyVideoRenderer();
-                      remote_mixed_stream->AttachVideoRenderer(*myVideoRenderer);
-                      //  DFBVideoRenderer* dfbVideoRenderer = new DFBVideoRenderer();
-                      //  rstream->AttachVideoRenderer(*dfbVideoRenderer);
-                    
-                      int remoteID=atoi((remote_mixed_stream->Origin()).c_str());
-                    //  std::thread FpsSendThread(MyBasicServerConnector::SendFps);
-                    //  std::thread BitrateSendThread(MyBasicServerConnector::SendBitrate);
-                    //  std::thread ARGBSendThread(MyBasicServerConnector::SendARGB);
-                      
-                      std::thread FpsSaveThread(MyBasicServerConnector::SaveFps);
-                      std::thread BitrateSaveThread(MyBasicServerConnector::SaveBitrate);
-                      std::thread ARGBSaveThread(MyBasicServerConnector::SaveARGB);
-                    //  std::thread publishDataSaveThread(MyBasicServerConnector::SavepublishDatas);
-                      //getstats
-                      //int interval = 0;
-                      while(1) {
-                        sleep(3);
-                        //++interval;
-                        //if (interval%2 == 0) {
-                          subscription->GetStats(
-                                                  [=](std::shared_ptr<ConnectionStats> stats) {
-                                                    MyBasicServerConnector::FpsDataQ.push(stats->video_receiver_reports[remoteID]->framerate_output);
-                                                    MyBasicServerConnector::BitrateDataQ.push(stats->video_receiver_reports[remoteID]->bytes_rcvd);
-                                                    cout << "subscribe mix resolution is ------" << endl;
-                                                    cout << stats->video_receiver_reports[remoteID]->frame_resolution_rcvd.width << endl;
-                                                    cout << stats->video_receiver_reports[remoteID]->frame_resolution_rcvd.height << endl;
-                                                  },
-                                                  [=](unique_ptr<Exception>) {
-                                                    cout << "GetConnectionStats failed" << endl;
-                                                  });
-                        //}
-                      }
-
-                                },
-                                [=](std::unique_ptr<Exception>) {
-
-                                  cout << "==============Subscribe failed============" << endl;
-                                });
-	      } else if(subscribe && !mode) { //subscribing existing forward stream instead
-		      std::vector<std::shared_ptr<RemoteStream>> remote_streams = info->RemoteStreams();
-		      for (auto& remote_stream : remote_streams) {
-			      if (remote_stream->Source().video == VideoSourceInfo::kCamera) {
-				      SubscribeOptions options;
-				      VideoCodecParameters codec_param1;
-				      codec_param1.name = codec_name;
-				      options.video.codecs.push_back(codec_param1);
-                      Resolution res(width,height);
-                      options.video.resolution = res;
-                      //options.video.bitrateMultiplier = 0.8;
-				      room->Subscribe(remote_stream,
-						      options,
-						      [&](std::shared_ptr<ConferenceSubscription> subscription) {
-						      cout << "==============Subscribe succeed===========" << endl;
-						      MyVideoRenderer* myVideoRenderer = new MyVideoRenderer();
-						      remote_stream->AttachVideoRenderer(*myVideoRenderer);
-						      //  DFBVideoRenderer* dfbVideoRenderer = new DFBVideoRenderer();
-						      //  rstream->AttachVideoRenderer(*dfbVideoRenderer);
-
-						      int remoteID=atoi((remote_stream->Origin()).c_str());
-						      //  std::thread FpsSendThread(MyBasicServerConnector::SendFps);
-						      //  std::thread BitrateSendThread(MyBasicServerConnector::SendBitrate);
-						      //  std::thread ARGBSendThread(MyBasicServerConnector::SendARGB);
-						      std::thread FpsSaveThread(MyBasicServerConnector::SaveFps);
-						      std::thread BitrateSaveThread(MyBasicServerConnector::SaveBitrate);
-						      std::thread ARGBSaveThread(MyBasicServerConnector::SaveARGB);
-						      //  std::thread publishDataSaveThread(MyBasicServerConnector::SavepublishDatas);
-						      //getstats
-						      //int interval = 0;
-						      while(1) {
-							      sleep(3);
-							      //++interval;
-							      //if (interval%2 == 0) {
-							      subscription->GetStats(
-									      [=](std::shared_ptr<ConnectionStats> stats) {
-									      MyBasicServerConnector::FpsDataQ.push(stats->video_receiver_reports[remoteID]->framerate_output);
-									      MyBasicServerConnector::BitrateDataQ.push(stats->video_receiver_reports[remoteID]->bytes_rcvd);
-									      },
-									      [=](unique_ptr<Exception>) {
-									      cout << "GetConnectionStats failed" << endl;
-									      });
-							      //}
-						      }
-
-						      },
-						      [=](std::unique_ptr<Exception>) {
-
-							      cout << "==============Subscribe failed============" << endl;
-						      });
-
-
-			      }
-		      }
-
-
-
-	      }
-              // Publish if indicated so
-              if(publish) {
-                PublishOptions options;
-                VideoCodecParameters codec_param1;
-                codec_param1.name = codec_name;
-                VideoEncodingParameters encoding_param1(codec_param1, 0, false);
-                options.video.push_back(encoding_param1);
-
-                room->Publish(shared_stream,
-                              options,
-                              [=](std::shared_ptr<ConferencePublication> publication) {
-                                cout <<" ============Publish succeed=========="<<endl;
-                                std::string pub_id = publication->Id();
-                                mix(scheme, roomId, pub_id);
-                              },
-                              [=](std::unique_ptr<Exception> err) {
-                                cout <<" ============Publish failed==========="<<endl;
-                              });
-                }
-                cout << "Join succeeded!" << endl;
-           }, // Join success callback
-           [=](std::unique_ptr<Exception> err) {
-             cout << "Join failed!" << endl;
-           }); //End of join 
-  } else {
-     cout << "join error!" << endl;
-  }
-
-
-
-
-  int connectResult = MyBasicServerConnector::TestConnect();
-  MyBasicServerConnector::Create(width,height);
-//  std::thread publishDataSendThread(MyBasicServerConnector::SendpublishDatas);
-  std::thread publishDataSaveThread(MyBasicServerConnector::SavepublishDatas);
-  while(1){
-    sleep(1);
-  }
-
-  if(forwardobserver) {
-    delete forwardobserver;
-    forwardobserver = nullptr;
-  }
-  return 0;
+    if (forwardObserver)
+    {
+        delete forwardObserver;
+        forwardObserver = nullptr;
+    }
+    if (data)
+    {
+        delete data;
+        data = nullptr;
+    }
+    return 0;
 }
-
