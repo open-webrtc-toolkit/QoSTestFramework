@@ -7,7 +7,6 @@ const errorhandler = require('errorhandler');
 const morgan = require('morgan');
 const fs = require('fs');
 const https = require('https');
-const toobusy = require('node-toobusy');
 const crypto = require('crypto');
 const uuid = require('uuid/v4');
 const exec = require('child_process').exec;
@@ -21,15 +20,6 @@ const sourceDir = analysisDir + "dataset/source/"
 const clientDir = rootDir + "QOStestclient/";
 
 const app = express();
-
-// add toobusy to poll the monitor
-app.use((req, res, next) => {
-  if (toobusy()) {
-    res.send(503, "Server too busy right now, sorry.");
-  } else {
-    next();
-  }
-});
 
 app.use(errorhandler({
   dumpExceptions: true,
