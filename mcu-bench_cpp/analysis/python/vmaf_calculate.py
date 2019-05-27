@@ -1,3 +1,6 @@
+# Copyright (C) <2019> Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
 import os
 import os.path
 import subprocess as sp
