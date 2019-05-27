@@ -1,3 +1,6 @@
+# Copyright (C) <2019> Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
 import sys
 caffe_root = '/home/yonghao/machine-learning/caffe/'
 sys.path.insert(0, caffe_root + 'python')

@@ -1,3 +1,6 @@
+// Copyright (C) <2019> Intel Corporation
+//
+// SPDX-License-Identifier: Apache-2.0
 #include <iostream> // for standard I/O
 #include <string>   // for strings
 #include <iomanip>  // for controlling float print precision

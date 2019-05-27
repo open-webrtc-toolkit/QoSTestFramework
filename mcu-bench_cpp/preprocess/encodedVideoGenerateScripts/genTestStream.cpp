@@ -1,5 +1,6 @@
-//Notes: jianhui.j.dai@intel.com
-
+// Copyright (C) <2019> Intel Corporation
+//
+// SPDX-License-Identifier: Apache-2.0
 #include <stdio.h>
 #include <getopt.h>
 #include <unistd.h>

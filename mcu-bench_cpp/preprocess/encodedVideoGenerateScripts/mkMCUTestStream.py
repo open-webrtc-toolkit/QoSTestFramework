@@ -1,9 +1,8 @@
 #! /usr/bin/python
 
-# @author       jianhui.j.dai@intel.com,yanbin.zhang@intel.com
-# @brief
-# @version      0.1
-# @date         2015/01/23
+# Copyright (C) <2019> Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import os
 import sys
