@@ -11,7 +11,6 @@ const morgan = require('morgan');
 const fs = require('fs');
 const https = require('https');
 const crypto = require('crypto');
-const uuid = require('uuid/v4');
 const exec = require('child_process').exec;
 const path = require('path')
 const rootDir = __dirname + "/../";

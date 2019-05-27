@@ -7,7 +7,6 @@
     "async": "^1.5.2",
     "express": "^4.16.4",
     "morgan": "^1.9.1",
-    "uuid": "^3.3.2",
     "spdy": "^4.0.0"
   },
   "devDependencies": {},
