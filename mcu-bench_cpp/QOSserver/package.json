@@ -15,8 +15,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "qos testbench"
+    "qos testframework"
   ],
   "author": "Jianlin Qiu,yanbin zhang",
-  "license": "ISC"
+  "license": "Apache 2.0"
 }

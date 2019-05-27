@@ -1,7 +1,10 @@
-/*
-This file could help you collect the video data and
-get some parameters about your peer connection
-*/
+// Copyright (C) <2019> Intel Corporation
+//
+// SPDX-License-Identifier: Apache-2.0
+
+//
+//This file could help you collect the video quality and other indicators data
+//
 'use strict'
 
 var chartMap = new Map()

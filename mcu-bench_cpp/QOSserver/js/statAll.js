@@ -1,6 +1,9 @@
-/*
-This file help you compare different
-*/
+// Copyright (C) <2019> Intel Corporation
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+//This file help you compare different
+//
 
 'use strict'
 

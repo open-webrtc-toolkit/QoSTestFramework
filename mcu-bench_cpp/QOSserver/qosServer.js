@@ -1,3 +1,6 @@
+// Copyright (C) <2019> Intel Corporation
+//
+// SPDX-License-Identifier: Apache-2.0
 /*global require, __dirname, console, process*/
 'use strict';
 
@@ -46,11 +49,11 @@ app.use(function(req, res, next) {
 });
 
 app.get('/', function(req, res) {
-  res.sendFile(__dirname + '/rtcmcubench_withoutjs.html');
+  res.sendFile(__dirname + '/qostestframework.html');
 });
 
 app.get('/rtcmcubench_summary.html', function(req, res) {
-  res.sendFile(__dirname + '/rtcmcubench_summary.html');
+  res.sendFile(__dirname + '/qostestframework_summary.html');
 });
 
 app.get('/js/stat.js', function(req, res) {
