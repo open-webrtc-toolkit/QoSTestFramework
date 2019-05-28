@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import sys
-caffe_root = '/home/webrtc/caffe/caffe/'
+caffe_root = 'caffe/caffe/'
 sys.path.insert(0, caffe_root + 'python')
 from caffe import layers as L,params as P,to_proto
 deploy='mnist/deploy.prototxt'   

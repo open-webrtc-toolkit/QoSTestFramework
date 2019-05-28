@@ -34,8 +34,7 @@ void help()
     cout << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "This program measures jitter, the time gap between two consecutive saved frames" << endl;
-    cout << "If you want to run it in terminal instead of basicServer, please cd to mcu-bench_cpp folder and use ./native/xxx" << endl;
-    cout << "For example: ./native/flr ./native/Data/localLatency.txt" << endl;
+    cout << "Usage: ./native/flr ./native/Data/localLatency.txt" << endl;
     cout << "This program will read the tag photos from C++ and generate a new file call rec_timestamp.txt " << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl
          << endl;

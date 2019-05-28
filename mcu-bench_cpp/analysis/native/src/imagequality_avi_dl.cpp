@@ -43,10 +43,9 @@ void help()
     cout << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "This program measures PSNR/MSSIM by Deep Learning Recognition" << endl;
-    cout << "Please ensure your OPENCV is above 3.2 and complied with corresponding opencv_contrib. This is very important to enable Deep Learning modules" << endl;
-    cout << "If you want to run it in terminal instead of basicServer, please cd to mcu-bench_cpp folder and use ./native/xxx" << endl;
-    cout << "USAGE: ./native/iq_avi rawdata sourcevideo" << endl;
-    cout << "For example: ./native/iq_avi ./native/Data/localARGB ./native/video/testFourPeople.avi 1080p" << endl;
+    cout << "Please ensure your OPENCV is installed following readme file." << endl;
+    cout << "USAGE: ./native/iq_avi rawdata sourcevideo video_width video_height" << endl;
+    cout << "For example: ./native/iq_avi ./native/Data/localARGB ./native/video/testFourPeople.avi 1280 720" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl
          << endl;
 }
@@ -72,27 +71,11 @@ int main(int argc, char *argv[])
     ofstream ssim_out("../dataset/output/ssim.txt");
     ofstream quality_out("../dataset/output/quality.txt");
     // resolution of video
-    std::string res(argv[3]);
-    if (res.find("1080") != std::string::npos)
-    {
-        video_width = 1920;
-        video_height = 1080;
-    }
-    else if (res.find("720") != std::string::npos)
-    {
-        video_width = 1280;
-        video_height = 720;
-    }
-    else if (res.find("vga") != std::string::npos)
-    {
-        video_width = 640;
-        video_height = 480;
-    }
-    else
-    {
-        video_width = 540;
-        video_height = 360;
-    }
+    std::string res_width(argv[3]);
+    std::string res_height(argv[4]);
+    video_width = std::stoi(res_width);
+    video_height = std::stoi(res_height);
+
     if (!received_video)
     {
         cout << "can't not open file" << endl;

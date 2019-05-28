@@ -263,7 +263,8 @@ app.post('/bitrate', function(req, res) {
 app.post('/quality', function(req, res) {
   let originFilename = req.body.filename || sourceDir +
     "FourPeople_540x360_30_taged.avi";
-  let codec = req.body.codec || "hd540p";
+  let width = req.body.width || "1280";
+  let height = req.body.height || "720";
   let rawFilename = dataDir + "localARGB.txt";
   let exec_file = undefined;
   if (originFilename.indexOf(';') !== -1) {
@@ -272,8 +273,14 @@ app.post('/quality', function(req, res) {
       errmsg: "wrong file name"
     });
   }
-  if (codec.indexOf(';') !== -1) {
-    console.err("wrong resolution");
+  if (width.indexOf(';') !== -1) {
+    console.err("wrong resolution width");
+    res.json({
+      errmsg: "wrong file name"
+    });
+  }
+  if (height.indexOf(';') !== -1) {
+    console.err("wrong resolution height");
     res.json({
       errmsg: "wrong file name"
     });
@@ -286,7 +293,7 @@ app.post('/quality', function(req, res) {
     console.info('wrong origin file format.');
   }
   exec(nativeDir + exec_file + rawFilename + ' ' + originFilename + ' ' +
-    codec, function(err, data, stderr) {
+    width + ' ' + height, function(err, data, stderr) {
     if (err) {
       console.info('stderr from quality:' + stderr);
       req.errormsg = err.stack

@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import sys
-caffe_root = '/home/yonghao/machine-learning/caffe/'
+caffe_root = 'machine-learning/caffe/'
 sys.path.insert(0, caffe_root + 'python')
 import caffe
 from caffe import layers as L,params as P,proto,to_proto

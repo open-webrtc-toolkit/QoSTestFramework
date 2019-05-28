@@ -30,9 +30,8 @@ void help()
     cout << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "This program saves frames received" << endl;
-    cout << "If you want to run it in terminal instead of basicServer, please cd to mcu-bench_cpp folder and use ./native/xxx" << endl;
-    cout << "USAGE: ./saveImage rawdata" << endl;
-    cout << "For example: ./native/saveImage ./native/Data/localARGB.txt hd720p" << endl;
+    cout << "USAGE: ./saveImage rawdata width height" << endl;
+    cout << "For example: ./native/saveImage ./native/Data/localARGB.txt 1920 1080" << endl;
     cout << "The output files will be saved in ./native/output" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl
          << endl;
@@ -44,30 +43,10 @@ int main(int argc, char *argv[])
 {
 
     ifstream received_video(argv[1]);
-    std::string res(argv[3]);
-    if (res.find("1080") != std::string::npos)
-    {
-        video_width = 1920;
-        video_height = 1080;
-    }
-    else if (res.find("720") != std::string::npos)
-    {
-        video_width = 1280;
-        video_height = 720;
-        cout << "-------------------------------------------720P---------------------------------------" << endl;
-        cout << video_width << endl;
-        cout << "----------------720--------" << endl;
-    }
-    else if (res.find("vga") != std::string::npos)
-    {
-        video_width = 640;
-        video_height = 480;
-    }
-    else
-    {
-        video_width = 320;
-        video_height = 240;
-    }
+    std::string res_width(argv[2]);
+    std::string res_height(argv[3]);
+    video_width = std::stoi(res_width);
+    video_height =std::stoi(res_height);
     int v(0);
     unsigned int r, g, b;
 

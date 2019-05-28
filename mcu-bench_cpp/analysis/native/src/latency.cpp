@@ -47,8 +47,7 @@ void help()
 {
     cout << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl;
-    cout << "This program measures WebRTC Video latency" << endl;
-    cout << "If you want to run it in terminal instead of basicServer, please cd to mcu-bench_cpp folder and use ./native/xxx" << endl;
+    cout << "This program measures latency" << endl;
     cout << "For example: ./native/latency ./native/Data/localPublishTime.txt ./native/Data/localLatency" << endl;
     cout << "This program will read the tag photos from C++ and generate a new file call rec_timestamp.txt " << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl

@@ -25,10 +25,8 @@ void help()
 {
     cout << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl;
-    cout << "This program measures WebRTC Video Frames per second" << endl;
-    cout << "USAGE: ./latency senddata recvdata" << endl;
-    cout << "If you want to run it in terminal instead of basicServer, please cd to mcu-bench_cpp folder and use ./native/xxx" << endl;
-    cout << "For example: ./native/fps ./native/Data/localFPS.txt" << endl;
+    cout << "This program measures Frames per second" << endl;
+    cout << "Usage: ./native/fps ./native/Data/localFPS.txt" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl
          << endl;
 }

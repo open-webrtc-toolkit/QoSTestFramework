@@ -25,7 +25,7 @@ using namespace std;
 #define ND 4
 int tagsize = 60;
 
-int framesize; //一副图所含的像素个数
+int framesize; // pixels in one frames
 
 float RGBYUV02990[256], RGBYUV05870[256], RGBYUV01140[256];
 float RGBYUV01684[256], RGBYUV03316[256];
@@ -43,10 +43,9 @@ void help()
     cout << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "This program measures PSNR/MSSIM by Deep Learning Recognition" << endl;
-    cout << "Please ensure your OPENCV is above 3.2 and complied with corresponding opencv_contrib. This is very important to enable Deep Learning modules" << endl;
-    cout << "USAGE: ./iq_yuv rawdata sourcevideo" << endl;
-    cout << "If you want to run it in terminal instead of basicServer, please cd to mcu-bench_cpp folder and use ./native/xxx" << endl;
-    cout << "For example: ./native/iq_yuv ./native/Data/localARGB.txt ./native/video/vp8_raw_1280x720_framerate30-bitrate2000k-gop30.yuv 720p" << endl;
+    cout << "Please ensure your OPENCV is installed following readme file" << endl;
+    cout << "USAGE: ./iq_yuv rawdata sourcevideo width height" << endl;
+    cout << "For example: ./native/iq_yuv ./native/Data/localARGB.txt ./native/video/vp8_raw_1280x720_framerate30-bitrate2000k-gop30.yuv 1280 720" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl
          << endl;
 }
@@ -69,28 +68,12 @@ int main(int argc, char *argv[])
         cout << "can't not open file" << endl;
         return -1;
     }
-    std::string res(argv[3]);
-    if (res.find("1080") != std::string::npos)
-    {
-        video_width = 1920;
-        video_height = 1080;
-    }
-    else if (res.find("720") != std::string::npos)
-    {
-        video_width = 1280;
-        video_height = 720;
-    }
-    else if (res.find("vga") != std::string::npos)
-    {
-        video_width = 640;
-        video_height = 480;
-    }
-    else
-    {
-        video_width = 540;
-        video_height = 360;
-    }
-    framesize = video_width * video_height * 3 / 2; //一副图所含的像素个数
+    std::string res_width(argv[3]);
+    std::string res_height(argv[4]);
+    video_width = std::stoi(res_width);
+    video_height = std::stoi(res_height);
+    
+    framesize = video_width * video_height * 3 / 2; //pixels in one frame
                                                     // typedef struct planet
                                                     // {
                                                     // char name[framesize];
@@ -107,14 +90,14 @@ int main(int argc, char *argv[])
         cout << "the file is error" << endl;
         return -1;
     }
-    fin.seekg(0, ios::end);     //设置文件指针到文件流的尾部
-    streampos ps = fin.tellg(); //指出当前的文件指针
-    //cout << "file size: " << ps << endl;  //输出指针的位置
-    unsigned FrameCount = ps / framesize; //帧大小
-    //cout << "frameNuber: " << FrameCount << endl; //输出帧数
+    fin.seekg(0, ios::end);     //go to end of file
+    streampos ps = fin.tellg(); //current points
+    //cout << "file size: " << ps << endl;  
+    unsigned FrameCount = ps / framesize; //frame size
+    //cout << "frameNuber: " << FrameCount << endl; //frame number
     fin.close();
     FILE *fileIn = fopen(originVideoName.c_str(), "rb+");
-    unsigned char *pYuvBuf = new unsigned char[framesize]; //一帧数据大小
+    unsigned char *pYuvBuf = new unsigned char[framesize]; //one frame size
 
     //存储到图像
     Mat frameReference;
