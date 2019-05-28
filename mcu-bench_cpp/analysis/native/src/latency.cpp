@@ -41,15 +41,15 @@ multimap<int, long>::iterator it2;
 multimap<int, long>::iterator key;
 pair<multimap<int, long>::iterator, multimap<int, long>::iterator> ret;
 int TagRound = 0;
-int FrameCount = 600;
+int FrameCount = 0;
 
 void help()
 {
     cout << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "This program measures latency" << endl;
-    cout << "For example: ./native/latency ./native/Data/localPublishTime.txt ./native/Data/localLatency" << endl;
-    cout << "This program will read the tag photos from C++ and generate a new file call rec_timestamp.txt " << endl;
+    cout << "For example: ./native/latency ./native/Data/localPublishTime.txt ./native/Data/localLatency FrameCount" << endl;
+    cout << "This program will read the tag photos from C++ and generate a new file call rec_timestamp.txt 600" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl
          << endl;
 }
@@ -66,6 +66,9 @@ int main(int argc, char **argv)
     ofstream receive_timestamp(rec_timestamp.c_str());
     ifstream received_video(argv[2]);
     receive_timestamp << ",";
+    
+    std::string framecount(argv[3]);
+    FrameCount = std::stoi(framecount);
 
     int height = tagsize;
     int width = tagsize * ND;
