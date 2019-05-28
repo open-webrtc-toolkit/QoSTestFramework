@@ -23,33 +23,31 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-// fileframegenerator.h : header file
+// conferenceforwardobserver.h : header file
 //
 
 #pragma once
 
 #include "owt.h"
-#include <stdio.h>
-#include <string>
+#include "log.h"
+#include "data.h"
 
-using namespace std;
 
-class CEncodedVideoInput : public VideoEncoderInterface
+class CConferenceForwardObserver
+    : public ConferenceClientObserver
 {
 public:
-    static CEncodedVideoInput *Create(const string &videoFile, VideoCodec codec);
-    CEncodedVideoInput(const string &videoFile, VideoCodec codec);
-    ~CEncodedVideoInput();
-
-    virtual bool InitEncoderContext(Resolution &resolution, uint32_t fps, uint32_t bitrate, VideoCodec video_codec) override;
-    virtual bool EncodeOneFrame(vector<uint8_t> &buffer, bool keyFrame) override;
-    virtual bool Release() override;
-    virtual VideoEncoderInterface *Copy() override;
-    void SetPublishTimeFile(const string &file);
+  CConferenceForwardObserver(shared_ptr<ConferenceClient> client);
+  virtual ~CConferenceForwardObserver() {}
+  void OnStreamAdded(shared_ptr<RemoteStream> stream) override;
+  void setPubId(string pubId);
+  void setData(CData* data);
 
 private:
-    string m_videoPath;
-    VideoCodec m_codec;
-    FILE *m_fd;
-    FILE *m_fLocalPublishTime;
+  static void getStatus(string filenameBitrate, string filenameFps, shared_ptr<ConferenceSubscription> subscription);
+  shared_ptr<RemoteStream> m_remoteStream;
+  shared_ptr<ConferenceClient> m_client;
+  string m_pubId;
+  CData* m_data;
 };
+

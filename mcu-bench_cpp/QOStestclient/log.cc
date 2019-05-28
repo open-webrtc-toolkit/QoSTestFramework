@@ -23,33 +23,68 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-// fileframegenerator.h : header file
+// log.cpp : implementation file
 //
 
-#pragma once
-
-#include "owt.h"
+#include "log.h"
+#include <iostream>
+#include <mutex>
+#include <stdarg.h>
 #include <stdio.h>
-#include <string>
+#include <string.h>
 
-using namespace std;
+static mutex s_mtxLog;
+static LogLevel s_level = LogLevel::Debug;
 
-class CEncodedVideoInput : public VideoEncoderInterface
+int _vscprintf(const char *format, va_list pargs)
 {
-public:
-    static CEncodedVideoInput *Create(const string &videoFile, VideoCodec codec);
-    CEncodedVideoInput(const string &videoFile, VideoCodec codec);
-    ~CEncodedVideoInput();
+    int retval;
+    va_list argcopy;
+    va_copy(argcopy, pargs);
+    retval = vsnprintf(NULL, 0, format, argcopy);
+    va_end(argcopy);
+    return retval;
+}
 
-    virtual bool InitEncoderContext(Resolution &resolution, uint32_t fps, uint32_t bitrate, VideoCodec video_codec) override;
-    virtual bool EncodeOneFrame(vector<uint8_t> &buffer, bool keyFrame) override;
-    virtual bool Release() override;
-    virtual VideoEncoderInterface *Copy() override;
-    void SetPublishTimeFile(const string &file);
+void CLog::log(LogLevel level, string file, string func, int line, const char *format, ...)
+{
+    if (s_level > level)
+    {
+        return;
+    }
+    s_mtxLog.lock();
+    char *pszStr = NULL;
+    if (NULL != format)
+    {
+        va_list marker;
+        va_start(marker, format);
+        size_t nLength = _vscprintf(format, marker) + 1;
+        pszStr = new char[nLength];
+        memset(pszStr, '\0', nLength);
+        vsnprintf(pszStr, nLength, format, marker);
+        va_end(marker);
+    }
+    string sLog = file + "::" + to_string(line) + "::" + func + "::" + pszStr + "\r\n";
+    cout << sLog.c_str();
+    delete[] pszStr;
+    s_mtxLog.unlock();
+}
 
-private:
-    string m_videoPath;
-    VideoCodec m_codec;
-    FILE *m_fd;
-    FILE *m_fLocalPublishTime;
-};
+void CLog::setLogParam(LogLevel level, string path)
+{
+    s_mtxLog.lock();
+    s_level = level;
+    if (path != "")
+    {
+        freopen(path.c_str(), "ab", stdout);
+    }
+    s_mtxLog.unlock();
+}
+
+CLog::CLog()
+{
+}
+
+CLog::~CLog()
+{
+}

@@ -1,0 +1,16 @@
+{
+  "logLevel": "debug",
+  "logToFile": false,
+  "logFile": "runQosClient.log",
+  "roomId": "5c89ba56be98d00f1e995009",
+  "videoFile": "FourPeople_540x360_30_taged.yuv",
+  "bitrate": "1",
+  "server": "place_holder",
+  "codec": "vp8",
+  "resolution": "540*360",
+  "fps": "30",
+  "pubAndSubFlag": "ps",
+  "runTime": "60",
+  "encoded": "0",
+  "libsPath": "place_holder"
+}
