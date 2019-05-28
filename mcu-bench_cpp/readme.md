@@ -2,6 +2,29 @@
 ## Introduction
 QOS Framework is a test framework help you anlysis real-time video/audio quality. Major components are included QoS Server, Preprocess module, Analysis module and Video transmission adapter module. It can also combined with IATF( Interactive API Test Framework) module to handle cross-platform and multi-device API test automation. Please following to install it.
 
+## Architecture
+The following figure shows the architecture of this framework.
+![Architecture of QoS Framework](docs/images/arch.jpg)
+
+## Design philosophy
+
+- **Rich performance indicator**: Included Reference video quality indicators PSNR, SSIM , VMAF , Non-reference video quality indicators,blockniess, blockloss etc.
+
+- ** High modular and scalable**: Each module can be run seperately and integrated to your system easily .
+
+- ** visualization of analysis result**: All anlaysis results can be viewed remotely . visualization of comparative data for different scenarios was supported as well.
+
+## Structure introduction
+
+In this section, we introduce the four module in our framework.
+
+1. **QoS server** : It is reponsible fo
+2. **Preprocess module**: video pre-processing include raw files and encoded files
+3. **Analysis module**: Performance data result analysis included reference video quality indicate e.g PSNR, SSIM , VMAF and non-reference video quality indicate e.g blockniess, blockloss etc.
+4. **Web Application**: Test task trigger and  visualization of analysis result showing.
+5. **Video transmission adapter module**: video transmission channels which is adaptation layer for different evaluated real-time video system.
+
+## Install guide
 ## Preprocess module setup
 This section describes the dependencies and steps for setup Preprocess module, all scripts and code can be found at preprocess folder.
 ### Install dependencies
