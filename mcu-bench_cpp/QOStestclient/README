@@ -38,9 +38,9 @@ Before you start, make sure you have following prerequisites installed/built:
 
 ## How to config
 Configuration in config.json file.
-`server` is the mcu server address.
+`address` is the mcu server address.
 `libsPath` is the third party lib path the program need to link.
-`encoded` set true will use encoded video file, set false will use raw video.
+`encode` set true will use encoded video file, set false will use raw video.
 
 ## How to build
 1. cd scripts

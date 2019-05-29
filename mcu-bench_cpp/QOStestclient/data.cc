@@ -1,49 +1,26 @@
-/*
- * Copyright © 2019 Intel Corporation. All Rights Reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-// data.cpp : implementation file
+// Copyright (C) <2019> Intel Corporation
 //
-
+// SPDX-License-Identifier: Apache-2.0
 #include "data.h"
+#include <getopt.h>
 #include <unistd.h>
 
 CData::CData()
 {
     LOG_DEBUG("");
-    m_dataDir = "./Data/";
+    m_dataDir = "";
     m_roomId = "";
     m_serverAddress = "";
     m_videoPath = "";
     m_width = 0;
     m_height = 0;
     m_fps = 0;
-    m_publish = true;
-    m_subscribe = true;
-    m_encoded = false;
+    m_publish = false;
+    m_subscribe = false;
+    m_encode = false;
     m_codec = VideoCodec::kVp8;
     m_bandwidthRate = 0;
+    m_timeout = 60;
 }
 
 CData::~CData()
@@ -54,15 +31,93 @@ CData::~CData()
 bool CData::ParsingParameters(int argc, char **argv)
 {
     LOG_DEBUG("");
-    if (argc != 11)
+    int opt;
+    static struct option longOptions[] =
+        {
+            {"address", required_argument, NULL, 'a'},
+            {"room", required_argument, NULL, 'r'},
+            {"codec", required_argument, NULL, 'c'},
+            {"width", required_argument, NULL, 'w'},
+            {"height", required_argument, NULL, 'h'},
+            {"fps", required_argument, NULL, 'f'},
+            {"subscribe", no_argument, NULL, 's'},
+            {"publish", no_argument, NULL, 'p'},
+            {"video", required_argument, NULL, 'v'},
+            {"bitrate", required_argument, NULL, 'b'},
+            {"timeout", required_argument, NULL, 't'},
+            {"encode", no_argument, NULL, 'e'},
+            {"dataDir", required_argument, NULL, 'd'},
+            {0, 0, 0, 0}};
+    string codecName = "";
+    while (1)
     {
-        LOG_DEBUG("args error!");
-        return false;
+        int optIndex = 0;
+        opt = getopt_long_only(argc, argv, "a:r:c:w:h:f:spv:b:t:ed:", longOptions, &optIndex);
+
+        if (-1 == opt)
+        {
+            break;
+        }
+        switch (opt)
+        {
+        case 'a':
+            LOG_DEBUG("address is %s", optarg);
+            m_serverAddress = "http://" + string(optarg) + "/createToken";
+            break;
+        case 'r':
+            LOG_DEBUG("room is %s", optarg);
+            m_roomId = optarg;
+            break;
+        case 'c':
+            LOG_DEBUG("codec is %s", optarg);
+            codecName = optarg;
+            break;
+        case 'w':
+            LOG_DEBUG("width is %s", optarg);
+            m_width = atoi(optarg);
+            break;
+        case 'h':
+            LOG_DEBUG("height is %s", optarg);
+            m_height = atoi(optarg);
+            break;
+        case 'f':
+            LOG_DEBUG("fps is %s", optarg);
+            m_fps = atoi(optarg);
+            break;
+        case 's':
+            LOG_DEBUG("subscribe is true");
+            m_subscribe = true;
+            break;
+        case 'p':
+            LOG_DEBUG("publish is true");
+            m_publish = true;
+            break;
+        case 'v':
+            LOG_DEBUG("video is %s", optarg);
+            m_videoPath = optarg;
+            break;
+        case 'b':
+            LOG_DEBUG("bitrate is %s", optarg);
+            m_bandwidthRate = atoi(optarg);
+            break;
+        case 't':
+            LOG_DEBUG("timeout is %s", optarg);
+            m_timeout = atoi(optarg);
+            break;
+        case 'e':
+            LOG_DEBUG("encode is true");
+            m_encode = true;
+            break;
+        case 'd':
+            LOG_DEBUG("dataDir is %s", optarg);
+            m_dataDir = optarg;
+            break;
+        default:
+            LOG_DEBUG("error arg %s", optarg);
+            return false;
+        }
     }
-    LOG_DEBUG("argc is %d", argc);
-    m_serverAddress = "http://" + string(argv[1]) + "/createToken";
-    m_roomId = argv[2];
-    string codecName = argv[3];
+
     if (codecName.find("h264") != string::npos)
     {
         m_codec = VideoCodec::kH264;
@@ -82,36 +137,6 @@ bool CData::ParsingParameters(int argc, char **argv)
     else
     {
         m_codec = VideoCodec::kVp8;
-    }
-
-    string resolution(argv[4]);
-    string::size_type pos = resolution.find('*');
-    m_width = atoi(resolution.substr(0, pos).c_str());
-    m_height = atoi(resolution.substr(pos + 1, resolution.length() - 1).c_str());
-    LOG_DEBUG("resolution is %d*%d", m_width, m_height);
-
-    m_fps = atoi(argv[5]);
-
-    string ps(argv[6]);
-    LOG_DEBUG("ps param:%s", ps.c_str());
-    if ((ps.find("p") == string::npos) && (ps.find("P") == string::npos))
-    {
-        m_publish = false;
-    }
-    if ((ps.find("s") == string::npos) && (ps.find("S") == string::npos))
-    {
-        m_subscribe = false;
-    }
-
-    m_videoPath = argv[7];
-
-    m_bandwidthRate = atof(argv[8]);
-    LOG_DEBUG("m_bandwidthRate is %d", m_bandwidthRate);
-    m_runTime = atoi(argv[9]);
-    LOG_DEBUG("m_runTime is %d", m_runTime);
-    int encoded = atoi(argv[9]);
-    if(encoded){
-        m_encoded = true;
     }
     return true;
 }
@@ -179,41 +204,41 @@ float CData::GetBandwidthRate()
 int CData::GetRunTime()
 {
     LOG_DEBUG("");
-    return m_runTime;
+    return m_timeout;
 }
 
 bool CData::GetIfEncoded()
 {
     LOG_DEBUG("");
-    return m_encoded;
+    return m_encode;
 }
 
 string CData::GetLocalPublishTimeFilePath()
 {
     LOG_DEBUG("");
-    return (m_dataDir + "localPublishTime.txt");
+    return (m_dataDir + "/localPublishTime.txt");
 }
 
 string CData::GetLocalARGBFilePath()
 {
     LOG_DEBUG("");
-    return (m_dataDir + "localARGB.txt");
+    return (m_dataDir + "/localARGB.txt");
 }
 
 string CData::GetLocalLatencyFilePath()
 {
     LOG_DEBUG("");
-    return (m_dataDir + "localLatency.txt");
+    return (m_dataDir + "/localLatency.txt");
 }
 
 string CData::GetLocalFpsFilePath()
 {
     LOG_DEBUG("");
-    return (m_dataDir + "localFps.txt");
+    return (m_dataDir + "/localFps.txt");
 }
 
 string CData::GetLocalBitrateFilePath()
 {
     LOG_DEBUG("");
-    return (m_dataDir + "localBitrate.txt");
+    return (m_dataDir + "/localBitrate.txt");
 }
