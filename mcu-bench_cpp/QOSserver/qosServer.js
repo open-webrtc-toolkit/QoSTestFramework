@@ -12,7 +12,8 @@ const fs = require('fs');
 const https = require('https');
 const crypto = require('crypto');
 const exec = require('child_process').exec;
-const path = require('path')
+const path = require('path');
+const conf = require('./conf.json');
 const rootDir = __dirname + "/../";
 const analysisDir = rootDir + "analysis/";
 const nativeDir = analysisDir + "native/";
@@ -262,10 +263,10 @@ app.post('/bitrate', function(req, res) {
 });
 
 app.post('/quality', function(req, res) {
-  let originFilename = req.body.filename || sourceDir +
-    "FourPeople_540x360_30_taged.avi";
-  let width = req.body.width || "1280";
-  let height = req.body.height || "720";
+
+  let originFilename = conf.quality.originFilename;
+  let width = conf.quality.width;
+  let height = conf.quality.height;
   let rawFilename = dataDir + "localARGB.txt";
   let exec_file = undefined;
   if (originFilename.indexOf(';') !== -1) {
@@ -362,7 +363,7 @@ app.post('/getResultFolder', function(req, res) {
 });
 
 app.post('/getCompareResultFolder', function(req, res) {
-  let folder = req.body.folder;
+  let folder = conf.getCompareResultFolder.folder;
   if (folder != undefined) {
     console.log("folder is", folder);
     if (folder.indexOf(";") !== -1) {
@@ -401,8 +402,9 @@ app.post('/getCompareResultFolder', function(req, res) {
 });
 
 app.post('/displayData', function(req, res) {
-  let folder = req.body.folder;
-  let file = req.body.file;
+  let params = {};
+  let params["folder"] = req.body.folder;
+  let params["file"] = req.body.file;
   console.log("folder is", folder, "file is", file);
   if (folder.indexOf(";") !== -1) {
     console.log("wrong file name");
@@ -416,8 +418,8 @@ app.post('/displayData', function(req, res) {
       errmsg: "wrong file name"
     });
   }
-  exec('python python/display_data.py ' + '-c ' + folder + ' ' + '-f ' +
-    file, function(err, data, stderr) {
+  exec('python python/display_data.py ' + '-c ' + params.folder + ' ' + '-f ' +
+    params.file, function(err, data, stderr) {
     if (err) {
       console.info('stderr :' + stderr);
       req.errormsg = err.stack

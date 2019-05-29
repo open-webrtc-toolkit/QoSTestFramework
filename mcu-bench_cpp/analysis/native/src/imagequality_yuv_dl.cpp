@@ -84,7 +84,8 @@ int main(int argc, char *argv[])
     // PLANET pl;
     ifstream fin;
     const string originVideoName = argv[2];
-    fin.open(originVideoName.c_str(), ios_base::in | ios_base::binary);
+    char *video_name = originVideoName.c_str()
+    fin.open(video_name, ios_base::in | ios_base::binary);
     if (fin.fail())
     {
         cout << "the file is error" << endl;
@@ -96,7 +97,7 @@ int main(int argc, char *argv[])
     unsigned FrameCount = ps / framesize; //frame size
     //cout << "frameNuber: " << FrameCount << endl; //frame number
     fin.close();
-    FILE *fileIn = fopen(originVideoName.c_str(), "rb+");
+    FILE *fileIn = fopen(video_name, "rb+");
     unsigned char *pYuvBuf = new unsigned char[framesize]; //one frame size
 
     //存储到图像
@@ -124,7 +125,9 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < FrameCount; ++i)
     {
+        memset(pYuvBuf, '\0', sizeof(pYuvBuf));
         fread(pYuvBuf, framesize * sizeof(unsigned char), 1, fileIn);
+        pYuvBuf[sizeof(pYuvBuf)-1] = '\0';
         cv::Mat yuvImg;
         yuvImg.create(height * 3 / 2, width, CV_8UC1);
         memcpy(yuvImg.data, pYuvBuf, framesize * sizeof(unsigned char));
@@ -291,7 +294,9 @@ int main(int argc, char *argv[])
             Mat sendyuvtemp;
             unsigned char *pYuvBuf = new unsigned char[width * height * 3 / 2];
             cvtColor(originImages[framenum2], sendyuvtemp, COLOR_BGR2YUV_I420);
+            memset(pYuvBuf, '\0', sizeof(pYuvBuf));
             memcpy(pYuvBuf, sendyuvtemp.data, width * height * 3 / 2 * sizeof(unsigned char));
+            pYuvBuf[sizeof(pYuvBuf) - 1] = '\0';
             fwrite(pYuvBuf, 1, width * height * 3 / 2 * sizeof(unsigned char), sendyuv);
             delete[] pYuvBuf;
             pYuvBuf = nullptr;
