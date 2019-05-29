@@ -193,7 +193,7 @@ app.post('/jitter', function(req, res) {
 app.post('/latency', function(req, res) {
   let sTagFilename = dataDir + "localPublishTime.txt";
   let rTagFilename = dataDir + "localLatency.txt";
-  let frameCount = req.body.framecount || "600"; 
+  let frameCount = conf.latency.frameCount || "600"; 
   exec(nativeDir + 'latency ' + sTagFilename + ' ' + rTagFilename + ' ' + frameCount, function(
     err, data, stderr) {
     if (err) {
