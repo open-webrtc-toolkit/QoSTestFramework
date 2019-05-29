@@ -406,13 +406,13 @@ app.post('/displayData', function(req, res) {
   let params["folder"] = req.body.folder;
   let params["file"] = req.body.file;
   console.log("folder is", folder, "file is", file);
-  if (folder.indexOf(";") !== -1) {
+  if (params.folder.indexOf(";") !== -1) {
     console.log("wrong file name");
     res.json({
       errmsg: "wrong file name"
     });
   }
-  if (file.indexOf(";") !== -1) {
+  if (params.file.indexOf(";") !== -1) {
     console.log("wrong file name");
     res.json({
       errmsg: "wrong file name"
