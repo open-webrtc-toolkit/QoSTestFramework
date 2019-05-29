@@ -1,31 +1,6 @@
+# Copyright (C) <2019> Intel Corporation
 #
-# Copyright © 2019 Intel Corporation. All Rights Reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-# 1. Redistributions of source code must retain the above copyright notice,
-#    this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright notice,
-#    this list of conditions and the following disclaimer in the documentation
-#    and/or other materials provided with the distribution.
-# 3. The name of the author may not be used to endorse or promote products
-#    derived from this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# runQosClient.py : implementation file
-#
-
+# SPDX-License-Identifier: Apache-2.0
 import os
 import json
 import logging
@@ -44,17 +19,19 @@ import collections
 class QosStartParam(object):
     def __init__(self):
         logging.debug('')
-        self.server = ''
+        self.address = ''
         self.room_id = ''
         self.codec = ''
-        self.resolution = ''
+        self.width = ''
+        self.height = ''
         self.fps = 0
-        self.pub_and_sub_flag = ''
-        self.mode = ''
+        self.publish = False
+        self.subscribe = False
         self.video_file = ''
         self.bitrate = 1
-        self.runTime = 0
-        self.encoded = 0
+        self.timeout = 0
+        self.encode = False
+        self.data_dir = ''
         self.libs_path = ''
         self.log = ''
 
@@ -124,18 +101,24 @@ def timeout_callback(p):
 
 def run_qos_client(param):
     logging.debug('')
-    cmd = 'export LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH;./owt_conf_sample %s %s %s %s %s %s %s %s %s %s' % (
+    cmd = 'export LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH;./owt_conf_sample -a=%s -r=%s -c=%s -w=%s -h=%s -f=%s -v=%s -b=%s -t=%s -d=%s' % (
         param.libs_path,
-        param.server,
+        param.address,
         param.room_id,
         param.codec,
-        param.resolution,
+        param.width,
+        param.height,
         param.fps,
-        param.pub_and_sub_flag,
         param.video_file,
         param.bitrate,
-        param.runTime,
-        param.encoded)
+        param.timeout,
+        param.data_dir)
+    if param.publish:
+        cmd += " -p"
+    if param.subscribe:
+        cmd += " -s"
+    if param.encode:
+        cmd += " -e"
     run_cmd(cmd)
 
 
@@ -162,20 +145,20 @@ if __name__ == '__main__':
     clean_env()
     logging.debug(conf)
     param = QosStartParam()
-    param.server = conf.get('server', '')
+    param.address = conf.get('address', '')
     param.codec = conf.get('codec', '')
-    param.resolution = conf.get('resolution', '')
+    param.width = conf.get('width', '')
+    param.height = conf.get('height', '')
     param.fps = conf.get('fps', '')
-    param.pub_and_sub_flag = conf.get('pubAndSubFlag', '')
+    param.publish = conf.get('publish', False)
+    param.subscribe = conf.get('subscribe', False)
     param.bitrate = conf.get('bitrate', '')
-    param.runTime = conf.get('runTime', '')
-    param.encoded = conf.get('encoded', '')
+    param.timeout = conf.get('timeout', '')
+    param.encode = conf.get('encode', False)
     param.libs_path = conf.get('libsPath', '')
-    user_cnt = conf.get('userCnt', '')
-    room_id = conf.get('roomId', '')
-    video_file = conf.get('videoFile', '')
-    param.video_file = video_file
-    param.room_id = room_id
+    param.room_id = conf.get('roomId', '')
+    param.video_file = conf.get('videoFile', '')
+    param.data_dir = conf.get('dataDir', '')
     param.log = 'log.txt'
     thread = threading.Thread(target=run_qos_client, args=[param])
     thread.daemon = True
