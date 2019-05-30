@@ -6,6 +6,7 @@
 #include "owt.h"
 #include <stdio.h>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -31,6 +32,7 @@ private:
   uint32_t m_frameDataSize;
   string m_videoPath;
   VideoFrameGeneratorInterface::VideoFrameCodec m_type;
-  FILE *m_fd;
+  fstream m_fd;
+  //FILE *m_fd;
   FILE *m_fLocalPublishTime;
 };
