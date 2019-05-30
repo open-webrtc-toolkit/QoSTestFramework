@@ -80,10 +80,8 @@ bool CEncodedVideoInput::EncodeOneFrame(std::vector<uint8_t> &buffer, bool keyFr
             fflush(m_fLocalPublishTime);
         }
 
-        uint8_t *data = new uint8_t[frameDataSize + 1];
-        memset(data, 0, frameDataSize + 1);
+        uint8_t *data = new uint8_t[frameDataSize];
         fread(data, 1, frameDataSize, m_fd);
-        data[frameDataSize] = '\0';
         buffer.insert(buffer.begin(), data, data + frameDataSize);
         delete[] data;
         return true;
@@ -110,10 +108,8 @@ bool CEncodedVideoInput::EncodeOneFrame(std::vector<uint8_t> &buffer, bool keyFr
                 fseek(m_fd, 0, SEEK_SET);
                 fread(&temp, 1, sizeof(int), m_fd);
             }
-            uint8_t *data = new uint8_t[frameDataSize + 1];
-            memset(data, 0, frameDataSize + 1);
+            uint8_t *data = new uint8_t[frameDataSize];
             fread(data, 1, frameDataSize, m_fd);
-            data[frameDataSize] = '\0';
             delete[] data;
             fread(&keyFrameData, 1, sizeof(int), m_fd);
             fread(&frameDataSize, 1, sizeof(int), m_fd);
@@ -134,10 +130,8 @@ bool CEncodedVideoInput::EncodeOneFrame(std::vector<uint8_t> &buffer, bool keyFr
             fflush(m_fLocalPublishTime);
         }
 
-        uint8_t *data = new uint8_t[frameDataSize + 1];
-        memset(data, 0, frameDataSize + 1);
+        uint8_t *data = new uint8_t[frameDataSize];
         fread(data, 1, frameDataSize, m_fd);
-        data[frameDataSize] = '\0';
         buffer.insert(buffer.begin(), data, data + frameDataSize);
         delete[] data;
         return true;
