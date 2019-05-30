@@ -125,9 +125,7 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < FrameCount; ++i)
     {
-        memset(pYuvBuf, '\0', sizeof(pYuvBuf));
         fread(pYuvBuf, framesize * sizeof(unsigned char), 1, fileIn);
-        pYuvBuf[sizeof(pYuvBuf)-1] = '\0';
         cv::Mat yuvImg;
         yuvImg.create(height * 3 / 2, width, CV_8UC1);
         memcpy(yuvImg.data, pYuvBuf, framesize * sizeof(unsigned char));
@@ -294,9 +292,7 @@ int main(int argc, char *argv[])
             Mat sendyuvtemp;
             unsigned char *pYuvBuf = new unsigned char[width * height * 3 / 2];
             cvtColor(originImages[framenum2], sendyuvtemp, COLOR_BGR2YUV_I420);
-            memset(pYuvBuf, '\0', sizeof(pYuvBuf));
             memcpy(pYuvBuf, sendyuvtemp.data, width * height * 3 / 2 * sizeof(unsigned char));
-            pYuvBuf[sizeof(pYuvBuf) - 1] = '\0';
             fwrite(pYuvBuf, 1, width * height * 3 / 2 * sizeof(unsigned char), sendyuv);
             delete[] pYuvBuf;
             pYuvBuf = nullptr;
