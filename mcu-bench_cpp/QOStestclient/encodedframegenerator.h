@@ -6,6 +6,7 @@
 #include "owt.h"
 #include <stdio.h>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -25,6 +26,6 @@ public:
 private:
     string m_videoPath;
     VideoCodec m_codec;
-    FILE *m_fd;
+    fstream m_fd;
     FILE *m_fLocalPublishTime;
 };
