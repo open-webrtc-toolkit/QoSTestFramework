@@ -21,7 +21,6 @@ CFileFrameGenerator::CFileFrameGenerator(int width, int height, int fps, string 
   m_fLocalPublishTime = nullptr;
   m_frameDataSize = size + 2 * qsize;
   LOG_DEBUG("m_videoPath is %s", m_videoPath.c_str());
-  //m_fd = fopen(m_videoPath.c_str(), "r");
   m_fd.open(m_videoPath.c_str(), ios::in);
   if (m_fd.is_open())
   {
@@ -38,8 +37,6 @@ CFileFrameGenerator::~CFileFrameGenerator()
   LOG_DEBUG("");
   if (m_fd.is_open())
   {
-    //fclose(m_fd);
-    //m_fd = nullptr;
     m_fd.close();
   }
   if (m_fLocalPublishTime)
@@ -86,18 +83,13 @@ uint32_t CFileFrameGenerator::GenerateNextFrame(uint8_t *frameBuffer, const uint
   {
     return 0;
   }
-  /*if (fread(frameBuffer, 1, m_frameDataSize, m_fd) != (size_t)m_frameDataSize)
-  {
-    fseek(m_fd, 0, SEEK_SET);
-    fread(frameBuffer, 1, m_frameDataSize, m_fd);
-  }*/
   if (m_fd.eof())
   {
     LOG_DEBUG("m_fd is eof");
     m_fd.clear();
     m_fd.seekg(0, ios::beg);
   }
-  m_fd.read((char*)frameBuffer, m_frameDataSize);
+  m_fd.read(reinterpret_cast<char *>(frameBuffer), m_frameDataSize);
   if (m_fLocalPublishTime)
   {
     struct timeval tv_publish;

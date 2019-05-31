@@ -33,6 +33,5 @@ private:
   string m_videoPath;
   VideoFrameGeneratorInterface::VideoFrameCodec m_type;
   fstream m_fd;
-  //FILE *m_fd;
   FILE *m_fLocalPublishTime;
 };

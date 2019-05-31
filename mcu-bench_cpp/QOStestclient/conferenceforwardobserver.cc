@@ -16,7 +16,6 @@ void CConferenceForwardObserver::getStatus(string filenameBitrate, string filena
     FILE *localFps = fopen(filenameFps.c_str(), "w");
     while (1)
     {
-        LOG_DEBUG("filenameBitrate=%s filenameFps=%s", filenameBitrate.c_str(), filenameFps.c_str());
         std::this_thread::sleep_for(std::chrono::seconds(3));
         std::thread([&] {
             subscription->GetStats(
