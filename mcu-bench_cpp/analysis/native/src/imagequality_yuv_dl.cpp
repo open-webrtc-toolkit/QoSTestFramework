@@ -97,7 +97,8 @@ int main(int argc, char *argv[])
     unsigned FrameCount = ps / framesize; //frame size
     //cout << "frameNuber: " << FrameCount << endl; //frame number
     fin.close();
-    FILE *fileIn = fopen(video_name, "rb+");
+    // FILE *fileIn = fopen(video_name, "rb+");
+    fstream fileIn = new fstream(video_name, ios::in);
     unsigned char *pYuvBuf = new unsigned char[framesize]; //one frame size
 
     //存储到图像
@@ -125,10 +126,12 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < FrameCount; ++i)
     {
-        fread(pYuvBuf, framesize * sizeof(unsigned char), 1, fileIn);
+        fileIn.read(pYuvBuf, framesize * sizeof(unsigned char));
         cv::Mat yuvImg;
         yuvImg.create(height * 3 / 2, width, CV_8UC1);
-        memcpy(yuvImg.data, pYuvBuf, framesize * sizeof(unsigned char));
+        istringstream isframe = istringstream(pYuvBuf);
+        isframe.read(yuvImg.data, framesize * sizeof(unsigned char))
+        // memcpy(yuvImg.data, pYuvBuf, framesize * sizeof(unsigned char));
         cv::cvtColor(yuvImg, frameReference, COLOR_YUV2BGR_I420);
 
         originImages[i + 1] = frameReference.clone();
@@ -292,7 +295,9 @@ int main(int argc, char *argv[])
             Mat sendyuvtemp;
             unsigned char *pYuvBuf = new unsigned char[width * height * 3 / 2];
             cvtColor(originImages[framenum2], sendyuvtemp, COLOR_BGR2YUV_I420);
-            memcpy(pYuvBuf, sendyuvtemp.data, width * height * 3 / 2 * sizeof(unsigned char));
+            istringstream isframe = istringstream(sendyuvtemp.data);
+            isframe.read(pYuvBuf, width * height * 3 / 2 * sizeof(unsigned char));
+            // memcpy(pYuvBuf, sendyuvtemp.data, width * height * 3 / 2 * sizeof(unsigned char));
             fwrite(pYuvBuf, 1, width * height * 3 / 2 * sizeof(unsigned char), sendyuv);
             delete[] pYuvBuf;
             pYuvBuf = nullptr;

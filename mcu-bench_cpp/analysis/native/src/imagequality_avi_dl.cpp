@@ -259,7 +259,9 @@ int main(int argc, char *argv[])
             Mat sendyuvtemp;
             unsigned char *pYuvBuf = new unsigned char[width * height * 3 / 2];
             cvtColor(originImages[framenum2], sendyuvtemp, COLOR_BGR2YUV_I420);
-            memcpy(pYuvBuf, sendyuvtemp.data, width * height * 3 / 2 * sizeof(unsigned char));
+            istringstream isframe = istringstream(sendyuvtemp.data);
+            isframe.read(pYuvBuf, width * height * 3 / 2 * sizeof(unsigned char))
+            // memcpy(pYuvBuf, sendyuvtemp.data, width * height * 3 / 2 * sizeof(unsigned char));
             fwrite(pYuvBuf, 1, width * height * 3 / 2 * sizeof(unsigned char), sendyuv);
             delete[] pYuvBuf;
         }
