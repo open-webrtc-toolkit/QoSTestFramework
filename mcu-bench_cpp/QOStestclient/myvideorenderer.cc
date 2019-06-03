@@ -29,21 +29,18 @@ void CMyVideoRenderer::RenderFrame(unique_ptr<VideoBuffer> videoFrame)
         m_num++;
         if (m_num == 40)
         {
-            uint8_t *argb = new uint8_t[m_width * m_height * 4];
-            memmove(argb, videoFrame->buffer, m_width * m_height * 4);
             gettimeofday(&m_tv, NULL);
             long timestamp = m_tv.tv_sec % 10000 * 1000 + m_tv.tv_usec / 1000;
             fprintf(m_fLocalARGB, "%ld,", timestamp);
             fprintf(m_fLocalLatency, "%ld,", timestamp);
             int value = 0;
-            uint8_t *ptrTmp = argb;
+            uint8_t *ptrTmp = videoFrame->buffer;
             for (long i = 0; i < m_width * m_height * 4; ++i)
             {
                 value = (int)(*ptrTmp);
                 ptrTmp++;
                 fprintf(m_fLocalARGB, "%d", value);
                 fprintf(m_fLocalARGB, ",");
-
                 if (i / 4 % m_width >= 0 && i / 4 % m_width <= 239 && i / 4 / m_width >= 0 && i / 4 / m_width <= 59)
                 {
                     fprintf(m_fLocalLatency, "%d,", value);
@@ -52,8 +49,6 @@ void CMyVideoRenderer::RenderFrame(unique_ptr<VideoBuffer> videoFrame)
                 fflush(m_fLocalARGB);
             }
             m_num = 0;
-            delete[] argb;
-            argb = NULL;
         }
     }
     else
