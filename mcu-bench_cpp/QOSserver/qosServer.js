@@ -5,11 +5,9 @@
 'use strict';
 
 const express = require('express');
-const bodyParser = require('body-parser');
 const spdy = require('spdy');
 const morgan = require('morgan');
 const fs = require('fs');
-const https = require('https');
 const crypto = require('crypto');
 const exec = require('child_process').exec;
 const path = require('path');
@@ -403,8 +401,8 @@ app.post('/getCompareResultFolder', function(req, res) {
 
 app.post('/displayData', function(req, res) {
   let params = {};
-  let params["folder"] = req.body.folder;
-  let params["file"] = req.body.file;
+  params["folder"] = req.body.folder;
+  params["file"] = req.body.file;
   console.log("folder is", folder, "file is", file);
   if (params.folder.indexOf(";") !== -1) {
     console.log("wrong file name");
