@@ -177,7 +177,7 @@ To run the server you need the latest nodejs and node modules. Please refer to h
 
 After install runtime environment and necessary modules, start the server with:
 ```
-node qosServer.js
+node qosServer.js --pfx_file cert/certificate.pfx  --passphrase abc123
 ```
 
 ##### Web application setup and usage
