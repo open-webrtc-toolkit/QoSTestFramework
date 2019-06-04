@@ -6,8 +6,8 @@
   "dependencies": {
     "async": "^1.5.2",
     "express": "^4.16.4",
-    "morgan": "^1.9.1",
-    "spdy": "^4.0.0"
+    "https": "^1.0.0",
+    "morgan": "^1.9.1"
   },
   "devDependencies": {},
   "scripts": {

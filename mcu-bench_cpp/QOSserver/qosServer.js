@@ -8,6 +8,7 @@ const express = require('express');
 const spdy = require('spdy');
 const morgan = require('morgan');
 const fs = require('fs');
+const https = require('https');
 const crypto = require('crypto');
 const exec = require('child_process').exec;
 const path = require('path');
@@ -26,7 +27,7 @@ const httpsOptions = {
   cert: fs.readFileSync('cert/cert.pem').toString()
 };
 
-const httpServer = spdy.createServer(httpsOptions, app);
+const httpServer = https.createServer(httpsOptions, app);
 httpServer.listen(4004);
 
 app.use(express.json());
