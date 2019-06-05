@@ -5,7 +5,6 @@
 'use strict';
 
 const express = require('express');
-const spdy = require('spdy');
 const morgan = require('morgan');
 const fs = require('fs');
 const https = require('https');
@@ -362,16 +361,18 @@ app.post('/getResultFolder', function(req, res) {
 });
 
 app.post('/getCompareResultFolder', function(req, res) {
-  let folder = conf.getCompareResultFolder.folder;
-  if (folder != undefined) {
-    console.log("folder is", folder);
-    if (folder.indexOf(";") !== -1) {
+  let params = {};
+  params["folder"] = req.body.folder;
+  console.log('folder:',params.folder);
+  if (params.folder != undefined) {
+    console.log("folder is", params.folder);
+    if (params.folder.indexOf(";") !== -1) {
       console.log("error file name");
       res.json({
         errmsg: "wrong file name"
       });
     }
-    exec('python python/listFolder.py ' + '-f ' + folder, function(err,
+    exec('python python/listFolder.py ' + '-f ' + params.folder, function(err,
       data, stderr) {
       if (err) {
         console.info('stderr :' + stderr);
@@ -404,7 +405,6 @@ app.post('/displayData', function(req, res) {
   let params = {};
   params["folder"] = req.body.folder;
   params["file"] = req.body.file;
-  console.log("folder is", folder, "file is", file);
   if (params.folder.indexOf(";") !== -1) {
     console.log("wrong file name");
     res.json({
