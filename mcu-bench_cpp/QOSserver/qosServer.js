@@ -5,8 +5,8 @@
 'use strict';
 
 const express = require('express');
+const spdy = require('spdy');
 const morgan = require('morgan');
-const commander = require('commander');
 const fs = require('fs');
 const https = require('https');
 const crypto = require('crypto');
@@ -22,15 +22,9 @@ const clientDir = rootDir + "QOStestclient/";
 const authorizationFileName  = 'token.txt'
 const app = express();
 
-
-commander.description('qos server.').option('--pfx_file <pfx_file>',
-  'pfx for Socket.IO server.').option(
-  '--passphrase <passphrase>',
-  'Certificate passwd').parse(process.argv)
-
 const httpsOptions = {
-  pfx: fs.readFileSync(commander.pfx_file),
-  passphrase: commander.passphrase
+  key: fs.readFileSync('cert/key.pem').toString(),
+  cert: fs.readFileSync('cert/cert.pem').toString()
 };
 
 const httpServer = https.createServer(httpsOptions, app);
@@ -78,9 +72,9 @@ const tokenStore = function(fileName) {
     fs.unlinkSync(fileName)
   }
   let key = crypto.randomBytes(64).toString('hex');;
+  console.log("Key:", key)
   let id = crypto.randomBytes(32).toString('hex');
   console.log("Id:", id)
-  console.log("Key:", key)
   let writeStr = {
     'authorization': calculateClientSignature(id, key)
   };
