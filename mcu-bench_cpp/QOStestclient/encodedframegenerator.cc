@@ -33,6 +33,7 @@ CEncodedVideoInput::~CEncodedVideoInput()
 bool CEncodedVideoInput::InitEncoderContext(Resolution &resolution, uint32_t fps, uint32_t bitrate, VideoCodec video_codec)
 {
     LOG_DEBUG("");
+    m_fLocalPublishTime = fopen(m_publishTimeFile.c_str(), "w");
     m_fd.open(m_videoPath.c_str(), ios::in | ios::binary);
     if (m_fd.is_open())
     {
@@ -106,6 +107,7 @@ CEncodedVideoInput *CEncodedVideoInput::Create(const string &videoFile, VideoCod
 VideoEncoderInterface *CEncodedVideoInput::Copy()
 {
     CEncodedVideoInput *videoEncoder = new CEncodedVideoInput(m_videoPath, m_codec);
+    videoEncoder->SetPublishTimeFile(m_publishTimeFile);
     return videoEncoder;
 }
 
@@ -114,8 +116,8 @@ bool CEncodedVideoInput::Release()
     return true;
 }
 
-void CEncodedVideoInput::SetPublishTimeFile(const string &file)
+void CEncodedVideoInput::SetPublishTimeFile(const string & file)
 {
     LOG_DEBUG("");
-    m_fLocalPublishTime = fopen(file.c_str(), "w");
+    m_publishTimeFile = file;
 }

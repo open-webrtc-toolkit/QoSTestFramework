@@ -28,4 +28,5 @@ private:
     VideoCodec m_codec;
     fstream m_fd;
     FILE *m_fLocalPublishTime;
+    string m_publishTimeFile;
 };
