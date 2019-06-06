@@ -106,7 +106,7 @@ int main(int argc, char **argv)
         {
             for (int j = 0; j < width; j++)
             {
-                unsigend int a1;
+                unsigned int a1;
                 received_video >> v;
                 b1 = v;
                 received_video >> c;

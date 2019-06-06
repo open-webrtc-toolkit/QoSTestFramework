@@ -52,7 +52,7 @@ void help()
 
 int main(int argc, char *argv[])
 {
-    if (argc != 4)
+    if (argc != 5)
     {
         help();
         return -1;
@@ -257,13 +257,8 @@ int main(int argc, char *argv[])
             ssim_out << (ssim[0] + ssim[1] + ssim[2]) / 3;
             ssim_out << ",";
             Mat sendyuvtemp;
-            unsigned char *pYuvBuf = new unsigned char[width * height * 3 / 2];
             cvtColor(originImages[framenum2], sendyuvtemp, COLOR_BGR2YUV_I420);
-            istringstream isframe = istringstream(sendyuvtemp.data);
-            isframe.read(pYuvBuf, width * height * 3 / 2 * sizeof(unsigned char))
-            // memcpy(pYuvBuf, sendyuvtemp.data, width * height * 3 / 2 * sizeof(unsigned char));
-            fwrite(pYuvBuf, 1, width * height * 3 / 2 * sizeof(unsigned char), sendyuv);
-            delete[] pYuvBuf;
+            fwrite(sendyuvtemp.data, 1, width * height * 3 / 2 * sizeof(unsigned char), sendyuv);
         }
         if (received_video.eof())
         {

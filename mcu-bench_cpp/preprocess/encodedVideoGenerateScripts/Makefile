@@ -1,5 +1,5 @@
 
-BUILD=/usr/local
+BUILD=./ffmpeg
 
 CFLAGS := \
 	-Wall -g \

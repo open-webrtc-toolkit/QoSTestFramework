@@ -29,6 +29,7 @@ In this section, we introduce the four module in our framework.
 This section describes the dependencies and steps for setup Preprocess module, all scripts and code can be found at preprocess folder.
 ### Install dependencies
 To enable the deep learning module, you should compile the latest OpenCV. We recommend version 4.1.0. Refer https://opencv.org for the details and installation.
+To use the ffmpeg tool you should compile the latest FFmpeg toolset. You can refer to the script `preprocess/encodedVideoGenerateScripts/compile_ffmpeg.sh`.
 ### Generate tagged file as testing input video
 Two format video stream format: raw file or encoded file as testing input video were provided.
 #### Raw file:
@@ -41,6 +42,7 @@ tag input.y4m tagged.avi resolution_width resolution_height tagsize framenumber
 It will generate FourPeople_1280x720_30_taged.avi in native output folder, which resolution is 1280x720, one number tag size width is 20*3, total frame numberr is 60.
 
 2. use `ffmpeg` to generate requested input format video
+You can install the `ffmpeg` using PPA. Refer https://launchpad.net/~jonathonf/+archive/ubuntu/ffmpeg-4 for details.
 ```
 ffmpeg -i tagged.avi tagged.yuv
 ```
@@ -55,7 +57,8 @@ Python mkTestStream.py –w <width> -h <height> -b <bitrate> -o <output.mkv> -v 
 *e.g ./mkMCUTestStream.py -w 1280 -h  720 -b 2000 -o 1280x720-framerate30-vp8_bitrate1000k.mkv -v vp8 1280x720_30_taged.avi*
 
 It will generate encoded mkv file 1280x720-framerate30-bitrate1000k.mkv
-2. Inset  key frame and tag information to encoded video file
+2. Insert  key frame and tag information to encoded video file
+You shold run the `compile_ffmpeg.sh' script to compile the ffmpeg libs and build the `genTestStream` tool.
 ```
 ./genTestStream -i <MKV file>
 ```
@@ -83,15 +86,13 @@ To enable non-reference indicator, please go to http://vq.kt.agh.edu.pl//metrics
 To compile other module in src folder, you should compile the latest OpenCV and the OpenCV_contrib modules, We recommend version 4.1.0 . Refer  https://opencv.org for the details and installation.
 ### Generate analysis data
 To generate analysis data follow these steps. Please copy the out `Data` folder of the QOStestclient into the `dataset` folder first.
-1. Generate basic data for compare, use the iq_yuv or iq_avi to generate the basic data
+1. Generate basic data for compare, use the iq_yuv to generate the basic data
 ```
-iq_yuv <ARGBrawFile> <originalVideoFile> <resolution>
+iq_yuv <ARGBrawFile> <originalVideoFile> <width> <height>
 ```
-*e.g iq_yuv localARGB.txt FourPeople_720p_taged.yuv hd720p*
+*e.g iq_yuv localARGB.txt FourPeople_720p_taged.yuv 1280 720*
 
 It will process the video and generate data for other analysis
-
-**If the `<originalVideoFile>` is avi format, please use iq_avi instead.**
 
 2. Quality testing for vmaf
 ```
@@ -118,9 +119,9 @@ FLR {latencyFile}
 It will calculate the jitter result
 5. Caculate latency
 ```
-latency {publishTimeFile} {latencyFile}
+latency {publishTimeFile} {latencyFile} {frameCount}
 ```
-*e.g ./analysis/native/latency localPublishTime.txt localLatency.txt*
+*e.g ./analysis/native/latency localPublishTime.txt localLatency.txt 600*
 
 It will calculate the latency result
 

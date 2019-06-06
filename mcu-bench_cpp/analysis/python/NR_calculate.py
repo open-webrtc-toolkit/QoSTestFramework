@@ -14,10 +14,10 @@ os.chdir(targ_cwd)
 
 cmd = "./mitsu/mitsuLinuxMultithread"
 yuv = "../dataset/output/rec.yuv"
-width = "540"
-height = "360"
-_ = subprocess.run([cmd, yuv, width, height]).stdout
-f = open("metricsResultsCSV.txt")
+width = "1280"
+height = "720"
+_ = subprocess.call([cmd, yuv, width, height])
+f = open("metricsResultsCSV.csv")
 Blockiness_output = open('../dataset/output/Blockiness_score', 'w')
 Blockloss_output = open('../dataset/output/Blockloss_score', 'w')
 Blur_output = open('../dataset/output/Blur_score', 'w')
@@ -27,7 +27,7 @@ Interlace_output = open('../dataset/output/Interlace_score', 'w')
 NR_output = open('../dataset/output/NR_score', 'w')
 lines = f.readlines()
 f.close()
-os.remove("metricsResultsCSV.txt")
+os.remove("metricsResultsCSV.csv")
 list_line = []
 for line in islice(lines, 1, None):
     line = line.strip()

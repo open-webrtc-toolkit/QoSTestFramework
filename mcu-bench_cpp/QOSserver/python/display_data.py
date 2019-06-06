@@ -12,6 +12,7 @@ import time
 import subprocess
 import re
 import os
+import os.path
 '''
 this python scripts is used for load existing result and show the final result in html page 
 '''
@@ -40,7 +41,7 @@ if len(compareFolder) > 1:
         lines.append('#')
     print(lines)
 else:
-    f = open(folder+'/'+file)
+    f = open(os.path.join(folder,file))
     lines = f.readlines()
     f.close()
     list_line = []

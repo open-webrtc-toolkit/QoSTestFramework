@@ -31,6 +31,7 @@ cd build
 # configure
 cmake -D CMAKE_BUILD_TYPE=Release \
 -D CMAKE_INSTALL_PREFIX=/usr/local \
+-D BUILD_TIFF=ON -D WITH_TBB=ON -D BUILD_TBB=ON \
 -D OPENCV_GENERATE_PKGCONFIG=ON \
 -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
 ..

@@ -285,12 +285,10 @@ app.post('/quality', function(req, res) {
       errmsg: "wrong file name"
     });
   }
-  if (originFilename.endsWith('.avi')) {
-    exec_file = 'iq_avi ';
-  } else if (originFilename.endsWith('.yuv')) {
+  if (originFilename.endsWith('.yuv')) {
     exec_file = 'iq_yuv ';
   } else {
-    console.info('wrong origin file format.');
+    exec_file = 'iq_avi ';
   }
   exec(nativeDir + exec_file + rawFilename + ' ' + originFilename + ' ' +
     width + ' ' + height, function(err, data, stderr) {
@@ -361,18 +359,14 @@ app.post('/getResultFolder', function(req, res) {
 });
 
 app.post('/getCompareResultFolder', function(req, res) {
-  let params = {};
-  params["folder"] = req.body.folder;
-  console.log('folder:',params.folder);
-  if (params.folder != undefined) {
+  let folder = req.body.folder;
+  if (folder != undefined) {
     console.log("folder is", params.folder);
-    if (params.folder.indexOf(";") !== -1) {
-      console.log("error file name");
-      res.json({
-        errmsg: "wrong file name"
-      });
+    const sindex = folder.indexOf(";");
+    if(sindex !== -1) {
+      folder = folder.slice(0, sindex);
     }
-    exec('python python/listFolder.py ' + '-f ' + params.folder, function(err,
+    exec('python python/listFolder.py ' + '-f ' + folder, function(err,
       data, stderr) {
       if (err) {
         console.info('stderr :' + stderr);
@@ -402,23 +396,19 @@ app.post('/getCompareResultFolder', function(req, res) {
 });
 
 app.post('/displayData', function(req, res) {
-  let params = {};
-  params["folder"] = req.body.folder;
-  params["file"] = req.body.file;
-  if (params.folder.indexOf(";") !== -1) {
-    console.log("wrong file name");
-    res.json({
-      errmsg: "wrong file name"
-    });
+  let folder = req.body.folder;
+  let file = req.body.file;
+  const dindex = folder.indexOf(";");
+  if(dindex !== -1) {
+    folder = folder.slice(0, dindex);
   }
-  if (params.file.indexOf(";") !== -1) {
-    console.log("wrong file name");
-    res.json({
-      errmsg: "wrong file name"
-    });
+  const findex = file.indexOf(";");
+  if(findex !== -1) {
+    file = file.slice(0, findex);
   }
-  exec('python python/display_data.py ' + '-c ' + params.folder + ' ' + '-f ' +
-    params.file, function(err, data, stderr) {
+  
+  exec('python python/display_data.py ' + '-c ' + folder + ' ' + '-f ' +
+    file, function(err, data, stderr) {
     if (err) {
       console.info('stderr :' + stderr);
       req.errormsg = err.stack

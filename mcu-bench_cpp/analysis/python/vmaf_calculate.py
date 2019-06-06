@@ -18,7 +18,7 @@ width = "540"
 height = "360"
 out = "--out-fmt.json"
 
-cmd_out = sp.run([cmd, fmt, width, height, ref1, ref2, out], text=True).stdout
+cmd_out = sp.check_output([cmd, fmt, width, height, ref1, ref2, out])
 output = cmd_out.splitlines()
 
 VMAF_score = []

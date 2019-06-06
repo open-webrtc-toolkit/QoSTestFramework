@@ -137,7 +137,7 @@ int main(int argc, char **argv)
 
     VideoWriter output;
     int fcc = VideoWriter::fourcc('I','4','2','0');
-    const string video_name = "./output/"+name
+    const string video_name = "./output/"+name;
     output.open(video_name, fcc, 30, Size(owidth, oheight), true);
 
     if (!output.isOpened())

@@ -1,4 +1,4 @@
-all: iq_avi iq_yuv convert fps bitrate saveImage latency FLR
+all: iq_avi iq_yuv fps bitrate latency FLR
 .PHONY:all
 
 CC = g++

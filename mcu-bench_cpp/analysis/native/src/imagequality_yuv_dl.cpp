@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     // PLANET pl;
     ifstream fin;
     const string originVideoName = argv[2];
-    char *video_name = originVideoName.c_str()
+    const char *video_name = originVideoName.c_str();
     fin.open(video_name, ios_base::in | ios_base::binary);
     if (fin.fail())
     {
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     //cout << "frameNuber: " << FrameCount << endl; //frame number
     fin.close();
     // FILE *fileIn = fopen(video_name, "rb+");
-    fstream fileIn = new fstream(video_name, ios::in);
+    fstream fileIn(video_name, ios::in);
     unsigned char *pYuvBuf = new unsigned char[framesize]; //one frame size
 
     //存储到图像
@@ -126,19 +126,15 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < FrameCount; ++i)
     {
-        fileIn.read(pYuvBuf, framesize * sizeof(unsigned char));
+        
         cv::Mat yuvImg;
         yuvImg.create(height * 3 / 2, width, CV_8UC1);
-        istringstream isframe = istringstream(pYuvBuf);
-        isframe.read(yuvImg.data, framesize * sizeof(unsigned char))
-        // memcpy(yuvImg.data, pYuvBuf, framesize * sizeof(unsigned char));
+        fileIn.read((char*)yuvImg.data, framesize * sizeof(unsigned char));
         cv::cvtColor(yuvImg, frameReference, COLOR_YUV2BGR_I420);
 
         originImages[i + 1] = frameReference.clone();
     }
-    delete[] pYuvBuf;
-    pYuvBuf = nullptr;
-    fclose(fileIn);
+    fileIn.close();
 
     //////////////////////////////////////////////////////////Load data ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -293,14 +289,8 @@ int main(int argc, char *argv[])
             ssim_out << (ssim[0] + ssim[1] + ssim[2]) / 3;
             ssim_out << ",";
             Mat sendyuvtemp;
-            unsigned char *pYuvBuf = new unsigned char[width * height * 3 / 2];
             cvtColor(originImages[framenum2], sendyuvtemp, COLOR_BGR2YUV_I420);
-            istringstream isframe = istringstream(sendyuvtemp.data);
-            isframe.read(pYuvBuf, width * height * 3 / 2 * sizeof(unsigned char));
-            // memcpy(pYuvBuf, sendyuvtemp.data, width * height * 3 / 2 * sizeof(unsigned char));
-            fwrite(pYuvBuf, 1, width * height * 3 / 2 * sizeof(unsigned char), sendyuv);
-            delete[] pYuvBuf;
-            pYuvBuf = nullptr;
+            fwrite(sendyuvtemp.data, 1, width * height * 3 / 2 * sizeof(unsigned char), sendyuv);
         }
 
         if (received_video.eof())
