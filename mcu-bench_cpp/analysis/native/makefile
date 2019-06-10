@@ -1,4 +1,4 @@
-all: iq_avi iq_yuv fps bitrate latency FLR
+all: iq_yuv fps bitrate latency FLR
 .PHONY:all
 
 CC = g++
@@ -50,4 +50,4 @@ FLR.o:          ./src/FLR.cpp
 			$(CC) -c ./src/FLR.cpp -std=c++11 `pkg-config opencv4 --cflags`;
 
 clean:
-		rm -rf *.o  iq_avi iq_yuv convert saveImage latency FLR fps bitrate
+		rm -rf *.o  iq_yuv latency FLR fps bitrate

@@ -29,7 +29,7 @@ In this section, we introduce the four module in our framework.
 This section describes the dependencies and steps for setup Preprocess module, all scripts and code can be found at preprocess folder.
 ### Install dependencies
 To enable the deep learning module, you should compile the latest OpenCV. We recommend version 4.1.0. Refer https://opencv.org for the details and installation.
-To use the ffmpeg tool you should compile the latest FFmpeg toolset. You can refer to the script `preprocess/encodedVideoGenerateScripts/compile_ffmpeg.sh`.
+To use the ffmpeg tool you should compile the FFmpeg toolset. You can refer to the script `preprocess/encodedVideoGenerateScripts/compile_ffmpeg.sh`. And use the script to install the toolset.
 ### Generate tagged file as testing input video
 Two format video stream format: raw file or encoded file as testing input video were provided.
 #### Raw file:
