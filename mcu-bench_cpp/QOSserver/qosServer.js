@@ -50,7 +50,7 @@ app.get('/', function(req, res) {
   res.sendFile(__dirname + '/qostestframework.html');
 });
 
-app.get('/rtcmcubench_summary.html', function(req, res) {
+app.get('/qostestframework_summary.html', function(req, res) {
   res.sendFile(__dirname + '/qostestframework_summary.html');
 });
 
