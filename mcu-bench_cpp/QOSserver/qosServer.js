@@ -360,13 +360,16 @@ app.post('/getResultFolder', function(req, res) {
 
 app.post('/getCompareResultFolder', function(req, res) {
   let folder = req.body.folder;
+  let ftFolder;
   if (folder != undefined) {
     console.log("folder is", params.folder);
     const sindex = folder.indexOf(";");
     if(sindex !== -1) {
-      folder = folder.slice(0, sindex);
+      ftFolder = folder.slice(0, sindex);
+    } else {
+      ftFolder = folder;
     }
-    exec('python python/listFolder.py ' + '-f ' + folder, function(err,
+    exec('python python/listFolder.py ' + '-f ' + ftFolder, function(err,
       data, stderr) {
       if (err) {
         console.info('stderr :' + stderr);
@@ -398,17 +401,22 @@ app.post('/getCompareResultFolder', function(req, res) {
 app.post('/displayData', function(req, res) {
   let folder = req.body.folder;
   let file = req.body.file;
+  let ftFolder, ftFile;
   const dindex = folder.indexOf(";");
   if(dindex !== -1) {
-    folder = folder.slice(0, dindex);
+    ftFolder = folder.slice(0, dindex);
+  } else {
+    ftFolder = folder;
   }
   const findex = file.indexOf(";");
   if(findex !== -1) {
-    file = file.slice(0, findex);
+    ftFile = file.slice(0, findex);
+  } else {
+    ftFile = file;
   }
   
-  exec('python python/display_data.py ' + '-c ' + folder + ' ' + '-f ' +
-    file, function(err, data, stderr) {
+  exec('python python/display_data.py ' + '-c ' + ftFolder + ' ' + '-f ' +
+    ftFile, function(err, data, stderr) {
     if (err) {
       console.info('stderr :' + stderr);
       req.errormsg = err.stack
