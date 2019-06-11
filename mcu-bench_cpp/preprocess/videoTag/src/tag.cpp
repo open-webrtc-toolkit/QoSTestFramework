@@ -106,6 +106,17 @@ int main(int argc, char **argv)
     }
 
     const string inputVideoName = argv[1];
+    const string suffix = ".yuv";
+    if(inputVideoName.length() < suffix.length())
+    {
+        cout << "wrong file name" << endl;
+        return -1;
+    }
+    if(0 != inputVideoName.compare(inputVideoName.length()-suffix.length(), suffix.length(), suffix))
+    {
+        cout << "wrong file name" << endl;
+        return -1;
+    }
     int owidth = atoi(argv[3]);
     int oheight = atoi(argv[4]);
     int nsize = atoi(argv[5]);

@@ -83,7 +83,18 @@ int main(int argc, char *argv[])
 
     // PLANET pl;
     ifstream fin;
-    const string originVideoName = argv[2];
+    string originVideoName = argv[2];
+    string suffix = ".yuv";
+    if(originVideoName.length() < suffix.length())
+    {
+        cout << "wrong file name" << endl;
+        return -1;
+    }
+    if(0 != originVideoName.compare(originVideoName.length()-suffix.length(), suffix.length(), suffix))
+    {
+        cout << "wrong file name" << endl;
+        return -1;
+    }
     const char *video_name = originVideoName.c_str();
     fin.open(video_name, ios_base::in | ios_base::binary);
     if (fin.fail())
