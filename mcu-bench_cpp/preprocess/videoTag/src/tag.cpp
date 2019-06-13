@@ -33,9 +33,9 @@ void help()
 {
     cout << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl;
-    cout << "This program tags the raw y4m" << endl;
+    cout << "This program insert handwriting digits to raw y4m file and generate tagged avi file" << endl;
     cout << "USAGE: ./tag input output outputwidth outputheight tagsize(20px*n) framewanted" << endl;
-    cout << "For example: ./tag video/Megamind.avi test.y4m 640 480 1 10" << endl;
+    cout << "For example: ./tag test.y4m video/Megamind.avi 640 480 1 10" << endl;
     cout << "If you want to Skip57, let it be. If not, edit tagSkip57 function to tag normally " << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl << endl;
 }
@@ -99,14 +99,14 @@ int main(int argc, char **argv)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////tag the input video//////////////////////////////////////////////////////////
 
-    if(argc != 7) 
+    if(argc != 7)
     {
         cout << "Not enough arguments" << endl;
         return -1;
     }
 
     const string inputVideoName = argv[1];
-    const string suffix = ".yuv";
+    const string suffix = ".y4m";
     if(inputVideoName.length() < suffix.length())
     {
         cout << "wrong file name" << endl;
@@ -128,6 +128,17 @@ int main(int argc, char **argv)
 
     string::size_type pAt = inputVideoName.find_last_of('.');
     const string name = argv[2];
+    const string suffix2 = ".avi";
+    if(name.length() < suffix2.length())
+    {
+        cout << "wrong file name" << endl;
+        return -1;
+    }
+    if (0 != name.compare(name.length()-suffix2.length(), suffix2.length(), suffix2))
+    {
+        cout << "wrong file name" << endl;
+        return -1;
+    }
     int ex = static_cast<int>(inputVideo.get(CAP_PROP_FOURCC));
 
     if (!inputVideo.isOpened())
