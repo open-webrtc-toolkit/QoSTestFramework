@@ -70,7 +70,7 @@ const tokenStore = function(fileName) {
   if (fs.existsSync(fileName)) {
     fs.unlinkSync(fileName)
   }
-  let key = crypto.randomBytes(64).toString('hex');;
+  let key = crypto.randomBytes(64).toString('hex');
   console.log("Key:", key)
   let id = crypto.randomBytes(32).toString('hex');
   console.log("Id:", id)
@@ -362,10 +362,11 @@ app.post('/getCompareResultFolder', function(req, res) {
   let folder = req.body.folder;
   let ftFolder;
   if (folder != undefined) {
-    console.log("folder is", params.folder);
-    const sindex = folder.indexOf(";");
-    if(sindex !== -1) {
-      ftFolder = folder.slice(0, sindex);
+    console.log("folder is", folder);
+    if(folder.indexOf(";") !== -1) {
+      console.log("folder name invalid.");
+      res.status(500).send("wrong parameter")
+      return
     } else {
       ftFolder = folder;
     }
@@ -374,8 +375,8 @@ app.post('/getCompareResultFolder', function(req, res) {
       if (err) {
         console.info('stderr :' + stderr);
         req.errormsg = err.stack
-        res.status(500).send("Internal Server Error")
-        return
+        res.status(500).send("Internal Server Error");
+        return;
       }
       console.log(data);
       res.json({
@@ -388,8 +389,8 @@ app.post('/getCompareResultFolder', function(req, res) {
       if (err) {
         console.info('stderr :' + stderr);
         req.errormsg = err.stack
-        res.status(500).send("Internal Server Error")
-        return
+        res.status(500).send("Internal Server Error");
+        return;
       }
       res.json({
         folder: data
@@ -402,15 +403,18 @@ app.post('/displayData', function(req, res) {
   let folder = req.body.folder;
   let file = req.body.file;
   let ftFolder, ftFile;
-  const dindex = folder.indexOf(";");
-  if(dindex !== -1) {
-    ftFolder = folder.slice(0, dindex);
+  if(folder.indexOf(";") !== -1) {
+    console.err("wrong folder ", folder);
+    res.status(500).send("wrong parameter.");
+    return;
   } else {
     ftFolder = folder;
   }
-  const findex = file.indexOf(";");
-  if(findex !== -1) {
-    ftFile = file.slice(0, findex);
+
+  if(file.indexOf(";") !== -1){
+    console.err("wrong filename ", file);
+    res.status(500).send("wrong VREyeParameters.");
+    return;
   } else {
     ftFile = file;
   }
