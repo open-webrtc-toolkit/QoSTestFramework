@@ -369,20 +369,20 @@ app.post('/getCompareResultFolder', function(req, res) {
       return
     } else {
       ftFolder = folder;
-    }
-    exec('python python/listFolder.py ' + '-f ' + ftFolder, function(err,
-      data, stderr) {
-      if (err) {
-        console.info('stderr :' + stderr);
-        req.errormsg = err.stack
-        res.status(500).send("Internal Server Error");
-        return;
-      }
-      console.log(data);
-      res.json({
-        folder: data
+      exec('python python/listFolder.py ' + '-f ' + ftFolder, function(err,
+        data, stderr) {
+        if (err) {
+          console.info('stderr :' + stderr);
+          req.errormsg = err.stack
+          res.status(500).send("Internal Server Error");
+          return;
+        }
+        console.log(data);
+        res.json({
+          folder: data
+        });
       });
-    });
+    }
   } else {
     exec('python python/listFolder.py -l 0', function(err, data, stderr) {
       console.log(data);
