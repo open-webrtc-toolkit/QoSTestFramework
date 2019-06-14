@@ -18,37 +18,41 @@ The following figure shows the architecture of this framework.
 
 In this section, we introduce the four module in our framework.
 
-1. **QoS server** : It is reponsible fo
-2. **Preprocess module**: video pre-processing include raw files and encoded files
-3. **Analysis module**: Performance data result analysis included reference video quality indicate e.g PSNR, SSIM , VMAF and non-reference video quality indicate e.g blockniess, blockloss etc.
-4. **Web Application**: Test task trigger and  visualization of analysis result showing.
-5. **Video transmission adapter module**: video transmission channels which is adaptation layer for different evaluated real-time video system.
+1. **QoS server** : It is reponsible for handle requestment from web application. e.g trigger test task , stop the test and show the visualization test result on web page. 
+2. **Preprocess module**: Pre-process video for whole pipline, include insert handwriting digits to raw files and generate required format encoded files
+3. **Analysis module**: Performance data result analysis included full-reference video quality indicate e.g PSNR, SSIM , VMAF and non-reference video quality indicate e.g blockniess, blockloss etc, and other network status e.g bandwidth , fps etc.
+4. **Web Application**: Test task trigger and  visualization analysis result showing.
+5. **Video transmission adapter module**: video transmission channels which is adaptation layer for different evaluated real-time video system, we provide the example using Open WebRTC Toolkit linux SDK.
 
 ## Install guide
+
 ## Preprocess module setup
 This section describes the dependencies and steps for setup Preprocess module, all scripts and code can be found at preprocess folder.
+
 ### Install dependencies
 To enable the deep learning module, you should compile the latest OpenCV. We recommend version 4.1.0. Refer https://opencv.org for the details and installation.
 To use the ffmpeg tool you should compile the FFmpeg toolset. You can refer to the script `preprocess/encodedVideoGenerateScripts/compile_ffmpeg.sh`. And use the script to install the toolset.
+
 ### Generate tagged file as testing input video
 Two format video stream format: raw file or encoded file as testing input video were provided.
+
 #### Raw file:
-1. Generate tagged avi file:
+1. Generate tagged hand-writing digits avi file:
 ``` bash
 tag input.y4m tagged.avi resolution_width resolution_height tagsize framenumber
 ```
 *eg ./tag ./video/FourPeople_1280x720_60.y4m FourPeople_1280x720_30_tagged.avi 1280 720 3 600*
 
-It will generate FourPeople_1280x720_30_taged.avi in native output folder, which resolution is 1280x720, one number tag size width is 20*3, total frame numberr is 60.
+It will generate FourPeople_1280x720_30_taged.avi in native output folder, which resolution is 1280x720, one number tag size width is 20*3, total frame numberr is 600.
 
 2. use `ffmpeg` to generate requested input format video
-You can install the `ffmpeg` using PPA. Refer https://launchpad.net/~jonathonf/+archive/ubuntu/ffmpeg-4 for details.
+You can refer to the script `preprocess/encodedVideoGenerateScripts/compile_ffmpeg.sh`. And use the script to install the toolset.
 ```
 ffmpeg -i tagged.avi tagged.yuv
 ```
 *eg ffmpeg -i FourPeople_1280x720_30_taged.avi FourPeople_1280x720_30_taged.yuv*
-
 It will generate FourPeople_1280x720_30_taged.yuv
+
 #### Encoded file:
 1. Generate mkv file
 ```
@@ -58,7 +62,7 @@ Python mkTestStream.py –w <width> -h <height> -b <bitrate> -o <output.mkv> -v 
 
 It will generate encoded mkv file 1280x720-framerate30-bitrate1000k.mkv
 2. Insert  key frame and tag information to encoded video file
-You shold run the `compile_ffmpeg.sh' script to compile the ffmpeg libs and build the `genTestStream` tool.
+Run the `compile_ffmpeg.sh` script to compile the ffmpeg libs and build the `genTestStream` tool.
 ```
 ./genTestStream -i <MKV file>
 ```
@@ -144,7 +148,7 @@ It will calculate the fps result
 **All result data can be visual in QOS server page**
 
 ## Video transmission adapter module
-Video transmission adapt module help to establish SUT( system under testing) transmission channel and generate corresponding performance input data for Analysis module. We provide one Simple sample named QoStestclient which used Linux SDK of owt-client-native to testing performance for Open WebRTC Toolkit owt-server conference mode.
+Video transmission adapt module help to establish SUT( system under testing) transmission channel and generate corresponding performance input data for Analysis module. We provide one Simple sample named QoStestclient which use linux SDK of Open WebRTC Toolkit to testing performance for Open WebRTC Toolkit owt-server conference mode.
 #### Sample with Open WebRTC Tookit server and Client
 1. Start Open WebRTC Tookit  Conference Server
 
@@ -166,20 +170,25 @@ make
 ```
 
 4. Run QoStestclient
-```
-python runQosClient.py
-```
+
+Please following steps defined in QOStestclient/README file .
 
 #### QoS server and web application setup and usage
 QoS server Test task trigger and visualization of analysis result showing. The result can be showed in two ways. 1. calculate and show the single indicator directly at web page. 2. genereate and show compared results
 
 ##### Install Dependencies and start QOS server
-To run the server you need the latest nodejs and node modules. Please refer to https://nodejs.org/en/download/ for install nodejs in your system. And after that use npm to install the modules, eg. `‘npm install’`.
 
+Install latest nodejs >12 and node modules. Please refer to https://nodejs.org/en/download/ for install nodejs in your system. 
+And,use npm to install the modules, eg. `‘npm install’`.
+
+Replace cert.pem and key.pem in certs folder, please "DON'T" use sample cert.pem and key.pem to deploy QoS Server in public network.
+  
 After install runtime environment and necessary modules, start the server with:
 ```
 node qosServer.js
 ```
+It will generate new sample services ID and key at server side when the qosServer server is launched.  Please input this services key and ID in web application page. Only certified user request can reach to server. It can help you set up secure access mechanism between web application and server.
+Note: Please replace and use customized security access mechansim by yourself e.g account , userpassword etc if you want deploy the system in public network.
 
 ##### Web application setup and usage
 After you run the analysis steps described in 1.1.2.2-2, the result file will locate in `analysis/dataset/out`, and you should create your own subfolder and move all the result file in it.
@@ -197,8 +206,12 @@ this will create the necessary directory structure
 
 **single indicator visualization**
 
-After that you can visit https://localhost:4004 to get visual result for each indicators.
+After that you can visit https://localhost:4004 to get visualization result for each indicators.
+here is example result for SSIM data 
+![Example result for SSIM](docs/images/example_ssim.png)
 
 **multi indicators compared visualization**
 
-To see the compared results, you can visit https://\<qosServerAddress\>:4004/webrtcmcubench_summary.html to get comparsion result for each indicators. It will compare data with different “testnumber” in the same “date” dir which created in last step.
+To see the compared results, you can visit https://\<qosServerAddress\>:4004/qostestframework_summary.html to get comparsion result for each indicators. It will compare data with different “testnumber” in the same “data” dir which created in last step.
+![Example compared result for PSNR](docs/images/example_compared_psnr.png)
+

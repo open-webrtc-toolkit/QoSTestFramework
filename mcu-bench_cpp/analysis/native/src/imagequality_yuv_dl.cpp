@@ -42,7 +42,7 @@ void help()
 {
     cout << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl;
-    cout << "This program measures PSNR/MSSIM by Deep Learning Recognition" << endl;
+    cout << "This program measures PSNR/SSIM by Deep Learning Recognition" << endl;
     cout << "Please ensure your OPENCV is installed following readme file" << endl;
     cout << "USAGE: ./iq_yuv rawdata sourcevideo width height" << endl;
     cout << "For example: ./native/iq_yuv ./native/Data/localARGB.txt ./native/video/vp8_raw_1280x720_framerate30-bitrate2000k-gop30.yuv 1280 720" << endl;
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
     fstream fileIn(video_name, ios::in);
     unsigned char *pYuvBuf = new unsigned char[framesize]; //one frame size
 
-    //存储到图像
+    //save to image
     Mat frameReference;
     map<int, Mat> originImages;
     Mat ROI;

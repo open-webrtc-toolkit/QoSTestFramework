@@ -4,7 +4,7 @@
 This folder is QOS client by C++ Client SDK.
 It provide two kinds of input format video encoded video and raw video.
 
-- Supported Linux platform: Ubuntu 18.04.
+- Supported Linux platform: >=Ubuntu 16.
 - Supported MCU version: 4.2.
 
 ##Prepare the development environment
