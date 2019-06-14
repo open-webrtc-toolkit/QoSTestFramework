@@ -70,10 +70,10 @@ const tokenStore = function(fileName) {
   if (fs.existsSync(fileName)) {
     fs.unlinkSync(fileName)
   }
-  let key = crypto.randomBytes(64).toString('hex');
-  console.log("Key:", key)
   let id = crypto.randomBytes(32).toString('hex');
-  console.log("Id:", id)
+  let key = crypto.randomBytes(64).toString('hex');
+  console.log("Id:", id);
+  console.log("Key:", key);
   let writeStr = {
     'authorization': calculateClientSignature(id, key)
   };
