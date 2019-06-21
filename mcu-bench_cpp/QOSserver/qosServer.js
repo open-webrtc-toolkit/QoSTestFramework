@@ -434,9 +434,9 @@ app.post('/displayData', function(req, res) {
 });
 
 app.post('/startTest', function(req, res) {
-  exec(clientDir + 'scripts/vp8_js.sh', function(err) {
+  exec('python ' + clientDir + 'scripts/runQosClient.py', function(err) {
     if (err) {
-      console.info('stderr form vp8.sh:' + err);
+      console.info('stderr owt_conf_sample:' + err);
     }
   });
   res.send("OK");
@@ -444,10 +444,10 @@ app.post('/startTest', function(req, res) {
 
 app.post('/stopTest', function(req, res) {
   exec(
-    'ps aux | grep woogeen_conf_sample | grep -v \"grep\" | awk \'{print $2}\'|xargs kill -9 >/dev/null 2>&1 ',
+    'ps aux | grep owt_conf_sample | grep -v \"grep\" | awk \'{print $2}\'|xargs kill -9 >/dev/null 2>&1 ',
     function(err) {
       if (err) {
-        console.info('stderr form kill woogeen_conf_sample:' + err);
+        console.info('stderr form kill owt_conf_sample:' + err);
       }
     });
   res.send("OK");
