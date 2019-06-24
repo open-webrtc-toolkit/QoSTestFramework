@@ -1,0 +1,21 @@
+{
+  "name": "QOS-framework",
+  "version": "1.0.0",
+  "description": "realtime video/audio quality testbench project",
+  "main": "qosServer.js",
+  "dependencies": {
+    "async": "^1.5.2",
+    "express": "^4.16.4",
+    "https": "^1.0.0",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "qos testframework"
+  ],
+  "author": "Jianlin Qiu,yanbin zhang",
+  "license": "Apache 2.0"
+}
