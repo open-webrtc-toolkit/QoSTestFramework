@@ -1,4 +1,7 @@
 {
+    "jitter": {
+        "frameCount": "600"
+    },
     "latency": {
         "framecount": "600"
     },

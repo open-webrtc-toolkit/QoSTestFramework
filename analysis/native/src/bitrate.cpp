@@ -1,10 +1,10 @@
 // Copyright (C) <2019> Intel Corporation
 //
 // SPDX-License-Identifier: Apache-2.0
-#include <iostream> // for standard I/O
-#include <string>   // for strings
-#include <iomanip>  // for controlling float print precision
-#include <sstream>  // string to number conversion
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <sstream>
 #include <fstream>
 
 #include <opencv2/core.hpp>    // Basic OpenCV structures (cv::Mat, Scalar)
@@ -12,14 +12,12 @@
 #include <opencv2/highgui.hpp> // OpenCV window I/O
 #include <opencv2/ml.hpp>
 
-#include <unistd.h> // change dir
+#include <unistd.h>
 
 using namespace std;
 using namespace cv;
 using namespace cv::ml;
 
-#define ND 4
-#define TBS 60
 
 void help()
 {

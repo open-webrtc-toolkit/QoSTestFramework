@@ -1,10 +1,10 @@
 // Copyright (C) <2019> Intel Corporation
 //
 // SPDX-License-Identifier: Apache-2.0
-#include <iostream> // for standard I/O
-#include <string>   // for strings
-#include <iomanip>  // for controlling float print precision
-#include <sstream>  // string to number conversion
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <sstream>
 #include <fstream>
 
 #include <opencv2/core.hpp>    // Basic OpenCV structures (cv::Mat, Scalar)
@@ -18,15 +18,13 @@ using namespace std;
 using namespace cv;
 using namespace cv::ml;
 
-#define ND 4
-#define TBS 60
 
 void help()
 {
     cout << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "This program measures Frames per second" << endl;
-    cout << "Usage: ./native/fps ./native/Data/localFPS.txt" << endl;
+    cout << "Usage: ./native/fps ./native/Data/localFps.txt" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl
          << endl;
 }

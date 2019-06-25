@@ -1,10 +1,10 @@
 // Copyright (C) <2019> Intel Corporation
 //
 // SPDX-License-Identifier: Apache-2.0
-#include <iostream> // for standard I/O
-#include <string>   // for strings
-#include <iomanip>  // for controlling float print precision
-#include <sstream>  // string to number conversion
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <sstream>
 #include <fstream>
 
 #include <opencv2/core.hpp>
@@ -14,16 +14,17 @@
 #include <opencv2/ml.hpp>
 #include <opencv2/dnn.hpp>
 
-using namespace cv;
-using namespace cv::ml;
-using namespace cv::dnn;
-using namespace std;
 #include <map>
 #include <unistd.h>
 #include <stdio.h>
 
-#define ND 4
-int tagsize = 60;
+using namespace cv;
+using namespace cv::ml;
+using namespace cv::dnn;
+using namespace std;
+
+const int ND = 4;
+const int tagsize = 60;
 
 int framesize; // pixels in one frames
 
@@ -74,14 +75,7 @@ int main(int argc, char *argv[])
     video_height = std::stoi(res_height);
     
     framesize = video_width * video_height * 3 / 2; //pixels in one frame
-                                                    // typedef struct planet
-                                                    // {
-                                                    // char name[framesize];
-                                                    // double population;
-                                                    // double g;
-                                                    // } PLANET;
 
-    // PLANET pl;
     ifstream fin;
     string originVideoName = argv[2];
     string suffix = ".yuv";
@@ -104,11 +98,8 @@ int main(int argc, char *argv[])
     }
     fin.seekg(0, ios::end);     //go to end of file
     streampos ps = fin.tellg(); //current points
-    //cout << "file size: " << ps << endl;  
     unsigned FrameCount = ps / framesize; //frame size
-    //cout << "frameNuber: " << FrameCount << endl; //frame number
     fin.close();
-    // FILE *fileIn = fopen(video_name, "rb+");
     fstream fileIn(video_name, ios::in);
     unsigned char *pYuvBuf = new unsigned char[framesize]; //one frame size
 
@@ -122,8 +113,8 @@ int main(int argc, char *argv[])
 
     int v(0);
 
-    long t(0);                   //get timestamp from file "mixRawFile"
-    unsigned int r1, g1, b1; //get ARGB from file "mixRawFile"
+    long t(0);
+    unsigned int r1, g1, b1;
     int framecount(0);
 
     int width(video_width);
@@ -150,7 +141,7 @@ int main(int argc, char *argv[])
     //////////////////////////////////////////////////////////Load data ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    int roomsize = 1; //default
+    const int roomsize = 1; //default
     int isFirstData = 0;
 
     height /= roomsize;
@@ -309,7 +300,6 @@ int main(int argc, char *argv[])
             break;
         }
     }
-    //receive_timestamp.close();
     fclose(recyuv);
     fclose(sendyuv);
     received_video.close();
@@ -331,8 +321,6 @@ void getMaxClass(const Mat &probBlob, int *classId, double *classProb)
 
 int test_on_single_photo_dl(Mat img)
 {
-    // cv::dnn::initModule();  //Required if OpenCV is built as static libs
-
     String modelTxt = "./ml/deploy.prototxt";
     String modelBin = "./ml/lenet_iter_10000.caffemodel";
     Net net = dnn::readNetFromCaffe(modelTxt, modelBin);

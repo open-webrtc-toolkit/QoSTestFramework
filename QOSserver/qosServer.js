@@ -168,7 +168,8 @@ app.use(authPath, function(req, res, next) {
 
 app.post('/jitter', function(req, res) {
   let rTagFilename = dataDir + "localLatency.txt";
-  exec(nativeDir + 'FLR ' + rTagFilename, function(err, data, stderr) {
+  let frameCount = conf.jitter.frameCount || "600";
+  exec(nativeDir + 'FLR ' + rTagFilename + ' ' + frameCount, function(err, data, stderr) {
     if (err) {
       console.info('stderr:' + err.message);
       req.errormsg = err.stack
@@ -214,12 +215,13 @@ app.post('/latency', function(req, res) {
 });
 
 app.post('/fps', function(req, res) {
-  let fpsFilename = dataDir + "localFPS.txt";
+  let fpsFilename = dataDir + "localFps.txt";
   console.log('in fps post');
   exec(nativeDir + 'fps ' + fpsFilename, function(err, data, stderr) {
     if (err) {
       console.info('stderr from fps:' + stderr);
       req.errormsg = err.stack
+      console.info('the error stack is:' + req.errormsg);
       res.status(500).send("Internal Server Error")
       return
     }

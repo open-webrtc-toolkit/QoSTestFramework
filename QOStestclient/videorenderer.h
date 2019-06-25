@@ -13,13 +13,13 @@
 
 using namespace std;
 
-class CMyVideoRenderer : public VideoRendererInterface
+class CVideoRenderer : public VideoRendererInterface
 {
 public:
 	void RenderFrame(unique_ptr<VideoBuffer> videoFrame);
 	VideoRendererType Type();
-	CMyVideoRenderer();
-	~CMyVideoRenderer();
+	CVideoRenderer();
+	~CVideoRenderer();
 	void SetLocalARGBFile(const string &file);
 	void SetLocalLatencyFile(const string &file);
 

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "conferenceforwardobserver.h"
 #include "data.h"
-#include "myvideorenderer.h"
+#include "videorenderer.h"
 #include <iostream>
 #include <thread>
 
@@ -57,15 +57,15 @@ void CConferenceForwardObserver::OnStreamAdded(shared_ptr<RemoteStream> stream)
                         //options,
                         [=](shared_ptr<ConferenceSubscription> subscription) {
                             LOG_DEBUG("Subscribe succeed");
-                            CMyVideoRenderer *myVideoRenderer = new CMyVideoRenderer();
+                            CVideoRenderer *videoRenderer = new CVideoRenderer();
                             if (m_data)
                             {
-                                myVideoRenderer->SetLocalARGBFile(m_data->GetLocalARGBFilePath());
-                                myVideoRenderer->SetLocalLatencyFile(m_data->GetLocalLatencyFilePath().c_str());
+                                videoRenderer->SetLocalARGBFile(m_data->GetLocalARGBFilePath());
+                                videoRenderer->SetLocalLatencyFile(m_data->GetLocalLatencyFilePath().c_str());
                                 std::thread *t = new std::thread(CConferenceForwardObserver::getStatus, m_data->GetLocalBitrateFilePath(), m_data->GetLocalFpsFilePath(), subscription);
                                 t->detach();
                             }
-                            stream->AttachVideoRenderer(*myVideoRenderer);
+                            stream->AttachVideoRenderer(*videoRenderer);
                         },
                         [=](std::unique_ptr<Exception>) {
                             LOG_DEBUG("Subscribe failed");

@@ -6,7 +6,7 @@
 #include "data.h"
 #include "encodedframegenerator.h"
 #include "fileframegenerator.h"
-#include "myvideorenderer.h"
+#include "videorenderer.h"
 #include "owt.h"
 #include <chrono>
 #include <cmath>

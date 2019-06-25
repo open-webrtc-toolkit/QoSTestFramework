@@ -1,10 +1,10 @@
 // Copyright (C) <2019> Intel Corporation
 //
 // SPDX-License-Identifier: Apache-2.0
-#include <iostream> // for standard I/O
-#include <string>   // for strings
-#include <iomanip>  // for controlling float print precision
-#include <sstream>  // string to number conversion
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <sstream>
 #include <fstream>
 
 #include <opencv2/core.hpp>
@@ -14,22 +14,19 @@
 #include <opencv2/ml.hpp>
 #include <opencv2/dnn.hpp>
 
-using namespace cv;
-using namespace cv::ml;
-using namespace cv::dnn;
-using namespace std;
-
 #include <map>
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/time.h>
 
-#define TBS 60
-#define LATENCY_LIMIT_H 5000
-#define LATENCY_LIMIT_L 20
+using namespace cv;
+using namespace cv::ml;
+using namespace cv::dnn;
+using namespace std;
 
-#define ND 4
-int tagsize = 60;
+
+const int ND = 4;
+const int tagsize = 60;
 void getMaxClass(const Mat &probBlob, int *classId, double *classProb);
 int test_on_single_photo_dl(Mat img);
 
@@ -75,8 +72,8 @@ int main(int argc, char **argv)
     int isFirstData = 0;
     int overFlag = 0;
     int v(0);
-    long t(0);                   //get timestamp from file "mixRawFile"
-    unsigned int r1, g1, b1; //get ARGB from file "mixRawFile"
+    long t(0);
+    unsigned int r1, g1, b1;
     char c;
     int preframe = 0;
 
@@ -251,8 +248,6 @@ void getMaxClass(const Mat &probBlob, int *classId, double *classProb)
 
 int test_on_single_photo_dl(Mat img)
 {
-    // cv::dnn::initModule();  //Required if OpenCV is built as static libs
-
     String modelTxt = "./ml/deploy.prototxt";
     String modelBin = "./ml/lenet_iter_10000.caffemodel";
     Net net = dnn::readNetFromCaffe(modelTxt, modelBin);

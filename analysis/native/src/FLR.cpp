@@ -1,10 +1,10 @@
 // Copyright (C) <2019> Intel Corporation
 //
 // SPDX-License-Identifier: Apache-2.0
-#include <iostream> // for standard I/O
-#include <string>   // for strings
-#include <iomanip>  // for controlling float print precision
-#include <sstream>  // string to number conversion
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <sstream>
 #include <fstream>
 
 #include <opencv2/core.hpp>
@@ -14,18 +14,16 @@
 #include <opencv2/ml.hpp>
 #include <opencv2/dnn.hpp>
 
+#include <unistd.h>
+#include <stdio.h>
+
 using namespace cv;
 using namespace cv::ml;
 using namespace cv::dnn;
 using namespace std;
 
-#include <unistd.h>
-#include <stdio.h>
-
-#define ND 4
-#define INTERVAL 3000.0 / 30.0
-int tagsize = 60;
-int framenumber = 600;
+const int ND = 4;
+const int tagsize = 60;
 void getMaxClass(const Mat &probBlob, int *classId, double *classProb);
 int test_on_single_photo_dl(Mat img);
 
@@ -34,7 +32,7 @@ void help()
     cout << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "This program measures jitter, the time gap between two consecutive saved frames" << endl;
-    cout << "Usage: ./native/flr ./native/Data/localLatency.txt" << endl;
+    cout << "Usage: ./native/flr ./native/Data/localLatency.txt <framenumber>" << endl;
     cout << "This program will read the tag photos from C++ and generate a new file call rec_timestamp.txt " << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl
          << endl;
@@ -53,6 +51,8 @@ int main(int argc, char *argv[])
     string rec_timestamp = "../dataset/Data/rec_timestamp.txt";
     ofstream receive_timestamp(rec_timestamp.c_str());
     ifstream received_video(argv[1]);
+    std::string Framenumber(argv[2]);
+    int framenumber = std::stoi(Framenumber);
     ofstream jitter_out("../dataset/output/jitter.txt");
     receive_timestamp << ",";
 
@@ -61,8 +61,8 @@ int main(int argc, char *argv[])
     int isFirstData = 0;
     int overFlag = 0;
     int v(0);
-    long t(0);                   //get timestamp from file "mixRawFile"
-    unsigned int r1, g1, b1; //get ARGB from file "mixRawFile"
+    long t(0);
+    unsigned int r1, g1, b1;
     char c;
 
     for (int f = 0;; f++)
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
             }
             if (overFlag >= 1)
             {
-                break; //break to do iq task when a frame over or the whole file over.(maybe a img didn't trans completely,so must make a force break.)
+                break;
             }
         }
 
@@ -168,7 +168,6 @@ int main(int argc, char *argv[])
     //////////////////////////////////////////////////////////Load data ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //for c++
     int lastf = -1;
     received_tag >> c; //','
     for (;;)
@@ -195,14 +194,14 @@ int main(int argc, char *argv[])
 
         if (inter < 0)
         {
-            cout << abs((datas[i].first - datas[i - 1].first) / (inter + framenumber)) << endl; //what's INTERVAL?
-            jitter_out << abs((datas[i].first - datas[i - 1].first) / (inter + framenumber));   //what's INTERVAL?
+            cout << abs((datas[i].first - datas[i - 1].first) / (inter + framenumber)) << endl;
+            jitter_out << abs((datas[i].first - datas[i - 1].first) / (inter + framenumber));
         }
         else
         {
 
-            cout << abs((datas[i].first - datas[i - 1].first) / (inter)) << endl; //what's INTERVAL?
-            jitter_out << abs((datas[i].first - datas[i - 1].first) / (inter));   //what's INTERVAL?
+            cout << abs((datas[i].first - datas[i - 1].first) / (inter)) << endl;
+            jitter_out << abs((datas[i].first - datas[i - 1].first) / (inter));
         }
 
         jitter_out << ",";
@@ -223,8 +222,6 @@ void getMaxClass(const Mat &probBlob, int *classId, double *classProb)
 
 int test_on_single_photo_dl(Mat img)
 {
-    // cv::dnn::initModule();  //Required if OpenCV is built as static libs
-
     String modelTxt = "./ml/deploy.prototxt";
     String modelBin = "./ml/lenet_iter_10000.caffemodel";
     Net net = dnn::readNetFromCaffe(modelTxt, modelBin);
@@ -245,7 +242,6 @@ int test_on_single_photo_dl(Mat img)
     Mat inputBlob = blobFromImage(img);
     net.setInput(inputBlob);  //set the network input
     Mat prob = net.forward(); //compute output
-    // Mat prob = net.getBlob("prob");   //gather output of "prob" layer
     int classId;
     double classProb;
     getMaxClass(prob, &classId, &classProb); //find the best class

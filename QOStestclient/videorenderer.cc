@@ -1,14 +1,14 @@
 // Copyright (C) <2019> Intel Corporation
 //
 // SPDX-License-Identifier: Apache-2.0
-#include "myvideorenderer.h"
+#include "videorenderer.h"
 #include "log.h"
 #include <cstring>
 #include <iostream>
 
 using namespace std;
 
-CMyVideoRenderer::CMyVideoRenderer()
+CVideoRenderer::CVideoRenderer()
 {
     LOG_DEBUG("");
     m_width = 0;
@@ -19,7 +19,7 @@ CMyVideoRenderer::CMyVideoRenderer()
     m_fLocalLatency = nullptr;
 }
 
-void CMyVideoRenderer::RenderFrame(unique_ptr<VideoBuffer> videoFrame)
+void CVideoRenderer::RenderFrame(unique_ptr<VideoBuffer> videoFrame)
 {
     //LOG_DEBUG("");
     if (videoFrame && m_fLocalARGB && m_fLocalLatency)
@@ -57,13 +57,13 @@ void CMyVideoRenderer::RenderFrame(unique_ptr<VideoBuffer> videoFrame)
     }
 }
 
-VideoRendererType CMyVideoRenderer::Type()
+VideoRendererType CVideoRenderer::Type()
 {
     //LOG_DEBUG("");
     return VideoRendererType::kARGB;
 }
 
-CMyVideoRenderer::~CMyVideoRenderer()
+CVideoRenderer::~CVideoRenderer()
 {
     LOG_DEBUG("");
     if (m_fLocalARGB)
@@ -78,13 +78,13 @@ CMyVideoRenderer::~CMyVideoRenderer()
     }
 }
 
-void CMyVideoRenderer::SetLocalARGBFile(const string &file)
+void CVideoRenderer::SetLocalARGBFile(const string &file)
 {
     LOG_DEBUG("");
     m_fLocalARGB = fopen(file.c_str(), "w");
 }
 
-void CMyVideoRenderer::SetLocalLatencyFile(const string &file)
+void CVideoRenderer::SetLocalLatencyFile(const string &file)
 {
     LOG_DEBUG("");
     m_fLocalLatency = fopen(file.c_str(), "w");

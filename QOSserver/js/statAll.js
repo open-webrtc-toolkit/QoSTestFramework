@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 //
-//This file help you compare different
+//This file help you compare different rounds result for same indicators
 //
 
 'use strict'
