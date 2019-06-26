@@ -9,9 +9,9 @@ QoSTestFramework is a new test framework aims to provide comprehensive methodolo
 
 - **Rich performance indicator**: Reference video quality indicators PSNR, SSIM and VMAF. Non-reference video quality indicators e.g. blockniess, blockloss, etc. Other related preformance indicators e.g. bandwidth, fps, etc.
 
-- ** High modular and scalable**: Each module can be run separately and integrated to your system easily.
+- **High modular and scalable**: Each module can be run separately and integrated to your system easily.
 
-- ** Visualization of analysis result**: All analysis results can be viewed remotely. Visualization of comparative data for different test scenarios is supported as well.
+- **Visualization of analysis result**: All analysis results can be viewed remotely. Visualization of comparative data for different test scenarios is supported as well.
 
 ## Structure introduction
 
