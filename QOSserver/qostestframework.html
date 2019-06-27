@@ -1,0 +1,143 @@
+<!--
+ Copyright (C) <2019> Intel Corporation
+
+ SPDX-License-Identifier: Apache-2.0
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title> QoSTestFramework</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <script language="javascript">
+
+  </script>
+
+  <body>
+    <h2 style="text-align:center;"> QoSTestFramework: A Test Framework assess the performance of real-time video communication system </h2>
+    <div id="welcome"> </div>
+    <div id = "how-to-use">
+      <p> Please follow readme file to setup or develop test environment.
+      <p> 'start test' and 'stop test' will trigger test with owt-conferen-sample ,it will help assess performance of owt-server, please replace it with your own test pipeline sample if you want trigger test from web application.
+    </div>
+    <div>
+      Authorization Id: <input type="password" id="sampleId" autocomplete="off">
+      Authorization key: <input type="password" id="sampleKey" autocomplete="off">
+    </div>
+    <div style="clear: both">
+      <button id="start test" onclick="startVideoQualityMeasureTesting();"
+        style="width: 640px;height: 50px;">start
+        Video Quality Measure Testing</button>
+      <button id="stop test" onclick="stopVideoQualityMeasureTesting();"
+        style="width: 640px;height: 50px;">stop Video
+        Quality Measure Testing</button>
+    </div>
+
+    <div>
+      <canvas id="blank space" style="width: 640px;height: 50px;"
+        style="display: none;"></canvas>
+    </div>
+
+    <div>
+      <button id="getResultFolder" onclick="getResultFolder()"
+        style="width: 200px;height: 30px;">getResultFolder</button>
+      <div>
+        ResultFolder:<select id="resultfolder"></select>
+      </div>
+    </div>
+
+    <div>Frame:<input type="text" id="maxFrame" value="300" autocomplete="off"></div>
+
+    <div>
+      <button id="quality-btn" onclick="getQuality('qualitythreshold')"
+        style="width: 250px;height: 50px;">Image
+        Quality (PSNR & SSIM & VIF)</button>
+      Threshold:<input type="text" id="qualitythreshold" value="1000" autocomplete="off">
+      <canvas id="chartPsnr" width="400" height="100"
+        style="display: none;"></canvas>
+      <canvas id="chartSsim" width="400" height="100"
+        style="display: none;"></canvas>
+    </div>
+
+    <div>
+      <button id="vmaf-btn"
+        onclick="getData('chartVmaf', 'vmafthreshold', 'vmaf')"
+        style="width: 250px;height: 50px;">Image Quality (vmaf)</button>
+      Threshold:<input type="text" id="vmafthreshold" value="1000" autocomplete="off">
+      <canvas id="chartVmaf" width="400" height="100"
+        style="display: none;"></canvas>
+    </div>
+
+    <div>
+      <button id="NR-btn" onclick="getNR()"
+        style="width: 250px;height: 50px;">No-Reference (Blockiness,
+        Blockloss, Blur, Noise,Freezing)</button>
+      Blockiness Normal Range:<a>0.9-1.01</a>
+      <canvas id="chartNR1" width="400" height="100"
+        style="display: none;"></canvas>
+      Blockloss Normal Range:<a>0-5</a>
+      <canvas id="chartNR2" width="400" height="100"
+        style="display: none;"></canvas>
+      Blur Normal Range:<a>0-5</a>
+      <canvas id="chartNR3" width="400" height="100"
+        style="display: none;"></canvas>
+      Noise Normal Range:<a>0-3.5</a>
+      <canvas id="chartNR4" width="400" height="100"
+        style="display: none;"></canvas>
+      Interlacing Normal Range:<a>0</a>
+      <canvas id="chartNR5" width="400" height="100"
+        style="display: none;"></canvas>
+      Freezing Normal Range:<a>0</a>
+      <canvas id="chartNR6" width="400" height="100"
+        style="display: none;"></canvas>
+    </div>
+
+    <div>
+      <button id="jitter-btn"
+        onclick="getData('chartJitter', 'jthreshold', 'jitter', 'jitter_avg')"
+        style="width: 250px;height: 50px;">Jitter (miliseconds)</button>
+      Threshold:<input type="text" id="jthreshold" value="3000" autocomplete="off">
+      Average: <input type="text" id="jitter_avg" value="0" readonly>
+      <canvas id="chartJitter" width="400" height="100"
+        style="display: none;"></canvas>
+    </div>
+
+    <div>
+      <button id="latency-btn"
+        onclick="getData('chartLatency', 'lthreshold', 'latency', 'latency_avg')"
+        style="width: 250px;height: 50px;">Latency (miliseconds)</button>
+      Threshold:<input type="text" id="lthreshold" value="1000" autocomplete="off">
+      Average:<input type="text" id="latency_avg" value="0" readonly>
+      <canvas id="chartLatency" width="400" height="100"
+        style="display: none;"></canvas>
+    </div>
+
+    <div>
+      <button id="fps-btn"
+        onclick="getData('chartgoogFps', 'fthreshold', 'fps', 'fps_avg')"
+        style="width: 250px;height: 50px;">Fps</button>
+      Threshold:<input type="text" id="fthreshold" value="80" autocomplete="off">
+      Average:<input type="text" id="fps_avg" value="0" readonly>
+      <canvas id="chartgoogFps" width="400" height="100"
+        style="display: none;"></canvas>
+    </div>
+
+    <div>
+      <button id="bitrate-btn"
+        onclick="getData('chartgoogBitrate', 'bthreshold', 'bitrate', 'bitrate_avg')"
+        style="width: 250px;height: 50px;">Bitrate (kbps)</button>
+      Threshold:<input type="text" id="bthreshold" value="2500" autocomplete="off">
+      Average:<input type="text" id="bitrate_avg" value="0" readonly>
+      <canvas id="chartgoogBitrate" width="400" height="100"
+        style="display: none;"></canvas>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+    <script type="text/javascript" src="js/stat.js"> </script>
+    <script type="text/javascript" src="js/util.js"> </script>
+  </body>
+
+</html>

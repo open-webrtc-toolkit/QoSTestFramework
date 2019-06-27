@@ -1,0 +1,27 @@
+/bak
+node_modules
+package-lock.json
+analysis/native/*.o
+analysis/native/iq_avi iq_yuv tag convert saveImage latency FLR fps bitrate imagequality_yuv_android fps_android bitrate_android FLR_android latency_android
+analysis/dataset/Data/*
+analysis/dataset/output/*
+analysis/dataset/source/*
+preprocess/videoTag/output/*
+preprocess/videoTag/tag
+preprocess/videoTag/*.y4m
+preprocess/encodedVideoGenerateScripts/*.mkv
+preprocess/encodedVideoGenerateScripts/*.yuv
+preprocess/encodedVideoGenerateScripts/*.vp8
+preprocess/encodedVideoGenerateScripts/*.vp9
+preprocess/encodedVideoGenerateScripts/*.h264
+/native/video
+/native/src/*.*~
+/QOStestclient/out
+/QOStestclient/*.*~
+/QOStestclient/build
+vmaf
+mitsu
+*.o
+.vscode
+venv
+
