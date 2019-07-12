@@ -110,64 +110,6 @@ def mkH26x(g_output, g_input, g_width, g_height,
         extraceBitSreamH265(g_input, g_width, g_height,
                      g_framerate, g_bitrate, g_gop, g_rawBSFile)
        
-'''
-    if not os.path.exists(g_rawBSFile):
-        print '*' * 10
-        print 'Error:', 'Can not extract bitstream'
-        print '*' * 10
-        sys.exit(1)
-
-    f_output = file(g_output, 'wb')
-
-    f = open(g_rawBSFile, 'rb')
-    data = f.read()
-
-    f.seek(0, os.SEEK_END)
-    size = f.tell()
-    # print size
-
-    f.close()
-
-    if os.path.exists(g_rawBSFile):
-        os.remove(g_rawBSFile)
-
-    i = 0
-    frameNum = 1
-    startCodePosition = None
-    nal_type = None
-    last_nal_type = None
-    j = frameNum
-    print "size is ", size;
-    while i < size:
-        if ord(data[i]) == 0 and ord(data[i + 1]) == 0 and ord(data[i + 2]) == 0 and ord(data[i + 3]) == 1:
-            nal_type = ord(data[i + 4])
-
-            # merge sps, pps, skip sps and wait for next pps
-            if not nal_type == 0x67:
-                if startCodePosition is not None:
-                    frame_size = i - startCodePosition
-                    frame_size_str = struct.pack('I', frame_size)
-                    if frameNum % 100 == 0:
-                        print "Write ", frameNum, " frame..."
-                    result=tagSkip57(j);
-                    j=result+1;
-                    tag_str = struct.pack("I",result)
-                    print "tag is", result;
-#########################write data #############################
-                    f_output.write(frame_size_str)
-                    f_output.write(tag_str)
-                    f_output.write(data[startCodePosition:i])
-                    print "frameNum is ", frameNum
-                    frameNum += 1
-                startCodePosition = i
-
-            last_nal_type = nal_type
-
-        i += 1
-
-    f_output.close()
-    print "Write ", frameNum-1, " frame...Done"
-'''
 
 def extraceBitSreamVPx(inputFile, o_width, o_height, o_framerate, o_bitrate, o_gop, o_file, codec):
     cmd = 'ffmpeg -y -i ' + inputFile \
@@ -187,24 +129,6 @@ def extraceBitSreamVPx(inputFile, o_width, o_height, o_framerate, o_bitrate, o_g
 
     return
 
-'''
-bytes 0-3    signature: 'DKIF'
-bytes 4-5    version (should be 0)
-bytes 6-7    length of header in bytes
-bytes 8-11   codec FourCC (e.g., 'VP80')
-bytes 12-13  width in pixels
-bytes 14-15  height in pixels
-bytes 16-19  frame rate
-bytes 20-23  time scale
-bytes 24-27  number of frames in file
-bytes 28-31  unused
-
-The header is followed by a series of frames. Each frame consists of a 12-byte header followed by data:
-
-bytes 0-3    size of frame in bytes (not including the 12-byte header)
-bytes 4-11   64-bit presentation timestamp
-bytes 12..   frame data
-'''
 
 
 def mkVPx(g_output, g_input, g_width, g_height,
@@ -212,62 +136,6 @@ def mkVPx(g_output, g_input, g_width, g_height,
 
     extraceBitSreamVPx(g_input, g_width, g_height,
                        g_framerate, g_bitrate, g_gop, g_rawBSFile, codec)
-'''
-    if not os.path.exists(g_rawBSFile):
-        print '*' * 10
-        print 'Error:', 'Can not extract bitstream'
-        print '*' * 10
-        sys.exit(1)
-
-    f_output = file(g_output, 'wb')
-
-    f = open(g_rawBSFile, 'rb')
-    data = f.read()
-
-    f.seek(0, os.SEEK_END)
-    size = f.tell()
-    # print size
-
-    f.close()'''
-'''
-    if os.path.exists(g_rawBSFile):
-        os.remove(g_rawBSFile)
-
-    head = struct.unpack('4sHH4sHHIIII', data[0:32])
-    print '%s, version %d, %s, %dx%d, %dfps, %d frames' % (head[0], head[1], head[3], head[4], head[5], head[6], head[8])
-
-    i = 32
-    frameNum = 1
-    j=frameNum
-    while i < size:
-
-        frame_head = struct.unpack('III', data[i:i + 12])
-        print frame_head
-
-        frame_size = frame_head[0]
-
-        frame_size_str = struct.pack('I', frame_size)
-
-
-        if frameNum % 100 == 0:
-            print "Write ", frameNum, " frame..."
-
-        result=tagSkip57(j);
-        j=result+1;
-        tag_str = struct.pack("I",result)
-        print "tag is", result;
-#########################write data #############################
-        f_output.write(frame_size_str)
-        f_output.write(tag_str)
-        f_output.write(data[i + 12:i + 12 + frame_size])
-        print "frameNum is ", frameNum
-        i += 12 + frame_head[0]
-        frameNum += 1
-
-    f_output.close()
-
-    print "Write ", frameNum-1, " frame...Done"
-'''
 
 def main(argv):
     try:

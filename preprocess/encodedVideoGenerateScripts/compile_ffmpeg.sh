@@ -87,7 +87,7 @@ install_ffmpeg(){
 
   echo "Building ffmpeg-${VERSION}"
   pushd ${DIR}
-  PKG_CONFIG_PATH=${DOWNLOAD_DIR}/lib/pkgconfig CFLAGS=-fPIC ./configure --prefix=${DOWNLOAD_DIR} --enable-shared --disable-static --disable-libvpx --disable-vaapi && \
+  PKG_CONFIG_PATH=${DOWNLOAD_DIR}/lib/pkgconfig CFLAGS=-fPIC ./configure --prefix=${DOWNLOAD_DIR} --enable-shared --disable-static --disable-opencl --disable-vaapi --enable-gpl --enable-libvpx --enable-libx264 && \
   make -j4 -s V=0 && make install
   popd
 }
