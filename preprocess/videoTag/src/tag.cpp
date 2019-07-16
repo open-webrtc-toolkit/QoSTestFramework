@@ -14,6 +14,7 @@
 #include <opencv2/highgui.hpp>  // OpenCV window I/O
 #include <opencv2/ml.hpp>
 #include <math.h>
+#include <sys/stat.h>
 
 using namespace std;
 using namespace cv;
@@ -35,12 +36,10 @@ void help()
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl;
     cout << "This program insert handwriting digits to raw y4m file and generate tagged avi file" << endl;
     cout << "USAGE: ./tag input output outputwidth outputheight tagsize(20px*n) framewanted" << endl;
-    cout << "For example: ./tag test.y4m video/Megamind.avi 640 480 1 10" << endl;
-    cout << "If you want to Skip57, let it be. If not, edit tagSkip57 function to tag normally " << endl;
+    cout << "For example: ./tag test.y4m test_tag.avi 640 480 1 10" << endl;
     cout << "/////////////////////////////////////////////////////////////////////////////////" << endl << endl;
 }
 
-int tagSkip57(int input);
 
 int main(int argc, char **argv)
 {
@@ -159,6 +158,16 @@ int main(int argc, char **argv)
 
     VideoWriter output;
     int fcc = VideoWriter::fourcc('I','4','2','0');
+    if (mkdir("output", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)
+    {
+       if( errno == EEXIST ) {
+       }
+       else {
+        std::cout << "cannot create folder output:" << strerror(errno) << std::endl;
+        throw std::exception();
+      }
+    }
+
     const string video_name = "./output/"+name;
     output.open(video_name, fcc, 30, Size(owidth, oheight), true);
 
@@ -189,7 +198,6 @@ int main(int argc, char **argv)
         resize(_frameReference, frameReference, Size(owidth, oheight));
 
         ++frameNum;
-        //frameNum= tagSkip57(frameNum);
         cout << "Frame: " << frameNum << "# " << endl;
 
         int number = frameNum;
@@ -243,16 +251,3 @@ void GenTag(int num, Mat &dst)
     resize(_dst, dst, Size(tagsize, tagsize));
 }
 
-int tagSkip57(int input)
-{
-    int output=0;
-    int len =0;
-    do
-    {
-        int num = input%10;
-        if(num==5 || num==7) num++;
-        output += num*pow(10,len);
-        len++;       
-    } while(input/=10);
-    return output;
-}
