@@ -7,6 +7,8 @@
     },
     "quality": {
         "originFilename": "1280x720-framerate30-vp8-bitrate2000k_decode.yuv",
+        "recYuv": "rec.yuv",
+        "sendYuv": "send.yuv",
         "width": "1280",
         "height": "720"
     },
