@@ -18,7 +18,7 @@ const nativeDir = analysisDir + "native/";
 const dataDir = analysisDir + "dataset/Data/";
 const sourceDir = analysisDir + "dataset/source/"
 const clientDir = rootDir + "QOStestclient/";
-const authorizationFileName  = 'token.txt'
+const authorizationFileName = 'token.txt'
 const app = express();
 
 const httpsOptions = {
@@ -34,7 +34,7 @@ app.use(express.urlencoded({
   extended: true
 }));
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods',
     'POST, GET, PUT, PATCH, OPTIONS, DELETE');
@@ -46,27 +46,27 @@ app.use(function(req, res, next) {
   }
 });
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.sendFile(__dirname + '/qostestframework.html');
 });
 
-app.get('/qostestframework_summary.html', function(req, res) {
+app.get('/qostestframework_summary.html', function (req, res) {
   res.sendFile(__dirname + '/qostestframework_summary.html');
 });
 
-app.get('/js/stat.js', function(req, res) {
+app.get('/js/stat.js', function (req, res) {
   res.sendFile(__dirname + '/js/stat.js');
 });
 
-app.get('/js/statAll.js', function(req, res) {
+app.get('/js/statAll.js', function (req, res) {
   res.sendFile(__dirname + '/js/statAll.js');
 });
 
-app.get('/js/util.js', function(req, res) {
+app.get('/js/util.js', function (req, res) {
   res.sendFile(__dirname + '/js/util.js');
 });
 
-const tokenStore = function(fileName) {
+const tokenStore = function (fileName) {
   if (fs.existsSync(fileName)) {
     fs.unlinkSync(fileName)
   }
@@ -80,25 +80,25 @@ const tokenStore = function(fileName) {
   fs.writeFileSync(fileName, JSON.stringify(writeStr))
 };
 
-const checkFile = function(fileName) {
+const checkFile = function (fileName) {
   return fs.existsSync(fileName) && !fs.lstatSync(fileName).isSymbolicLink()
 }
 
-const getAuthorization = function(fileName) {
+const getAuthorization = function (fileName) {
   if (!checkFile(fileName)) {
     return undefined
   }
   return JSON.parse(fs.readFileSync(fileName).toString())['authorization'];
 }
 
-const calculateClientSignature = function(id, key) {
+const calculateClientSignature = function (id, key) {
   let hash = crypto.createHmac('sha256', id)
     .update(key)
     .digest('hex');
   return hash
 }
 
-const parseHeader = function(header) {
+const parseHeader = function (header) {
   var params = {},
     array = [],
     p = header.split(','),
@@ -138,13 +138,13 @@ var accessLogStream = fs.createWriteStream(path.join(logDirectory, 'error.log'),
 // setup the logger
 app.use(morgan('combined', {
   stream: accessLogStream,
-  skip: function(req, res) {
+  skip: function (req, res) {
     return res.statusCode < 400
   }
 }))
 app.use(morgan(':errormsg', {
   stream: accessLogStream,
-  skip: function(req, res) {
+  skip: function (req, res) {
     return res.statusCode < 400
   }
 }))
@@ -153,7 +153,7 @@ const authPath = ['/jitter', '/latency', '/fps', '/bitrate', '/quality',
   '/vmaf', '/NR', '/freezeRatio', '/getResultFolder', '/getCompareResultFolder',
   '/displayData', '/startTest', '/stopTest'
 ];
-app.use(authPath, function(req, res, next) {
+app.use(authPath, function (req, res, next) {
   let authorization = req.headers.authorization
   if (authorization === undefined) {
     return res.status(401).send('Unauthorized');
@@ -166,10 +166,10 @@ app.use(authPath, function(req, res, next) {
   next();
 });
 
-app.post('/jitter', function(req, res) {
+app.post('/jitter', function (req, res) {
   let rTagFilename = dataDir + "localLatency.txt";
   let frameCount = conf.jitter.frameCount || "600";
-  exec(nativeDir + 'FLR ' + rTagFilename + ' ' + frameCount, function(err, data, stderr) {
+  exec(nativeDir + 'FLR ' + rTagFilename + ' ' + frameCount, function (err, data, stderr) {
     if (err) {
       console.info('stderr:' + err.message);
       req.errormsg = err.stack
@@ -189,11 +189,11 @@ app.post('/jitter', function(req, res) {
   });
 });
 
-app.post('/latency', function(req, res) {
+app.post('/latency', function (req, res) {
   let sTagFilename = dataDir + "localPublishTime.txt";
   let rTagFilename = dataDir + "localLatency.txt";
-  let frameCount = conf.latency.frameCount || "600"; 
-  exec(nativeDir + 'latency ' + sTagFilename + ' ' + rTagFilename + ' ' + frameCount, function(
+  let frameCount = conf.latency.frameCount || "600";
+  exec(nativeDir + 'latency ' + sTagFilename + ' ' + rTagFilename + ' ' + frameCount, function (
     err, data, stderr) {
     if (err) {
       console.info('stderr:' + stderr);
@@ -214,10 +214,10 @@ app.post('/latency', function(req, res) {
   });
 });
 
-app.post('/fps', function(req, res) {
+app.post('/fps', function (req, res) {
   let fpsFilename = dataDir + "localFps.txt";
   console.log('in fps post');
-  exec(nativeDir + 'fps ' + fpsFilename, function(err, data, stderr) {
+  exec(nativeDir + 'fps ' + fpsFilename, function (err, data, stderr) {
     if (err) {
       console.info('stderr from fps:' + stderr);
       req.errormsg = err.stack
@@ -238,10 +238,10 @@ app.post('/fps', function(req, res) {
   });
 });
 
-app.post('/bitrate', function(req, res) {
+app.post('/bitrate', function (req, res) {
   let bitrateFilename = dataDir + "localBitrate.txt";
   console.log('in bitrate post');
-  exec(nativeDir + 'bitrate ' + bitrateFilename, function(err, data,
+  exec(nativeDir + 'bitrate ' + bitrateFilename, function (err, data,
     stderr) {
     if (err) {
       console.info('stderr from bitrate:' + stderr);
@@ -262,9 +262,11 @@ app.post('/bitrate', function(req, res) {
   });
 });
 
-app.post('/quality', function(req, res) {
+app.post('/quality', function (req, res) {
 
   let originFilename = conf.quality.originFilename;
+  let recYuv = conf.quality.recYuv;
+  let sendYuv = conf.quality.sendYuv;
   let width = conf.quality.width;
   let height = conf.quality.height;
   let rawFilename = dataDir + "localARGB.txt";
@@ -289,35 +291,73 @@ app.post('/quality', function(req, res) {
   }
   if (originFilename.endsWith('.yuv')) {
     exec_file = 'iq_yuv ';
+    exec(nativeDir + 'gen_rec ' + rawFilename + ' ' + recYuv + ' ' +
+      width + ' ' + height, function (err, data, stderr) {
+        if (err) {
+          console.info('stderr from quality:' + stderr);
+          req.errormsg = err.stack
+          res.status(500).send("Internal Server Error")
+          return
+        }
+        exec(nativeDir + 'gen_send ' + recYuv + ' ' + originFilename + ' ' +
+          width + ' ' + height + ' ' + sendYuv, function (err, data, stderr) {
+            if (err) {
+              console.info('stderr from quality:' + stderr);
+              req.errormsg = err.stack
+              res.status(500).send("Internal Server Error")
+              return
+            }
+            exec(nativeDir + exec_file + recYuv + ' ' + sendYuv + ' ' +
+              width + ' ' + height, function (err, data, stderr) {
+                if (err) {
+                  console.info('stderr from quality:' + stderr);
+                  req.errormsg = err.stack
+                  res.status(500).send("Internal Server Error")
+                  return
+                }
+                if (data.length > 1) {
+                  res.json({
+                    quality: data
+                  });
+                } else {
+                  console.log('you did not offer args');
+                  res.json({
+                    errmsg: 'you did not offer args'
+                  });
+                }
+              });
+          });
+      });
   } else {
     exec_file = 'iq_avi ';
+    exec(nativeDir + exec_file + recYuv + ' ' + sendYuv + ' ' +
+      width + ' ' + height, function (err, data, stderr) {
+        if (err) {
+          console.info('stderr from quality:' + stderr);
+          req.errormsg = err.stack
+          res.status(500).send("Internal Server Error")
+          return
+        }
+        if (data.length > 1) {
+          res.json({
+            quality: data
+          });
+        } else {
+          console.log('you did not offer args');
+          res.json({
+            errmsg: 'you did not offer args'
+          });
+        }
+      });
   }
-  exec(nativeDir + exec_file + rawFilename + ' ' + originFilename + ' ' +
-    width + ' ' + height, function(err, data, stderr) {
-    if (err) {
-      console.info('stderr from quality:' + stderr);
-      req.errormsg = err.stack
-      res.status(500).send("Internal Server Error")
-      return
-    }
-    if (data.length > 1) {
-      res.json({
-        quality: data
-      });
-    } else {
-      console.log('you did not offer args');
-      res.json({
-        errmsg: 'you did not offer args'
-      });
-    }
-  });
+
 });
 
-app.post('/vmaf', function(req, res) {
+app.post('/vmaf', function (req, res) {
   process.env['PYTHONPATH'] = (process.env['PYTHONPATH'] || '');
   exec('python ' + analysisDir + 'python/vmaf_calculate.py', {
     env: process.env
-  }, function(err, data, stderr) {
+  }, function (err, data, stderr) {
     if (err) {
       console.info('stderr from vmaf:' + stderr);
       req.errormsg = err.stack
@@ -330,8 +370,8 @@ app.post('/vmaf', function(req, res) {
   });
 });
 
-app.post('/NR', function(req, res) {
-  exec('python ' + analysisDir + 'python/NR_calculate.py', function(err,
+app.post('/NR', function (req, res) {
+  exec('python ' + analysisDir + 'python/NR_calculate.py', function (err,
     data, stderr) {
     if (err) {
       console.info('stderr from NR:' + stderr);
@@ -345,7 +385,8 @@ app.post('/NR', function(req, res) {
   });
 });
 
-app.post('/freezeRatio', function(req, res) {
+
+app.post('/freezeRatio', function (req, res) {
   let g_input = conf.freezeRatio.g_input || "cut.mp4";
   let max_drop_count = conf.freezeRatio.max_drop_count || '0';
   let hi = conf.freezeRatio.hi || '768';
@@ -367,8 +408,9 @@ app.post('/freezeRatio', function(req, res) {
   });
 });
 
-app.post('/getResultFolder', function(req, res) {
-  exec('python python/listFolder.py -l 1', function(err, data, stderr) {
+
+app.post('/getResultFolder', function (req, res) {
+    exec('python python/listFolder.py -l 1', function (err, data, stderr) {
     console.log(data);
     if (err) {
       console.info('stderr :' + stderr);
@@ -382,18 +424,18 @@ app.post('/getResultFolder', function(req, res) {
   });
 });
 
-app.post('/getCompareResultFolder', function(req, res) {
+app.post('/getCompareResultFolder', function (req, res) {
   let folder = req.body.folder;
   let ftFolder;
   if (folder != undefined) {
     console.log("folder is", folder);
-    if(folder.indexOf(";") !== -1) {
+    if (folder.indexOf(";") !== -1) {
       console.log("folder name invalid.");
       res.status(500).send("wrong parameter")
       return
     } else {
       ftFolder = folder;
-      exec('python python/listFolder.py ' + '-f ' + ftFolder, function(err,
+      exec('python python/listFolder.py ' + '-f ' + ftFolder, function (err,
         data, stderr) {
         if (err) {
           console.info('stderr :' + stderr);
@@ -408,7 +450,7 @@ app.post('/getCompareResultFolder', function(req, res) {
       });
     }
   } else {
-    exec('python python/listFolder.py -l 0', function(err, data, stderr) {
+    exec('python python/listFolder.py -l 0', function (err, data, stderr) {
       console.log(data);
       if (err) {
         console.info('stderr :' + stderr);
@@ -423,11 +465,11 @@ app.post('/getCompareResultFolder', function(req, res) {
   }
 });
 
-app.post('/displayData', function(req, res) {
+app.post('/displayData', function (req, res) {
   let folder = req.body.folder;
   let file = req.body.file;
   let ftFolder, ftFile;
-  if(folder.indexOf(";") !== -1) {
+  if (folder.indexOf(";") !== -1) {
     console.err("wrong folder ", folder);
     res.status(500).send("wrong parameter.");
     return;
@@ -435,30 +477,30 @@ app.post('/displayData', function(req, res) {
     ftFolder = folder;
   }
 
-  if(file.indexOf(";") !== -1){
+  if (file.indexOf(";") !== -1) {
     console.err("wrong filename ", file);
     res.status(500).send("wrong VREyeParameters.");
     return;
   } else {
     ftFile = file;
   }
-  
+
   exec('python python/display_data.py ' + '-c ' + ftFolder + ' ' + '-f ' +
-    ftFile, function(err, data, stderr) {
-    if (err) {
-      console.info('stderr :' + stderr);
-      req.errormsg = err.stack
-      res.status(500).send("Internal Server Error")
-      return
-    }
-    res.json({
-      data: data
+    ftFile, function (err, data, stderr) {
+      if (err) {
+        console.info('stderr :' + stderr);
+        req.errormsg = err.stack
+        res.status(500).send("Internal Server Error")
+        return
+      }
+      res.json({
+        data: data
+      });
     });
-  });
 });
 
-app.post('/startTest', function(req, res) {
-  exec('python ' + clientDir + 'scripts/runQosClient.py', function(err) {
+app.post('/startTest', function (req, res) {
+  exec('python ' + clientDir + 'scripts/runQosClient.py', function (err) {
     if (err) {
       console.info('stderr owt_conf_sample:' + err);
     }
@@ -466,10 +508,10 @@ app.post('/startTest', function(req, res) {
   res.send("OK");
 });
 
-app.post('/stopTest', function(req, res) {
+app.post('/stopTest', function (req, res) {
   exec(
     'ps aux | grep owt_conf_sample | grep -v \"grep\" | awk \'{print $2}\'|xargs kill -9 >/dev/null 2>&1 ',
-    function(err) {
+    function (err) {
       if (err) {
         console.info('stderr form kill owt_conf_sample:' + err);
       }
@@ -477,7 +519,7 @@ app.post('/stopTest', function(req, res) {
   res.send("OK");
 });
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   console.error(err); // Log error message in our server's console
   if (!err.statusCode) err.statusCode =
     500; // If err has no specified error code, set error code to 'Internal Server Error (500)'
