@@ -48,7 +48,7 @@
       </div>
     </div>
 
-    <div>Frame:<input type="text" id="maxFrame" value="300" autocomplete="off"></div>
+    <div>Frame:<input type="text" id="maxFrame" value="20000" autocomplete="off"></div>
 
     <div>
       <button id="quality-btn" onclick="getQuality('qualitythreshold')"
@@ -94,6 +94,14 @@
         style="display: none;"></canvas>
     </div>
 
+    <div>
+      <button id="freezeRatio-btn"
+        onclick="getData('chartFreezeRatio', 'fthreshold', 'freezeRatio', 'freezeRatio_avg')"
+        style="width: 250px;height: 50px;">freeze ratio (s)</button>
+      Threshold:<input type="text" id="fthreshold" value="300" autocomplete="off">
+      <canvas id="chartFreezeRatio" width="400" height="100"
+        style="display: none;"></canvas>
+    </div>
     <div>
       <button id="jitter-btn"
         onclick="getData('chartJitter', 'jthreshold', 'jitter', 'jitter_avg')"

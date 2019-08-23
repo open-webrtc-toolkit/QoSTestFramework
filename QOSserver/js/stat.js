@@ -208,6 +208,10 @@ function getData(canvasId, thresholdId, chartName, avgId = undefined) {
     fileName = 'VMAF_score';
     chartTitle = 'Vmaf Chart';
     url = '/vmaf'
+  } else if (chartName === 'freezeRatio') {
+    fileName = 'freeze_ratio.txt';
+    chartTitle = 'Freeze Ratio Chart';
+    url = '/freezeRatio'
   }
   if (selectfolder) {
     let strfolder = resultfolder.options[resultfolder.selectedIndex].text;
@@ -235,6 +239,8 @@ function getData(canvasId, thresholdId, chartName, avgId = undefined) {
           dataList = data.bitrate.split("\n")
         } else if (chartName === 'vmaf') {
           dataList = data.vmaf.split("\n")
+        } else if (chartName === 'freezeRatio') {
+          dataList = data.freeze.split("\n")
         }
         setData(chartName, canvasId, chartTitle, chartData, dataList, fCount,
           threshold, avgId);
