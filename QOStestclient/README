@@ -13,7 +13,6 @@ Before you start, make sure you have following prerequisites installed/built:
 - [Open WebRTC Toolkit Native SDK](https://github.com/open-webrtc-toolkit/owt-client-native/).
 - [OpenSSL 1.1.0](https://www.openssl.org/source/).
 - [Socket.IO C++ Client](https://github.com/socketio/socket.io-client-cpp/).
-- [Boost 1.67.0 or higher](https://www.boost.org/users/download/).
 
 ### How to build Open WebRTC Toolkit Native SDK
 - python scripts/build_linux.py --gn_gen --sdk --arch x64 --ssl_root <openssl_path> --scheme release --output_path <output_path>
@@ -22,10 +21,6 @@ Before you start, make sure you have following prerequisites installed/built:
 - ./config shared -m64 --prefix=<openssl_path> --openssldir=<openssl_path>
 - make
 - make install
-
-### How to build Boost
-- ./bootstrap.sh
-- ./b2 variant=release link=shared runtime-link=shared --with-system --with-random --with-date_time --with-regex --with-thread --with-filesystem --with-chrono --with-atomic
 
 ### How to build socket.io-client-cpp
 - git clone --recurse-submodules https://github.com/socketio/socket.io-client-cpp.git
