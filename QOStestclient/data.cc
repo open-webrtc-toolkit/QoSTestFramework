@@ -62,7 +62,7 @@ bool CData::ParsingParameters(int argc, char **argv)
         {
         case 'a':
             LOG_DEBUG("address is %s", optarg);
-            m_serverAddress = "http://" + string(optarg) + "/createToken";
+            m_serverAddress = "http://" + string(optarg);
             break;
         case 'r':
             LOG_DEBUG("room is %s", optarg);

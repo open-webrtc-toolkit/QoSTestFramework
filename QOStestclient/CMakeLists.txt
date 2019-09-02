@@ -21,6 +21,8 @@ file(GLOB OWT_CONF_SAMPLE_SOURCES
   "${CMAKE_CURRENT_SOURCE_DIR}/data.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/log.cc"
   "${CMAKE_CURRENT_SOURCE_DIR}/log.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/http.cc"
+  "${CMAKE_CURRENT_SOURCE_DIR}/http.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/owt.h"
 )
 
@@ -46,9 +48,6 @@ set_target_properties(owt_conf_sample PROPERTIES COMPILE_DEFINITIONS "WEBRTC_LIN
 target_link_libraries(owt_conf_sample
   "-Wl,--start-group"
   "-lsioclient_tls"
-  "-lasiotoken"
-  "-lboost_date_time"
-  "-lboost_random"
   "-lssl"
   "-lcrypto"
   "-lowt"
@@ -64,6 +63,5 @@ target_link_libraries(owt_conf_sample
   "-lXcursor"
   "-lXfixes"
   "-lXdamage"
-  "-lpthread"
-  "-lboost_system")
+  "-lpthread")
 
