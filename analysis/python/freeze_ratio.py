@@ -19,19 +19,21 @@ targ_cwd = os.path.dirname(os.path.abspath(__file__))
 
 def print_usage():
     print ("")
-    print ("  Usage: "  + sys.argv[0] + " test.mp4")
+    print ("  Usage: "  + sys.argv[0] + ' test.mp4')
     print ("      -m")
     print ("          specify max_drop_cout, default is 0")
     print ("      -h")
     print ("          specify hi, default is 768")
     print ("      -l")
     print ("          specify lo, default is 320")
-    print ("      -fr")
+    print ("      -f")
     print ("          specify frac, default is 0.3330000")
+    print ("      -e")
+    print ("          specify freeze threshold length")
     print ("")
     print ("  Sample: ")
     print ("")
-    print ("          " + sys.argv[0] + ' test.mp4 -m 0 -h 768 -l 320 -fr 0.1')
+    print ("          " + sys.argv[0] + ' -m 0 -h 768 -l 320 -f 0.1 test.mp4')
     print ("")
     sys.exit(1)
 
@@ -127,33 +129,31 @@ def extrace_freeze(input_file,max_drop_count,hi,lo,frac,freeze_threshold):
 
 def main(argv):
     try: 
-        options, arguments = getopt.getopt(argv[1:], "o:w:h:f:b:g:v:", [])
+        options, arguments = getopt.getopt(sys.argv[1:], "m:h:l:f:e:",["hi=","lo=","frac=","len="])
     except getopt.GetoptError, error:
-        PrintUsage()
+        print_usage()
     g_input = "test.mp4"
     max_drop_count ='0'
     hi = '768'
     lo = '320'
-    frac = '0.330000'
+    frac = '0.33000'
     freeze_threshold = '1'
     path =  os.path.dirname(os.path.abspath(__file__))
     list = []
 
     if len(arguments) == 0:
        print_usage()
-
     g_input = arguments[0]
-
     for option, value in options:
         if option == "-m":
             max_drop_count = value
-        elif option == "-h":
+        elif option in ("-h", "--hi"):
             hi = int(value)
-        elif option == "-l":
+        elif option in ("-l", "--lo"):
             lo = int(value)
-        elif option == "-fr":
+        elif option in ("-f", "--frac"):
             frac = float(value)
-        elif option == "-len":
+        elif option in ("-e", "--len"):
             freeze_threshold = float(value)
         else:
             print_usage()
