@@ -1,7 +1,7 @@
 // Copyright (C) <2019> Intel Corporation
 //
 // SPDX-License-Identifier: Apache-2.0
-#include "asio_token.h"
+#include "http.h"
 #include "conferenceforwardobserver.h"
 #include "data.h"
 #include "encodedframegenerator.h"
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 
     string serverAddress = data->GetServerAddress();
     string roomId = data->GetRoomId();
-    string token = getToken(serverAddress, roomId, "", "", false, "presenter");
+    string token = CHttp::getToken(serverAddress, roomId);
     LOG_DEBUG("token is: %s", token.c_str());
 
     if (token != "")
