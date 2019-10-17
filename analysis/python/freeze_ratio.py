@@ -90,17 +90,19 @@ def extrace_freeze(input_file, max_drop_count, hi, lo, frac, freeze_threshold):
                     _freeze_length = float(
                         _time_stamp)-float(_last_freeze_time_stamp)
                     freeze_length_list.append(_freeze_length)
+                    print str(_freeze_length)
                     _last_freeze_time_stamp = _time_stamp
                 else:
                     _freeze_length = float(
                         _time_stamp)-float(_last_freeze_time_stamp)
-
+                    print str(_freeze_length)
                     freeze_length_list.append(_freeze_length)
 
             if int(_value) < 0:
                 _mark += 1
                 _freeze_mark = 0
                 _last_freeze_time_stamp = _time_stamp
+                print '0'
                 freeze_length_list.append(0)
                 freeze_list.append(0)
                 if (_mark == 2):
@@ -126,6 +128,7 @@ def extrace_freeze(input_file, max_drop_count, hi, lo, frac, freeze_threshold):
     #print ("inital_frame_time",_inital_frame_time)
     #print ("total freeze_rate is ", freeze_rate)
     #print ("freeze_list is ", freeze_list)
+
 
     return _fps_value, _inital_frame_time, freeze_list, freeze_length_list
 
