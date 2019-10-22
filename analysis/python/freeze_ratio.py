@@ -172,7 +172,6 @@ def main(argv):
         sys.exit(1)
 
     # extrace_frame_rate(g_input)
-    g_input.startswith("f")
 
     g_fps_value, g_inital_frame_time, g_freeze_list, g_freeze_length_list = extrace_freeze(
         g_input, max_drop_count, hi, lo, frac, freeze_threshold)

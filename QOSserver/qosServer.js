@@ -393,7 +393,6 @@ app.post('/freezeRatio', function (req, res) {
   let lo = conf.freezeRatio.lo || '320';
   let frac = conf.freezeRatio.frac || '0.330000';
   let freeze_threshold = conf.freezeRatio.freeze_threshold || '1';
-  console.info('python ' + analysisDir + 'python/freeze_ratio.py' + ' -m ' + max_drop_count + ' -h ' + hi + ' -l ' + lo + ' -f ' + frac + ' -e ' + freeze_threshold +' '+ analysisDir +'dataset/output/' + g_input);
   exec('python ' + analysisDir + 'python/freeze_ratio.py' + ' -m ' + max_drop_count + ' -h ' + hi + ' -l ' + lo + ' -f ' + frac + ' -e ' + freeze_threshold +' '+ analysisDir +'dataset/output/' + g_input , function(err,
     data, stderr) {
     if (err) {

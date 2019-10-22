@@ -112,7 +112,15 @@ python /path/to/NR_calculate.py
 
 It will test the quality use no-reference video quality assessment algorithm and generate result data.
 
-4. Caculate latency
+4. Freeze ratio, length and number of freezes
+```
+python ./analysis/python/freeze_ratio.py <video-file> 
+````
+*e.g python ./analysis/python/freeze_ratio.py ./analysis/dataset/output/cut.mp4*
+
+Currently, it only support encoded video format. It can generate the freeze_ratio and length of freezes, please check front-end visualization results.  
+
+5. Caculate latency
 ```
 latency {publishTimeFile} {latencyFile} {frameCount}
 ```
@@ -120,7 +128,7 @@ latency {publishTimeFile} {latencyFile} {frameCount}
 
 It will calculate the latency result
 
-5. Calculate fps
+6. Calculate fps
 ```
 fps {FpsFile}
 ```
@@ -128,7 +136,7 @@ fps {FpsFile}
 
 It will calculate the fps result
 
-6. Calculate jitter
+7. Calculate jitter
 ```
 FLR {latencyFile}
 ```
@@ -136,7 +144,7 @@ FLR {latencyFile}
 
 It will calculate the jitter result
 
-7. Calculate bitrate
+8. Calculate bitrate
 ```
 bitrate {bitrateFile}
 ```
