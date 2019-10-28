@@ -150,7 +150,7 @@ app.use(morgan(':errormsg', {
 }))
 
 const authPath = ['/jitter', '/latency', '/fps', '/bitrate', '/quality',
-  '/vmaf', '/NR', '/getResultFolder', '/getCompareResultFolder',
+  '/vmaf', '/NR', '/freezeRatio', '/getResultFolder', '/getCompareResultFolder',
   '/displayData', '/startTest', '/stopTest'
 ];
 app.use(authPath, function (req, res, next) {
@@ -385,8 +385,31 @@ app.post('/NR', function (req, res) {
   });
 });
 
+
+app.post('/freezeRatio', function (req, res) {
+  let g_input = conf.freezeRatio.g_input || "cut.mp4";
+  let max_drop_count = conf.freezeRatio.max_drop_count || '0';
+  let hi = conf.freezeRatio.hi || '768';
+  let lo = conf.freezeRatio.lo || '320';
+  let frac = conf.freezeRatio.frac || '0.330000';
+  let freeze_threshold = conf.freezeRatio.freeze_threshold || '1';
+  exec('python ' + analysisDir + 'python/freeze_ratio.py' + ' -m ' + max_drop_count + ' -h ' + hi + ' -l ' + lo + ' -f ' + frac + ' -e ' + freeze_threshold +' '+ analysisDir +'dataset/output/' + g_input , function(err,
+    data, stderr) {
+    if (err) {
+      console.info('stderr from freezeRatio:' + stderr);
+      req.errormsg = err.stack
+      res.status(500).send("Internal Server Error")
+      return
+    }
+    res.json({
+      freeze: data
+    });
+  });
+});
+
+
 app.post('/getResultFolder', function (req, res) {
-  exec('python python/listFolder.py -l 1', function (err, data, stderr) {
+    exec('python python/listFolder.py -l 1', function (err, data, stderr) {
     console.log(data);
     if (err) {
       console.info('stderr :' + stderr);

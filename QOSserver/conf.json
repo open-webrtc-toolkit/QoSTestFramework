@@ -12,6 +12,14 @@
         "width": "1280",
         "height": "720"
     },
+    "freezeRatio":{
+        "g_input": "cut.mp4",
+        "max_drop_count": "0",
+        "hi": "768",
+        "lo": "320",
+        "frac": "0.330000",
+        "freeze_threshold": "1"
+    },
     "getCompareResultFolder": {
         "folder": null
     }

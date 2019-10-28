@@ -45,7 +45,7 @@
     </div>
 
     <div>
-      Frame:<input type="text" id="maxFrame" value="300" autocomplete="off">
+      Frame:<input type="text" id="maxFrame" value="3000" autocomplete="off">
     </div>
     <div>
       <p>getQuality Full-Reference (PSNR, SSIM)</p>
@@ -117,7 +117,14 @@
           style="display: none;"></canvas>
       </div>
     </div>
-
+    <div>
+      <button id="freezeRatio-btn"
+        onclick="getComparedResult('freezeRatioChart','freeze_ratio.txt','frthreshold')"
+        style="width: 250px;height: 50px;">Freeze ratio and length (s)</button>
+      Threshold:<input type="text" id="frthreshold" value="100" autocomplete="off">
+      <canvas id="freezeRatioChart" width="400" height="100"
+        style="display: none;"></canvas>
+    </div>
     <div>
       <button id="jitter-btn"
         onclick="getComparedResult('jitterChart','jitter.txt','jthreshold')"
