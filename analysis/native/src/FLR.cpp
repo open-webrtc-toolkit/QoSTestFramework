@@ -191,19 +191,17 @@ int main(int argc, char *argv[])
     for (int i = 2; i < datas.size(); i++)
     {
         int inter = datas[i].second - datas[i - 1].second;
-
+        uint64 abs_value = 0;
         if (inter < 0)
         {
-            cout << abs((datas[i].first - datas[i - 1].first) / (inter + framenumber)) << endl;
-            jitter_out << abs((datas[i].first - datas[i - 1].first) / (inter + framenumber));
+            abs_value = abs(static_cast<uint64>((datas[i].first - datas[i - 1].first) / (inter + framenumber)));
         }
         else
         {
-
-            cout << abs((datas[i].first - datas[i - 1].first) / (inter)) << endl;
-            jitter_out << abs((datas[i].first - datas[i - 1].first) / (inter));
+            abs_value = abs(static_cast<uint64>((datas[i].first - datas[i - 1].first) / inter));
         }
-
+        cout << abs_value << endl;
+        jitter_out << abs_value;
         jitter_out << ",";
     }
 
